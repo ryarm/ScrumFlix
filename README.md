@@ -21,3 +21,24 @@ Database: Microsoft SQL Server (Developer Edition)
 Web Technologies: HTML, CSS, JavaScript (or ASP.NET if used)
 
 Version Control: Git & GitHub
+
+
+Installation:
+
+Prerequisites
+- Visual Studio
+- .NET desktop development workload installed
+- .NET SDK 10.0 installed
+
+1. Clone the repository
+- Open VS and clone the repository with the repo URL
+
+2. Open the solution
+- Open 'ScrumFlix.sln'
+
+3. Run the app
+
+4. SQLite setup (Temporary until we get an actual db
+- On the first run the database file is created automatically in: %AppData%\ScrumFlix\scrumflix.db
+- While we are using SQLite each member gets their own local db
+- Do not commit db files until we have a cloud db setup (they are ignored in .gitignore)
