@@ -1,0 +1,15 @@
+﻿using Microsoft.EntityFrameworkCore;
+using ScrumFlix.Models;
+
+namespace ScrumFlix.Data;
+
+public class AppDbContext : DbContext
+{
+    public DbSet<Movie> Movies => Set<Movie>();
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder.UseSqlite($"Data Source={AppPaths.DatabasePath}");
+    }
+}
