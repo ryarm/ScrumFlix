@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             btnMovies = new Button();
+            showtimes = new Button();
             SuspendLayout();
             // 
             // btnMovies
@@ -41,11 +42,22 @@
             btnMovies.UseVisualStyleBackColor = true;
             btnMovies.Click += btnMovies_Click;
             // 
+            // showtimes
+            // 
+            showtimes.Location = new Point(425, 318);
+            showtimes.Name = "showtimes";
+            showtimes.Size = new Size(171, 30);
+            showtimes.TabIndex = 1;
+            showtimes.Text = "Manage Showtimes";
+            showtimes.UseVisualStyleBackColor = true;
+            showtimes.Click += button1_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1038, 616);
+            Controls.Add(showtimes);
             Controls.Add(btnMovies);
             Name = "MainForm";
             Text = "Form1";
@@ -56,5 +68,6 @@
         #endregion
 
         private Button btnMovies;
+        private Button showtimes;
     }
 }

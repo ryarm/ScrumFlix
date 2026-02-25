@@ -38,5 +38,10 @@ namespace ScrumFlix
             f.ShowDialog();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using var f = new ShowtimesForm();
+            f.ShowDialog();
+        }
     }
 }
