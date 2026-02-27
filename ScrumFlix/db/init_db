@@ -1,35 +1,163 @@
+DROP DATABASE IF EXISTS defaultdb;
 CREATE DATABASE IF NOT EXISTS defaultdb;
 USE defaultdb;
 
+-- 1. MOVIES
 CREATE TABLE movies (
-movie_id INT PRIMARY KEY AUTO_INCREMENT,
-movie_name VARCHAR(150) NOT NULL UNIQUE,
-genre VARCHAR(50) NOT NULL,
-mpa_rating VARCHAR(5) NOT NULL,
-run_time SMALLINT
+    movie_id INT PRIMARY KEY AUTO_INCREMENT,
+    movie_name VARCHAR(150) NOT NULL UNIQUE,
+    genre VARCHAR(50) NOT NULL,
+    mpa_rating VARCHAR(10) NOT NULL,
+    run_time SMALLINT CHECK (run_time > 0)
 );
 
-CREATE TABLE location_time (
-show_id INT PRIMARY KEY AUTO_INCREMENT,
-movie_id INT NOT NULL,
-theater_room INT NOT NULL,
-show_date DATE NOT NULL, 
-start_time TIME NOT NULL, 
-end_time TIME NOT NULL,
-FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+-- 2. THEATER ROOMS
+CREATE TABLE theater_rooms (
+    room_id INT PRIMARY KEY AUTO_INCREMENT,
+    room_name VARCHAR(50) NOT NULL UNIQUE,
+    seating_capacity INT NOT NULL CHECK (seating_capacity > 0),
+    is_active BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE employees(
-employee_id INT PRIMARY KEY AUTO_INCREMENT, 
-employee_start_title VARCHAR(50) NOT NULL, 
-employee_current_title VARCHAR(50) NOT NULL,
-employee_start_date DATE NOT NULL, 
-employee_end_date DATE, 
-employee_dob DATE NOT NULL, 
-employee_phone SMALLINT NOT NULL,
-employee_email VARCHAR (100) NOT NULL,
-employee_st_address VARCHAR (100),
-employee_city VARCHAR (50) NOT NULL,
-employee_state VARCHAR (40) NOT NULL,
-employee_zipcode SMALLINT NOT NULL
+-- 3. SCHEDULED SHOWS
+CREATE TABLE scheduled_shows (
+    show_id INT PRIMARY KEY AUTO_INCREMENT,
+    movie_id INT NOT NULL,
+    room_id INT NOT NULL,
+    show_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+
+    CONSTRAINT fk_show_movie
+        FOREIGN KEY (movie_id)
+        REFERENCES movies(movie_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_show_room
+        FOREIGN KEY (room_id)
+        REFERENCES theater_rooms(room_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT chk_show_time
+        CHECK (end_time > start_time)
 );
+
+-- 4. EMPLOYEES
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    employee_start_title VARCHAR(50) NOT NULL,
+    employee_current_title VARCHAR(50) NOT NULL,
+    employee_start_date DATE NOT NULL,
+    employee_end_date DATE,
+    employee_dob DATE NOT NULL,
+    employee_phone VARCHAR(20) NOT NULL,
+    employee_email VARCHAR(100) NOT NULL UNIQUE,
+    employee_st_address VARCHAR(100),
+    employee_city VARCHAR(50) NOT NULL,
+    employee_state VARCHAR(40) NOT NULL,
+    employee_zipcode VARCHAR(10) NOT NULL
+);
+
+-- 5. CUSTOMERS
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    customer_email VARCHAR(255) NOT NULL UNIQUE,
+    customer_phone VARCHAR(20) NOT NULL,
+    customer_dob DATE,
+    customer_category ENUM('Child','Adult','Senior','Matinee') DEFAULT 'Adult'
+);
+
+-- 6. PRICE TIERS
+CREATE TABLE price_tiers (
+    price_tier_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL,
+    format_type VARCHAR(20) DEFAULT '2D',
+    price DECIMAL(6,2) NOT NULL CHECK (price >= 0),
+    is_active BOOLEAN DEFAULT TRUE,
+    description VARCHAR(255)
+);
+
+-- 7. POPULATE PRICE TIERS
+INSERT INTO price_tiers (category_name, format_type, price, description) VALUES
+('Adult Standard', '2D', 16.00, 'Standard adult admission'),
+('Child Standard', '2D', 9.00, 'Children ages 2-12'),
+('Senior Standard', '2D', 11.00, 'Seniors ages 60+'),
+('Adult IMAX', 'IMAX', 21.00, 'Premium IMAX experience'),
+('Matinee Special', '2D', 9.00, 'All shows before 2:00 PM');
+
+-- 8. TICKETS
+CREATE TABLE tickets (
+    ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+    show_id INT NOT NULL,
+    price_tier_id INT NOT NULL,
+    customer_id INT NULL,
+    guest_email VARCHAR(255),
+    ticket_date DATE NOT NULL,
+
+    CONSTRAINT fk_ticket_show
+        FOREIGN KEY (show_id)
+        REFERENCES scheduled_shows(show_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_ticket_price
+        FOREIGN KEY (price_tier_id)
+        REFERENCES price_tiers(price_tier_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_ticket_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES customers(customer_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+-- 9. TRIGGER: Enforce Guest OR Member Rule (INSERT)
+DROP TRIGGER IF EXISTS trg_ticket_insert_check;
+
+DELIMITER //
+
+CREATE TRIGGER trg_ticket_insert_check
+BEFORE INSERT ON tickets
+FOR EACH ROW
+BEGIN
+    IF NOT (
+        (NEW.customer_id IS NOT NULL AND NEW.guest_email IS NULL)
+        OR
+        (NEW.customer_id IS NULL AND NEW.guest_email IS NOT NULL)
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ticket must have either customer_id OR guest_email, not both or neither';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- 10. TRIGGER: Enforce Guest OR Member Rule (UPDATE)
+DROP TRIGGER IF EXISTS trg_ticket_update_check;
+
+DELIMITER //
+
+CREATE TRIGGER trg_ticket_update_check
+BEFORE UPDATE ON tickets
+FOR EACH ROW
+BEGIN
+    IF NOT (
+        (NEW.customer_id IS NOT NULL AND NEW.guest_email IS NULL)
+        OR
+        (NEW.customer_id IS NULL AND NEW.guest_email IS NOT NULL)
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ticket must have either customer_id OR guest_email, not both or neither';
+    END IF;
+END //
+
+DELIMITER ;
