@@ -23,13 +23,13 @@ namespace ScrumFlix.Forms
         {
             using var db = new AppDbContext();
 
-            var screens = db.Screens
+            var TheaterScreen = db.TheaterScreen
                 .OrderBy(s => s.TheaterScreenId)
                 .ToList();
 
             screenCombo.DisplayMember = "ScreenName";
             screenCombo.ValueMember = "TheaterScreenId";
-            screenCombo.DataSource = screens;
+            screenCombo.DataSource = TheaterScreen;
 
             var movies = db.Movies
                 .OrderBy(m => m.Title)

@@ -1,4 +1,5 @@
-﻿namespace ScrumFlix.Data;
+﻿// not needed now that MySQL is connected
+namespace ScrumFlix.Data;
 
 public static class AppPaths
 {

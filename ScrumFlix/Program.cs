@@ -14,9 +14,9 @@ internal static class Program
         using (var db = new AppDbContext())
         {
             db.Database.EnsureCreated();
-            if (!db.Screens.Any())
+            if (!db.TheaterScreen.Any())
             {
-                db.Screens.AddRange(
+                db.TheaterScreen.AddRange(
                     new TheaterScreen { ScreenName = "Screen 1" },
                     new TheaterScreen { ScreenName = "Screen 2" },
                     new TheaterScreen { ScreenName = "Screen 3" }
