@@ -1,5 +1,5 @@
 DROP DATABASE IF EXISTS defaultdb;
-CREATE DATABASE IF NOT EXISTS defaultdb;
+CREATE DATABASE defaultdb;
 USE defaultdb;
 
 -- 1. MOVIES
@@ -29,7 +29,7 @@ CREATE TABLE theater_rooms (
     seating_capacity INT NOT NULL CHECK (seating_capacity > 0),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     
-    CONSTRAINT fk_location
+    CONSTRAINT fk_room_location
 		FOREIGN KEY (location_id)
         REFERENCES locations(location_id)
         ON DELETE RESTRICT
@@ -40,6 +40,7 @@ CREATE TABLE theater_rooms (
 CREATE TABLE scheduled_shows (
     show_id INT PRIMARY KEY AUTO_INCREMENT,
     movie_id INT NOT NULL,
+    location_id INT NOT NULL,
     room_id INT NOT NULL,
     show_date DATE NOT NULL,
     start_datetime DATETIME NOT NULL,
@@ -55,6 +56,12 @@ CREATE TABLE scheduled_shows (
     CONSTRAINT fk_show_room
         FOREIGN KEY (room_id)
         REFERENCES theater_rooms(room_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+        
+	CONSTRAINT fk_show_location
+		FOREIGN KEY (location_id)
+        REFERENCES locations(location_id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
 
@@ -179,3 +186,22 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- 12. VIEW: Shows movies that customers can go see in theaters
+CREATE VIEW in_theaters_now AS 
+SELECT 
+    m.movie_name,
+    m.genre,
+    m.mpa_rating,
+    s.show_date, 
+    s.start_datetime, 
+    s.end_datetime,
+    l.location_name,
+    l.location_address
+FROM scheduled_shows s 
+JOIN movies m
+	ON s.movie_id = m.movie_id
+JOIN locations l
+	ON s.location_id = l.location_id
+WHERE s.is_active = TRUE
+	AND l.is_active = TRUE
