@@ -35,14 +35,13 @@ namespace ScrumFlix.Forms
         }
         private async void btnAdd_Click(object sender, EventArgs e)
         {
-            string title = Interaction.InputBox("Movie title:", "Add Movie");
-            title = title.Trim();
+            using var form = new MovieEditForm();
 
-            if (string.IsNullOrWhiteSpace(title))
+            if (form.ShowDialog() != DialogResult.OK)
                 return;
 
             using var db = new AppDbContext();
-            db.Movies.Add(new Movie { Title = title });
+            db.Movies.Add(form.Movie);
             await db.SaveChangesAsync();
 
             await LoadMoviesAsync();
@@ -62,23 +61,25 @@ namespace ScrumFlix.Forms
             var selected = SelectedMovie();
             if (selected is null)
             {
-                MessageBox.Show("Select a movie first.");
+                MessageBox.Show("Select a movie first please.");
                 return;
             }
 
-            string newTitle = Interaction.InputBox("Edit title:", "Edit Movie", selected.Title);
-            newTitle = newTitle.Trim();
+            using var form = new MovieEditForm(selected);
 
-            if (string.IsNullOrWhiteSpace(newTitle))
+            if (form.ShowDialog() != DialogResult.OK)
                 return;
 
             using var db = new AppDbContext();
             var movie = await db.Movies.FindAsync(selected.MovieId);
             if (movie is null) return;
 
-            movie.Title = newTitle;
-            await db.SaveChangesAsync();
+            movie.Title = form.Movie.Title;
+            movie.Rating = form.Movie.Rating;
+            movie.RuntimeMinutes = form.Movie.RuntimeMinutes;
+            movie.Description = form.Movie.Description;
 
+            await db.SaveChangesAsync();
             await LoadMoviesAsync();
         }
 
@@ -87,7 +88,16 @@ namespace ScrumFlix.Forms
             var selected = SelectedMovie();
             if (selected is null)
             {
-                MessageBox.Show("Select a movie first.");
+                MessageBox.Show("Select a movie first please.");
+                return;
+            }
+
+            using var db = new AppDbContext();
+            // If showtime exists won't delete movie
+            bool hasShowtimes = await db.ShowTimes.AnyAsync(s => s.MovieId == selected.MovieId);
+            if (hasShowtimes)
+            {
+                MessageBox.Show("Delete movie showtimes before attempting to delete the movie.");
                 return;
             }
 
@@ -100,7 +110,6 @@ namespace ScrumFlix.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            using var db = new AppDbContext();
             var movie = await db.Movies.FindAsync(selected.MovieId);
             if (movie is null) return;
 
