@@ -1,4 +1,6 @@
-﻿using System;
+﻿// This model represents a location and is used by EF Core to map the Location class to the database
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;

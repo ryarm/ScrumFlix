@@ -1,4 +1,6 @@
-﻿using ScrumFlix.Data;
+﻿// This form is the edit form that opens when someone adds or edits a theater screen in the TheaterScreenForm.cs form
+
+using ScrumFlix.Data;
 using ScrumFlix.Models;
 
 namespace ScrumFlix.Forms
@@ -23,7 +25,7 @@ namespace ScrumFlix.Forms
             InitializeComponent();
             LoadData();
         }
-        public TheaterScreenEditForm(TheaterScreen existing) : this()
+        public TheaterScreenEditForm(TheaterScreen existing) : this() // Constructor used when editing an existing screen, copies existing screen data into the forms fields
         {
             TheaterScreen = new TheaterScreen
             {
@@ -36,7 +38,7 @@ namespace ScrumFlix.Forms
             screenLocation.SelectedValue = TheaterScreen.LocationId;
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void btnOk_Click(object sender, EventArgs e) // Validates the form input and updates the TheaterScreen object before returning to the parent form
         {
             string name = screenName.Text.Trim();
             if (string.IsNullOrEmpty(name))

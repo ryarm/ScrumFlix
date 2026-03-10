@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// This model represents a showtime and is used by EF Core to map the Showtime class to the database
+
+using System.ComponentModel.DataAnnotations;
 using System;
 
 namespace ScrumFlix.Models;

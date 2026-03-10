@@ -29,47 +29,59 @@
         private void InitializeComponent()
         {
             btnMovies = new Button();
-            showtimes = new Button();
-            btnScreens = new Button();
+            btnShowtimes = new Button();
+            btnTheaterScreen = new Button();
+            btnLocation = new Button();
             SuspendLayout();
             // 
             // btnMovies
             // 
-            btnMovies.Location = new Point(462, 282);
+            btnMovies.Location = new Point(115, 25);
             btnMovies.Name = "btnMovies";
-            btnMovies.Size = new Size(98, 30);
+            btnMovies.Size = new Size(171, 30);
             btnMovies.TabIndex = 0;
-            btnMovies.Text = "Movies";
+            btnMovies.Text = "Manage Movies";
             btnMovies.UseVisualStyleBackColor = true;
             btnMovies.Click += btnMovies_Click;
             // 
-            // showtimes
+            // btnShowtimes
             // 
-            showtimes.Location = new Point(425, 318);
-            showtimes.Name = "showtimes";
-            showtimes.Size = new Size(171, 30);
-            showtimes.TabIndex = 1;
-            showtimes.Text = "Manage Showtimes";
-            showtimes.UseVisualStyleBackColor = true;
-            showtimes.Click += button1_Click;
+            btnShowtimes.Location = new Point(115, 61);
+            btnShowtimes.Name = "btnShowtimes";
+            btnShowtimes.Size = new Size(171, 30);
+            btnShowtimes.TabIndex = 1;
+            btnShowtimes.Text = "Manage Showtimes";
+            btnShowtimes.UseVisualStyleBackColor = true;
+            btnShowtimes.Click += btnShowtimes_Click;
             // 
-            // btnScreens
+            // btnTheaterScreen
             // 
-            btnScreens.Location = new Point(425, 354);
-            btnScreens.Name = "btnScreens";
-            btnScreens.Size = new Size(171, 30);
-            btnScreens.TabIndex = 2;
-            btnScreens.Text = "Manage Screens";
-            btnScreens.UseVisualStyleBackColor = true;
-            btnScreens.Click += button1_Click_1;
+            btnTheaterScreen.Location = new Point(115, 97);
+            btnTheaterScreen.Name = "btnTheaterScreen";
+            btnTheaterScreen.Size = new Size(171, 30);
+            btnTheaterScreen.TabIndex = 2;
+            btnTheaterScreen.Text = "Manage Screens";
+            btnTheaterScreen.UseVisualStyleBackColor = true;
+            btnTheaterScreen.Click += btnTheaterScreen_Click;
+            // 
+            // btnLocation
+            // 
+            btnLocation.Location = new Point(115, 133);
+            btnLocation.Name = "btnLocation";
+            btnLocation.Size = new Size(171, 30);
+            btnLocation.TabIndex = 3;
+            btnLocation.Text = "Manage Locations";
+            btnLocation.UseVisualStyleBackColor = true;
+            btnLocation.Click += button1_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1038, 616);
-            Controls.Add(btnScreens);
-            Controls.Add(showtimes);
+            ClientSize = new Size(405, 211);
+            Controls.Add(btnLocation);
+            Controls.Add(btnTheaterScreen);
+            Controls.Add(btnShowtimes);
             Controls.Add(btnMovies);
             Name = "MainForm";
             Text = "Form1";
@@ -80,7 +92,8 @@
         #endregion
 
         private Button btnMovies;
-        private Button showtimes;
-        private Button btnScreens;
+        private Button btnShowtimes;
+        private Button btnTheaterScreen;
+        private Button btnLocation;
     }
 }

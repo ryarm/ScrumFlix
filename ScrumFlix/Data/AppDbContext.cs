@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Connects the program to the database
+
+using Microsoft.EntityFrameworkCore;
 using ScrumFlix.Models;
 
 namespace ScrumFlix.Data;

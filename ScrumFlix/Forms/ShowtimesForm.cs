@@ -1,4 +1,6 @@
-﻿using ScrumFlix.Data;
+﻿// This form opens a window that allows the user to CRUD showtimes from the database
+
+using ScrumFlix.Data;
 using ScrumFlix.Models;
 using System;
 using System.Collections.Generic;
@@ -8,6 +10,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ScrumFlix.Forms
 {
@@ -19,17 +22,18 @@ namespace ScrumFlix.Forms
             LoadData();
             LoadShowtimes();
         }
-        private void LoadData()
+        private void LoadData() // Loads the data for the screenCombo box and the movieCombo box
         {
             using var db = new AppDbContext();
 
-            var TheaterScreen = db.TheaterScreen
+            var screens = db.TheaterScreen
+                .Include(s => s.Location)
                 .OrderBy(s => s.TheaterScreenId)
                 .ToList();
-
-            screenCombo.DisplayMember = "ScreenName";
+            
+            screenCombo.DisplayMember = "ScreenDisplay";
             screenCombo.ValueMember = "TheaterScreenId";
-            screenCombo.DataSource = TheaterScreen;
+            screenCombo.DataSource = screens;
 
             var movies = db.Movies
                 .OrderBy(m => m.Title)
@@ -40,11 +44,11 @@ namespace ScrumFlix.Forms
             movieCombo.DataSource = movies;
         }
 
-        private void screenCombo_SelectedIndexChanged(object sender, EventArgs e)
+        private void screenCombo_SelectedIndexChanged(object sender, EventArgs e) // Triggered whenever the selected screen changes
         {
             LoadShowtimes();
         }
-        private void LoadShowtimes()
+        private void LoadShowtimes()  // Loads showtimes for the currently selected screen and displays them in the grid
         {
             if (screenCombo.SelectedValue is null)
                 return;
@@ -72,7 +76,7 @@ namespace ScrumFlix.Forms
                 showtimesGrid.Columns["ShowtimeId"].Visible = false;
         }
 
-        private void AddButton_Click(object sender, EventArgs e)
+        private void AddButton_Click(object sender, EventArgs e) // Adds a new showtime for the selected movie and screen, also makes sure the new showtime doesn't overlap with previous showtimes
         {
             if (screenCombo.SelectedValue is null || movieCombo.SelectedValue is null)
             {
@@ -123,7 +127,7 @@ namespace ScrumFlix.Forms
             LoadShowtimes();
         }
 
-        private void deleteButton_Click(object sender, EventArgs e)
+        private void deleteButton_Click(object sender, EventArgs e) // Deletes the selected showtime from the db
         {
             if (showtimesGrid.CurrentRow == null)
             {

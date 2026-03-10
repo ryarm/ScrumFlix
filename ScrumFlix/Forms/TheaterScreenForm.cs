@@ -1,4 +1,6 @@
-﻿using ScrumFlix.Data;
+﻿// This form opens a window that allows the user to CRUD screens from the database
+
+using ScrumFlix.Data;
 using ScrumFlix.Models;
 using System;
 using System.Collections.Generic;
@@ -19,21 +21,31 @@ namespace ScrumFlix.Forms
         {
             InitializeComponent();
         }
-        private async void TheaterScreenForm_Load(object sender, EventArgs e)
+        private async void TheaterScreenForm_Load(object sender, EventArgs e) // When form loads it loads the data from the db
         {
             await LoadTheaterScreenAsync();
         }
 
-        private async Task LoadTheaterScreenAsync()
+        private async Task LoadTheaterScreenAsync() // Loads data from database and shows only the screen ID and the screenName/locationName
         {
             using var db = new AppDbContext();
-            var screens = await db.TheaterScreen.OrderBy(m => m.ScreenName).ToListAsync();
+            var screens = await db.TheaterScreen
+                .Include(s => s.Location)
+                .OrderBy(s => s.LocationId)
+                .ToListAsync();
 
             gridScreens.AutoGenerateColumns = true;
             gridScreens.DataSource = screens;
+
+            gridScreens.Columns["LocationId"].Visible = false;
+            gridScreens.Columns["ScreenName"].Visible = false;
+            gridScreens.Columns["Location"].Visible = false;
+
+            gridScreens.Columns["ScreenDisplay"].HeaderText = "Screen Name";
+            gridScreens.Columns["ScreenDisplay"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
-        private async void btnAdd_Click(object sender, EventArgs e)
+        private async void btnAdd_Click(object sender, EventArgs e) // When the add button is clicked it opens the TheaterScreenEditForm.cs form to allow the user to add a screen to the db
         {
             using var form = new TheaterScreenEditForm();
 
@@ -46,12 +58,12 @@ namespace ScrumFlix.Forms
 
             await LoadTheaterScreenAsync();
         }
-        private TheaterScreen? SelectedScreen()
+        private TheaterScreen? SelectedScreen() // When selecting an item in the dataviewgrid this function returns that object
         {
             return gridScreens.CurrentRow?.DataBoundItem as TheaterScreen;
         }
 
-        private async void btnEdit_Click(object sender, EventArgs e)
+        private async void btnEdit_Click(object sender, EventArgs e) // When the edit button is clicked it pulls the info from the selected item and opens a TheaterScreenEditForm.cs form to allow the user to edit the screens info
         {
             var selected = SelectedScreen();
             if (selected is null)
@@ -75,7 +87,7 @@ namespace ScrumFlix.Forms
             await LoadTheaterScreenAsync();
         }
 
-        private async void btnDelete_Click(object sender, EventArgs e)
+        private async void btnDelete_Click(object sender, EventArgs e) // When the delete button is clicked it checks to make sure there are no showtimes attached to the screen before removing it from the db
         {
             var selected = SelectedScreen();
             if (selected is null)
@@ -111,7 +123,7 @@ namespace ScrumFlix.Forms
             await LoadTheaterScreenAsync();
         }
 
-        private async void btnRefresh_Click(object sender, EventArgs e)
+        private async void btnRefresh_Click(object sender, EventArgs e) // When the refresh button is clicked it refreshes the data in the gridview (in case changes are made to the database while this form is still open on the admin computer)
         {
             await LoadTheaterScreenAsync();
         }

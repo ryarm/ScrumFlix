@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// This model represents a movie and is used by EF Core to map the Movie class to the database
+
+using System.ComponentModel.DataAnnotations;
 
 namespace ScrumFlix.Models;
 
