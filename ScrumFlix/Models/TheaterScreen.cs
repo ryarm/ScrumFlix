@@ -8,4 +8,5 @@ public class TheaterScreen
 
     [Required, MaxLength(100)]
     public string ScreenName { get; set; } = "";
+    public int LocationId { get; set; }
 }

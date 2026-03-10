@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     public DbSet<Movie> Movies => Set<Movie>();
     public DbSet<TheaterScreen> TheaterScreen => Set<TheaterScreen>();
     public DbSet<Showtime> ShowTimes => Set<Showtime>();
+    public DbSet<Location> Location => Set<Location>();
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

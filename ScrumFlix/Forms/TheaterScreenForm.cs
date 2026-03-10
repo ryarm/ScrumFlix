@@ -35,24 +35,16 @@ namespace ScrumFlix.Forms
 
         private async void btnAdd_Click(object sender, EventArgs e)
         {
-            string screenName = Interaction.InputBox(
-                "Enter Screen name:"
-            );
-            
-            if (!string.IsNullOrEmpty( screenName ) )
-            {
-                using var db = new AppDbContext();
+            using var form = new TheaterScreenEditForm();
 
-                var screen = new TheaterScreen
-                {
-                    ScreenName = screenName
-                };
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
+            using var db = new AppDbContext();
+            db.TheaterScreen.Add(form.TheaterScreen);
 
-                db.TheaterScreen.Add(screen);
-                await db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-                await LoadTheaterScreenAsync();
-            }
+            await LoadTheaterScreenAsync();
         }
         private TheaterScreen? SelectedScreen()
         {
@@ -68,15 +60,16 @@ namespace ScrumFlix.Forms
                 return;
             }
 
-            string screenName = Interaction.InputBox(
-                "Enter Screen name:"
-            );
+            using var form = new TheaterScreenEditForm(selected);
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
 
             using var db = new AppDbContext();
             var screen = await db.TheaterScreen.FindAsync(selected.TheaterScreenId);
             if (screen is null) return;
 
-            screen.ScreenName = screenName;
+            screen.ScreenName = form.TheaterScreen.ScreenName;
+            screen.LocationId = form.TheaterScreen.LocationId;
 
             await db.SaveChangesAsync();
             await LoadTheaterScreenAsync();
