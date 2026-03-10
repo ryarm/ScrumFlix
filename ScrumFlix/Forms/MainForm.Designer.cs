@@ -30,6 +30,7 @@
         {
             btnMovies = new Button();
             showtimes = new Button();
+            btnScreens = new Button();
             SuspendLayout();
             // 
             // btnMovies
@@ -52,11 +53,22 @@
             showtimes.UseVisualStyleBackColor = true;
             showtimes.Click += button1_Click;
             // 
+            // btnScreens
+            // 
+            btnScreens.Location = new Point(425, 354);
+            btnScreens.Name = "btnScreens";
+            btnScreens.Size = new Size(171, 30);
+            btnScreens.TabIndex = 2;
+            btnScreens.Text = "Manage Screens";
+            btnScreens.UseVisualStyleBackColor = true;
+            btnScreens.Click += button1_Click_1;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1038, 616);
+            Controls.Add(btnScreens);
             Controls.Add(showtimes);
             Controls.Add(btnMovies);
             Name = "MainForm";
@@ -69,5 +81,6 @@
 
         private Button btnMovies;
         private Button showtimes;
+        private Button btnScreens;
     }
 }

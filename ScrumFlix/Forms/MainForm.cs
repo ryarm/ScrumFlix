@@ -43,5 +43,11 @@ namespace ScrumFlix
             using var f = new ShowtimesForm();
             f.ShowDialog();
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            using var f = new TheaterScreenForm();
+            f.ShowDialog();
+        }
     }
 }
