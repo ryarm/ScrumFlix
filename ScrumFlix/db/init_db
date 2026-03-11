@@ -187,7 +187,70 @@ END //
 
 DELIMITER ;
 
--- 12. VIEW: Shows movies that customers can go see in theaters
+-- 12. PROCEDURE: Insert Movie Data
+
+DELIMITER //
+CREATE PROCEDURE insert_movie (
+	movie_name_param VARCHAR(150),
+    genre_param VARCHAR(50),
+    mpa_rating_param VARCHAR(10),
+    run_time_param SMALLINT
+)
+BEGIN
+
+-- Validate parameter values
+IF run_time_param < 0 THEN 
+	SIGNAL SQLSTATE '22003'
+		SET MESSAGE_TEXT = 
+			'The run_time value must be a positive number.',
+		MYSQL_ERRNO = 1264;
+END IF;
+
+-- Insert movie if validation passes
+INSERT INTO movies (movie_name, genre, mpa_rating, run_time)
+VALUES (movie_name_param, genre_param, mpa_rating_param, run_time_param);
+
+END//
+
+-- 13. PROCEDURE: Add new scheduled movie showings
+
+DELIMITER //
+
+CREATE PROCEDURE update_show_schedule (
+	movie_id_param INT, 
+    location_id_param INT, 
+    room_id_param INT, 
+    show_date_param DATE, 
+    start_datetime_param DATETIME, 
+    end_datetime_param DATETIME,
+    is_active_param TINYINT
+)
+BEGIN  
+
+-- Validate that showtimes don't overlap
+
+IF EXISTS (
+    SELECT 1
+    FROM scheduled_shows
+    WHERE room_id = room_id_param
+    AND start_datetime_param < end_datetime
+    AND end_datetime_param > start_datetime
+)
+THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Showtime conflict detected for this room.';
+END IF;
+  
+-- Insert scheduled showing
+INSERT INTO scheduled_shows
+	(movie_id, location_id, room_id, show_date, start_datetime, end_datetime, is_active)
+VALUES
+	(movie_id_param, location_id_param, room_id_param, DATE(start_datetime_param), 
+    start_datetime_param, end_datetime_param,is_active_param);
+
+END//
+
+-- 14. VIEW: Shows movies that customers can go see in theaters
 CREATE VIEW in_theaters_now AS 
 SELECT 
     m.movie_name,
