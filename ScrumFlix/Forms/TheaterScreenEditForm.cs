@@ -49,6 +49,8 @@ namespace ScrumFlix.Forms
             }
             TheaterScreen.ScreenName = name;
 
+            TheaterScreen.Capacity = (int)numCapacity.Value;
+
             TheaterScreen.LocationId = Convert.ToInt32(screenLocation.SelectedValue);
         }
     }

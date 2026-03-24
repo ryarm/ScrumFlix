@@ -98,7 +98,7 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
             // If showtime exists won't delete screen
-            bool hasShowtimes = await db.ShowTimes.AnyAsync(s => s.TheaterScreenId == selected.TheaterScreenId);
+            bool hasShowtimes = await db.Showtime.AnyAsync(s => s.TheaterScreenId == selected.TheaterScreenId);
             if (hasShowtimes)
             {
                 MessageBox.Show("Delete screen's showtimes before attempting to delete the screen.");

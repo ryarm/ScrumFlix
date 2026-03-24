@@ -98,7 +98,7 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
             // If showtime exists won't delete movie
-            bool hasShowtimes = await db.ShowTimes.AnyAsync(s => s.MovieId == selected.MovieId);
+            bool hasShowtimes = await db.Showtime.AnyAsync(s => s.MovieId == selected.MovieId);
             if (hasShowtimes)
             {
                 MessageBox.Show("Delete movie showtimes before attempting to delete the movie.");

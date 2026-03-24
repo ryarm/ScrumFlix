@@ -57,7 +57,7 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
 
-            var rows = db.ShowTimes
+            var rows = db.Showtime
                 .Include(s => s.Movie)
                 .Where(s => s.TheaterScreenId == screenId)
                 .Select(s => new
@@ -96,7 +96,7 @@ namespace ScrumFlix.Forms
             DateTime newStart = startTime;
             DateTime newEnd = startTime.AddMinutes(runtime);
 
-            var existing = db.ShowTimes
+            var existing = db.Showtime
                 .Include(s => s.Movie)
                 .Where(s => s.TheaterScreenId == screenId)
                 .ToList();
@@ -121,7 +121,7 @@ namespace ScrumFlix.Forms
                 StartTime = startTime
             };
 
-            db.ShowTimes.Add(showtime);
+            db.Showtime.Add(showtime);
             db.SaveChanges();
 
             LoadShowtimes();
@@ -155,7 +155,7 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
 
-            var showtime = db.ShowTimes.FirstOrDefault(s => s.ShowtimeId == showtimeId);
+            var showtime = db.Showtime.FirstOrDefault(s => s.ShowtimeId == showtimeId);
             if (showtime == null)
             {
                 MessageBox.Show("That showtime no longer exists.");
@@ -163,7 +163,7 @@ namespace ScrumFlix.Forms
                 return;
             }
 
-            db.ShowTimes.Remove(showtime);
+            db.Showtime.Remove(showtime);
             db.SaveChanges();
 
             LoadShowtimes();

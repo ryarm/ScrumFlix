@@ -32,12 +32,16 @@
             screenLocation = new ComboBox();
             btnOk = new Button();
             btnCancel = new Button();
+            numCapacity = new NumericUpDown();
+            labelCapacity = new Label();
+            ((System.ComponentModel.ISupportInitialize)numCapacity).BeginInit();
             SuspendLayout();
             // 
             // screenName
             // 
             screenName.Location = new Point(12, 12);
             screenName.Name = "screenName";
+            screenName.PlaceholderText = "Screen Name";
             screenName.Size = new Size(216, 29);
             screenName.TabIndex = 0;
             // 
@@ -70,17 +74,36 @@
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
+            // numCapacity
+            // 
+            numCapacity.Location = new Point(12, 68);
+            numCapacity.Name = "numCapacity";
+            numCapacity.Size = new Size(156, 29);
+            numCapacity.TabIndex = 4;
+            // 
+            // labelCapacity
+            // 
+            labelCapacity.AutoSize = true;
+            labelCapacity.Location = new Point(12, 44);
+            labelCapacity.Name = "labelCapacity";
+            labelCapacity.Size = new Size(69, 21);
+            labelCapacity.TabIndex = 5;
+            labelCapacity.Text = "Capacity";
+            // 
             // TheaterScreenEditForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(435, 107);
+            Controls.Add(labelCapacity);
+            Controls.Add(numCapacity);
             Controls.Add(btnCancel);
             Controls.Add(btnOk);
             Controls.Add(screenLocation);
             Controls.Add(screenName);
             Name = "TheaterScreenEditForm";
             Text = "TheaterScreenEditForm";
+            ((System.ComponentModel.ISupportInitialize)numCapacity).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -91,5 +114,7 @@
         private ComboBox screenLocation;
         private Button btnOk;
         private Button btnCancel;
+        private NumericUpDown numCapacity;
+        private Label labelCapacity;
     }
 }
