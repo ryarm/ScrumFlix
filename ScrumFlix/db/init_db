@@ -46,6 +46,7 @@ CREATE TABLE scheduled_shows (
     start_datetime DATETIME NOT NULL,
     end_datetime DATETIME NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    tickets_sold INT NOT NULL DEFAULT 0,
 
     CONSTRAINT fk_show_movie
         FOREIGN KEY (movie_id)
@@ -144,6 +145,8 @@ CREATE TABLE tickets (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+
+CREATE INDEX idx_tickets_show_id ON tickets(show_id);
 
 -- 10. TRIGGER: Enforce Guest OR Member Rule (INSERT)
 DROP TRIGGER IF EXISTS trg_ticket_insert_check;
@@ -268,3 +271,92 @@ JOIN locations l
 	ON s.location_id = l.location_id
 WHERE s.is_active = TRUE
 	AND l.is_active = TRUE
+    
+-- 15. Prevent Overselling + Increment
+
+DROP TRIGGER IF EXISTS trg_ticket_insert;
+
+DELIMITER //
+
+CREATE TRIGGER trg_ticket_insert
+BEFORE INSERT ON tickets
+FOR EACH ROW
+BEGIN
+    DECLARE current_sold INT;
+    DECLARE max_capacity INT;
+
+    -- Lock the show row to prevent race conditions
+    SELECT ss.tickets_sold, tr.seating_capacity
+    INTO current_sold, max_capacity
+    FROM scheduled_shows ss
+    JOIN theater_rooms tr
+        ON ss.room_id = tr.room_id
+    WHERE ss.show_id = NEW.show_id
+    FOR UPDATE;
+
+    -- Prevent overselling
+    IF current_sold >= max_capacity - 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot sell ticket: show is sold out';
+    END IF;
+
+    -- Increment tickets_sold
+    UPDATE scheduled_shows
+    SET tickets_sold = tickets_sold + 1
+    WHERE show_id = NEW.show_id;
+
+END //
+
+DELIMITER ;
+
+-- 16. Handle Ticket Cancellation (DELETE)
+
+DROP TRIGGER IF EXISTS trg_ticket_delete;
+
+DELIMITER //
+
+CREATE TRIGGER trg_ticket_delete
+AFTER DELETE ON tickets
+FOR EACH ROW
+BEGIN
+    UPDATE scheduled_shows
+    SET tickets_sold = tickets_sold - 1
+    WHERE show_id = OLD.show_id;
+END //
+
+DELIMITER ;
+
+-- 17. Create Tickets When Ticket_Sold
+
+DROP PROCEDURE IF EXISTS create_ticket;
+
+DELIMITER //
+
+CREATE PROCEDURE create_ticket (
+    IN show_id_param INT,
+    IN price_tier_id_param INT,
+    IN customer_id_param INT,
+    IN guest_email_param VARCHAR(255)
+)
+BEGIN
+
+    -- Insert ticket (your existing triggers handle validation + oversell protection)
+    INSERT INTO tickets (
+        show_id,
+        price_tier_id,
+        customer_id,
+        guest_email,
+        ticket_date
+    )
+    VALUES (
+        show_id_param,
+        price_tier_id_param,
+        customer_id_param,
+        guest_email_param,
+        CURDATE()
+    );
+
+END //
+
+DELIMITER ;
+
