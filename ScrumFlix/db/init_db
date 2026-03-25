@@ -355,8 +355,45 @@ BEGIN
         guest_email_param,
         CURDATE()
     );
+    
+    -- Return new ticket ID
+    SELECT LAST_INSERT_ID() AS ticket_id;
 
 END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS get_ticket_details;
+
+DELIMITER //
+
+-- 18. Get Ticket Details
+
+CREATE PROCEDURE get_ticket_details (
+    IN ticket_id_param INT
+)
+BEGIN
+    SELECT 
+        t.ticket_id,
+        m.movie_name,
+        s.show_date,
+        s.start_datetime,
+        s.end_datetime,
+        l.location_name,
+        l.location_address,
+        tr.room_name,
+        pt.category_name,
+        pt.price,
+        COALESCE(c.customer_email, t.guest_email) AS purchaser_email,
+        t.ticket_date
+    FROM tickets t
+    JOIN scheduled_shows s ON t.show_id = s.show_id
+    JOIN movies m ON s.movie_id = m.movie_id
+    JOIN locations l ON s.location_id = l.location_id
+    JOIN theater_rooms tr ON s.room_id = tr.room_id
+    JOIN price_tiers pt ON t.price_tier_id = pt.price_tier_id
+    LEFT JOIN customers c ON t.customer_id = c.customer_id
+    WHERE t.ticket_id = ticket_id_param;
+END //
+
+DELIMITER ;
