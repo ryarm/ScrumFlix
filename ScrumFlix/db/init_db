@@ -340,7 +340,7 @@ CREATE PROCEDURE create_ticket (
 )
 BEGIN
 
-    -- Insert ticket (your existing triggers handle validation + oversell protection)
+    -- Insert ticket 
     INSERT INTO tickets (
         show_id,
         price_tier_id,
