@@ -340,7 +340,7 @@ CREATE PROCEDURE create_ticket (
 )
 BEGIN
 
-    -- Insert ticket 
+    -- Insert ticket (your existing triggers handle validation + oversell protection)
     INSERT INTO tickets (
         show_id,
         price_tier_id,
@@ -397,3 +397,41 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- 19. Add Inventory and Vendors table
+CREATE TABLE vendors (
+	vendor_id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+	vendor_name VARCHAR(255) NOT NULL, 
+    vendor_address VARCHAR(100) NOT NULL, 
+    vendor_city VARCHAR(50),
+    vendor_state ENUM(
+    'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+    'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+    'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+    'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+    'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY') NOT NULL,
+    vendor_zipcode INT(9) NOT NULL, 
+    vendor_phone INT(9) NOT NULL, 
+    vendor_contact_name VARCHAR(255) NOT NULL, 
+    vendor_email VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE inventory (
+	item_id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
+    item_name VARCHAR(100) NOT NULL, 
+    unit_cost DECIMAL(10,2) NOT NULL DEFAULT 0,
+    item_quantity INT(10) NOT NULL, 
+    vendor_id BINARY(16) NOT NULL,
+    location_id INT NOT NULL,
+	
+    CONSTRAINT inventory_fk_location
+		FOREIGN KEY (location_id)
+        REFERENCES locations(location_id),
+
+	CONSTRAINT fk_item_vendor
+        FOREIGN KEY (vendor_id)
+        REFERENCES vendors(vendor_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
