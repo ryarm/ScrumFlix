@@ -90,6 +90,9 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
 
+            var screen = db.TheaterScreen
+                .FirstOrDefault(s => s.TheaterScreenId == screenId);
+
             var movie = db.Movies.First(m => m.MovieId == movieId);
             int runtime = movie.RuntimeMinutes;
 
@@ -118,7 +121,8 @@ namespace ScrumFlix.Forms
             {
                 TheaterScreenId = screenId,
                 MovieId = movieId,
-                StartTime = startTime
+                StartTime = startTime,
+                Capacity = screen.Capacity
             };
 
             db.Showtime.Add(showtime);

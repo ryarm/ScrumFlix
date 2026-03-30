@@ -1,6 +1,7 @@
 // Program.cs runs when the project is started
 
 using ScrumFlix.Data;
+using ScrumFlix.Forms;
 using ScrumFlix.Models;
 using System;
 
@@ -57,6 +58,6 @@ internal static class Program
             }
         } */
 
-        Application.Run(new MainForm());
+        Application.Run(new LoginForm());
     }
 }

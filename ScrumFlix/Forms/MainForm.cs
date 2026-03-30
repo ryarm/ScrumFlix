@@ -66,5 +66,10 @@ namespace ScrumFlix
             using var f = new LocationForm();
             f.ShowDialog();
         }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }

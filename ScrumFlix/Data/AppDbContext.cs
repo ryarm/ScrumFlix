@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<TheaterScreen> TheaterScreen => Set<TheaterScreen>();
     public DbSet<Showtime> Showtime => Set<Showtime>();
     public DbSet<Location> Location => Set<Location>();
+    public DbSet<Ticket> Ticket { get; set; }
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

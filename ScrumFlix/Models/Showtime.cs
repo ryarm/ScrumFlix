@@ -14,4 +14,17 @@ public class Showtime
     public TheaterScreen? TheaterScreen { get; set; }
     public DateTime StartTime { get; set; }
 
+    public int Capacity { get; set; } = 50;
+
+    public bool SellTicket(int amount)
+    {
+        if (Capacity - amount < 0)
+        {
+            return false; // not enough tickets
+        }
+
+        Capacity -= amount;
+        return true;
+    }
+
 }

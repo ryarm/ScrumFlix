@@ -17,4 +17,12 @@ public class TheaterScreen
     {
         get { return $"{ScreenName} ({Location?.LocationName})"; }
     }
+    public string GetLocation
+    {
+        get { return $"{Location?.LocationName}"; }
+    }
+    public int GetCapacity
+    {
+        get { return Capacity; }
+    }
 }
