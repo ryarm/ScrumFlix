@@ -174,3 +174,118 @@ hr {
 select {
     color: rgb(0, 0, 0);
 }
+/* General Styling for Cart Page */
+body {
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.60)),
+                url("../images/movie theatre background.png") center center / cover no-repeat fixed;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* Header Styling */
+header.page-header {
+    text-align: center;
+    margin-top: 20px;
+}
+
+header .logo {
+    width: 120px;
+    display: block;
+    margin: 10px auto;
+}
+
+/* Cart Table */
+#cartTable {
+    width: 90%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+}
+
+#cartTable th, #cartTable td {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+#cartTable th {
+    background-color: #333;
+    color: white;
+}
+
+#cartTable td {
+    color: black;
+}
+
+/* Seat Input Styling */
+#cartTable input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#cartTable button {
+    padding: 8px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+#cartTable button:hover {
+    background-color: #555;
+}
+
+/* Grand Total Section */
+h2 {
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+}
+
+#grandTotal {
+    font-size: 2em;
+    font-weight: bold;
+    color: #f8c300;
+}
+
+/* Buttons Below Cart */
+div > button {
+    padding: 10px 20px;
+    margin: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+div > button:hover {
+    background-color: #555;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: white;
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+footer ul li {
+    margin-top: 5px;
+}
