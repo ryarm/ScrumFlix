@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Vanelly Odette" />
+    <meta name="description" content="Scrumflix Cart Page" />
+    <title>Scrumflix Cart</title>
+    <meta name="theme-color" content="#ffffff">
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/layout.css" rel="stylesheet" />
+    <style>
+        /* Inline CSS additions for cart styling */
+        #cartTable {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.85);
+            border-radius: 10px;
+        }
+
+        #cartTable th, #cartTable td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        #cartTable th {
+            background-color: #333;
+            color: white;
+        }
+
+        #cartTable input[type="number"] {
+            width: 50px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.60)),
+                        url("../images/movie theatre background.png") center center / cover no-repeat fixed;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+        }
+
+        .logo {
+            width: 120px;
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+
+<header class="page-header">
+    <nav style="text-align: center;">
+        <a href="index.html" style="margin: 0 10px;">Home</a>
+        <a href="Movies.html" style="margin: 0 10px;">Movies</a>
+        <a href="Theatres.html" style="margin: 0 10px;">Theatres</a>
+        <a href="contact.html" style="margin: 0 10px;">Contact</a>
+    </nav>
+    <div style="text-align: center;">
+        <img src="images/Movie Theatre Icon sm.png" alt="Scrumflix Logo" class="logo">
+    </div>
+    <h1>SCRUMFLIX THEATRE North Central</h1>
+</header>
+
+<main class="content">
+    <h2>SCRUMFLIX THEATRE CART</h2>
+
+    <table id="cartTable">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Time</th>
+                <th>Theatre</th>
+                <th>Seats</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Grand Total: $<span id="grandTotal">0</span></h2>
+
+    <div style="text-align:center;">
+        <button onclick="checkout()">Checkout</button>
+        <button onclick="clearCart()">Clear Cart</button>
+    </div>
+</main>
+
+<footer class="w3-container w3-center w3-margin-top">
+    <p>&copy; 2026 VOM | INEW 2332-2 Project</p>
+    <ul style="list-style-type: none; padding: 0;">
+        <li>
+            <a href="https://www.dallascollege.edu/">Dallas College</a> .
+            <a href="mailto:scrumflix@dcccd.onmicrosoft.com">Webmaster</a>
+        </li>
+    </ul>
+</footer>
+
+<script>
+    // Load cart from localStorage
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const tbody = document.querySelector("#cartTable tbody");
+
+    function loadCart() {
+        tbody.innerHTML = "";
+        let grandTotal = 0;
+
+        cart.forEach((item, index) => {
+            let total = item.price * item.seats;
+            grandTotal += total;
+
+            const row = `
+            <tr>
+                <td>${item.movie}</td>
+                <td>${item.time}</td>
+                <td>${item.location}</td>
+                <td>
+                    <input type="number" value="${item.seats}" min="1"
+                    onchange="updateSeats(${index}, this.value)">
+                </td>
+                <td>$${item.price}</td>
+                <td>$${total}</td>
+                <td><button onclick="removeItem(${index})">X</button></td>
+            </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById("grandTotal").textContent = grandTotal;
+    }
+
+    function updateSeats(index, seats) {
+        cart[index].seats = seats;
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    function clearCart() {
+        localStorage.removeItem("cart");
+        cart = [];
+        loadCart();
+    }
+
+    function checkout() {
+        if(cart.length === 0){
+            alert("Your cart is empty!");
+            return;
+        }
+        alert("Purchase Complete! Thank you for your order.");
+        clearCart();
+    }
+
+    loadCart();
+</script>
+
+</body>
+</html>
