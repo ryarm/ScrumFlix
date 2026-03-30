@@ -1,131 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="author" content="Vanelly Odette" />
-    <meta name="description" content="Movie Ticket Confirmation" />
-    <title>Movie Ticket Confirmation</title>
-    <meta name="theme-color" content="#ffffff">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Vanelly Odette">
+    <meta name="description" content="Scrumflix Theatre Cart">
+    <title>Scrumflix Cart</title>
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/layout.css" rel="stylesheet" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .ticket-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+        /* Cart page custom styles */
+        #cartTable {
+            width: 90%;
+            border-collapse: collapse;
             margin: 20px auto;
+            background: rgba(255,255,255,0.85);
+            border-radius: 10px;
         }
 
-        .ticket-header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        #cartTable th, #cartTable td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
         }
 
-        .ticket-details {
-            margin-bottom: 15px;
-        }
-
-        .ticket-footer {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .button {
-            padding: 10px 15px;
+        #cartTable th {
             background-color: #333;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
 
-        .button:hover {
+        #cartTable input[type="number"] {
+            width: 50px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+        }
+
+        button:hover {
             background-color: #555;
         }
 
-        .movie-poster {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+        h1, h2 {
+            text-align: center;
+            color: white;
         }
 
-        .qr-container {
-            margin-top: 20px;
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.60)),
+                        url("../images/movie theatre background.png") center center / cover no-repeat fixed;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+        }
+
+        .logo {
+            width: 120px;
+            display: block;
+            margin: 10px auto;
         }
     </style>
-
-    <!-- Include QRCode.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 </head>
 <body>
 
-<h1>Your Movie Ticket</h1>
-
-<div class="ticket-container">
-    <div class="ticket-header">Thank you for your purchase!</div>
-
-    <div id="ticketContent"></div>
-
-    <div class="qr-container">
-        <h3>Scan Your Ticket</h3>
-        <div id="qrcode"></div>
+<header class="page-header">
+    <nav style="text-align: center;">
+        <a href="index.html" style="margin: 0 10px;">Home</a>
+        <a href="Movies.html" style="margin: 0 10px;">Movies</a>
+        <a href="Theatres.html" style="margin: 0 10px;">Theatres</a>
+        <a href="contact.html" style="margin: 0 10px;">Contact</a>
+    </nav>
+    <div style="text-align: center;">
+        <img src="images/Movie Theatre Icon sm.png" alt="Scrumflix Logo" class="logo">
     </div>
+    <h1>SCRUMFLIX THEATRE CART</h1>
+</header>
 
-    <button class="button" onclick="window.location.href='index.html'">Back to Home</button>
-</div>
+<main class="content">
+    <h2>YOUR CART</h2>
+
+    <table id="cartTable">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Time</th>
+                <th>Theatre</th>
+                <th>Seats</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Grand Total: $<span id="grandTotal">0</span></h2>
+
+    <div style="text-align:center;">
+        <button onclick="checkout()">Checkout</button>
+        <button onclick="clearCart()">Clear Cart</button>
+    </div>
+</main>
+
+<footer class="w3-container w3-center w3-margin-top">
+    <p>&copy; 2026 Scrumflix | INEW 2332-2 Project</p>
+    <ul style="list-style-type: none; padding: 0;">
+        <li>
+            <a href="https://www.dallascollege.edu/">Dallas College</a> .
+            <a href="mailto:scrumflix@dcccd.onmicrosoft.com">Webmaster</a>
+        </li>
+    </ul>
+</footer>
 
 <script>
-    // Retrieve the ticket information from localStorage
-    const ticketInfo = JSON.parse(localStorage.getItem("ticketInfo"));
+    // Load cart from localStorage
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const tbody = document.querySelector("#cartTable tbody");
 
-    if (ticketInfo && ticketInfo.length > 0) {
-        let ticketHTML = "";
-        let qrData = ""; // Data for the QR code
+    // Load cart into the table
+    function loadCart() {
+        tbody.innerHTML = ""; // Clear the table
+        let grandTotal = 0;
 
-        ticketInfo.forEach(item => {
-            ticketHTML += `
-                <div class="ticket-details">
-                    <h3>${item.movie}</h3>
-                    <img src="images/${item.movie.toLowerCase().replace(/\s+/g, '-')}.jpg" alt="${item.movie}" class="movie-poster">
-                    <p><strong>Time:</strong> ${item.time}</p>
-                    <p><strong>Theatre:</strong> ${item.location}</p>
-                    <p><strong>Seats:</strong> ${item.seats}</p>
-                    <p><strong>Total: $${item.total}</strong></p>
-                </div>
-                <hr>
+        cart.forEach((item, index) => {
+            let total = item.price * item.seats;
+            grandTotal += total;
+
+            const row = `
+            <tr>
+                <td>${item.movie}</td>
+                <td>${item.time}</td>
+                <td>${item.location}</td>
+                <td>
+                    <input type="number" value="${item.seats}" min="1"
+                    onchange="updateSeats(${index}, this.value)">
+                </td>
+                <td>$${item.price}</td>
+                <td>$${total}</td>
+                <td><button onclick="removeItem(${index})">X</button></td>
+            </tr>
             `;
-
-            // Collect ticket info for the QR code (concatenate into a string)
-            qrData += `${item.movie} | ${item.time} | ${item.location} | Seats: ${item.seats} | Total: $${item.total}\n`;
+            tbody.innerHTML += row;
         });
 
-        document.getElementById("ticketContent").innerHTML = ticketHTML;
-
-        // Generate QR code with the ticket info
-        QRCode.toCanvas(document.getElementById("qrcode"), qrData, function (error) {
-            if (error) console.error(error);
-            console.log("QR code generated!");
-        });
-
-        // Remove ticket info from localStorage after rendering the ticket
-        localStorage.removeItem("ticketInfo");
-    } else {
-        document.getElementById("ticketContent").innerHTML = "<p>Oops! There was an issue with your purchase.</p>";
+        // Update grand total
+        document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
     }
+
+    // Update the number of seats
+    function updateSeats(index, seats) {
+        cart[index].seats = seats;
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    // Remove an item from the cart
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    // Clear the cart
+    function clearCart() {
+        localStorage.removeItem("cart");
+        cart = [];
+        loadCart();
+    }
+
+    // Handle checkout (redirect to confirmation page)
+    function checkout() {
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        // Redirect to the confirmation page with cart data (passing data via URL or localStorage)
+        localStorage.setItem("cart", JSON.stringify(cart)); // Save the cart again before proceeding
+        window.location.href = "confirmation.html"; // Navigate to confirmation page
+    }
+
+    // Load cart on page load
+    loadCart();
 </script>
 
 </body>
