@@ -536,3 +536,49 @@ CREATE TABLE concessions_pricing (
         REFERENCES locations(location_id)
 );
 
+-- 24. Create a stored procedure for managers to set prices for concessions items
+
+DROP PROCEDURE IF EXISTS update_concession_price;
+
+DELIMITER //
+
+CREATE PROCEDURE update_concession_price (
+    IN item_id_param BINARY(16),
+    IN location_id_param INT,
+    IN new_price_param DECIMAL(10,2)
+)
+BEGIN
+    -- Validate price
+    IF new_price_param < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Price must be non-negative';
+    END IF;
+
+    -- End current active pricing record (if one exists)
+    UPDATE concessions_pricing
+    SET 
+        effective_end = CURRENT_TIMESTAMP,
+        is_active = FALSE
+    WHERE item_id = p_item_id
+      AND location_id = p_location_id
+      AND is_active = TRUE;
+
+    -- Insert new pricing record
+    INSERT INTO concessions_pricing (
+        item_id,
+        location_id,
+        price,
+        effective_start,
+        is_active
+    )
+    VALUES (
+        item_id_param,
+        location_id_param,
+        new_price_param,
+        CURRENT_TIMESTAMP,
+        TRUE
+    );
+
+END //
+
+DELIMITER ;
