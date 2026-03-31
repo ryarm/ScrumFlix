@@ -12,7 +12,6 @@ CREATE TABLE movies (
     CONSTRAINT chk_run_time CHECK (run_time > 0)
 );
 
-
 -- 2. LOCATIONS
 CREATE TABLE locations (
 	location_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -462,6 +461,7 @@ CREATE TABLE concessions_orders (
 
 -- 21. Add concessions orders received logic
 -- Trigger: Set order_received_date when order is marked as received
+-- and increase inventory by quantity in purchase order
 DROP TRIGGER IF EXISTS trg_set_order_received_date;
 
 DELIMITER //
@@ -470,14 +470,29 @@ CREATE TRIGGER trg_set_order_received_date
 BEFORE UPDATE ON concessions_orders
 FOR EACH ROW
 BEGIN
+    -- Prevent re-receiving the same order
+    IF OLD.order_received = TRUE AND NEW.order_received = TRUE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Order already received';
+    END IF;
+
     -- If order is being marked as received
     IF NEW.order_received = TRUE 
-       AND OLD.order_received = FALSE
-       AND NEW.order_received_date IS NULL THEN
+       AND OLD.order_received = FALSE THEN
        
-        SET NEW.order_received_date = NOW();
-        
+        -- Set received date if not provided
+        IF NEW.order_received_date IS NULL THEN
+            SET NEW.order_received_date = NOW();
+        END IF;
+
+        -- Increment inventory
+        UPDATE inventory
+        SET item_quantity = item_quantity + NEW.order_quantity
+        WHERE item_id = NEW.item_id
+          AND location_id = NEW.location_id;
+
     END IF;
+
 END//
 
 DELIMITER ;
@@ -559,8 +574,8 @@ BEGIN
     SET 
         effective_end = CURRENT_TIMESTAMP,
         is_active = FALSE
-    WHERE item_id = p_item_id
-      AND location_id = p_location_id
+    WHERE item_id = item_id_param
+      AND location_id = location_id_param
       AND is_active = TRUE;
 
     -- Insert new pricing record
@@ -578,6 +593,54 @@ BEGIN
         CURRENT_TIMESTAMP,
         TRUE
     );
+
+END //
+
+DELIMITER ;
+
+-- 25. Create a stored procedure that produces a ticket sales revenue/count report
+DROP PROCEDURE IF EXISTS ticket_sales_report;
+
+DELIMITER //
+
+CREATE PROCEDURE ticket_sales_report (
+    IN location_id_param INT,
+    IN start_date_range_param DATE,
+    IN end_date_range_param DATE
+)
+BEGIN
+    SELECT 
+        l.location_id,
+        l.location_name,
+        ss.show_date,
+        m.movie_id,
+        m.movie_name,
+        COUNT(t.ticket_id) AS tickets_sold,
+        COALESCE(SUM(pt.price), 0) AS total_revenue
+
+    FROM scheduled_shows ss
+    INNER JOIN locations l 
+        ON ss.location_id = l.location_id
+    INNER JOIN movies m 
+        ON ss.movie_id = m.movie_id
+    LEFT JOIN tickets t 
+        ON ss.show_id = t.show_id
+    LEFT JOIN price_tiers pt 
+        ON t.price_tier_id = pt.price_tier_id
+    WHERE ss.show_date BETWEEN start_date_range_param AND end_date_range_param
+    -- if the location_id_param is left blank the report will return totals for all locations
+      AND (ss.location_id = location_id_param OR location_id_param IS NULL)
+
+    GROUP BY 
+        l.location_id,
+        l.location_name,
+        ss.show_date,
+        m.movie_id,
+        m.movie_name
+
+    ORDER BY 
+        ss.show_date,
+        m.movie_name;
 
 END //
 
