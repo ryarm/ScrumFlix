@@ -12,6 +12,7 @@ CREATE TABLE movies (
     CONSTRAINT chk_run_time CHECK (run_time > 0)
 );
 
+
 -- 2. LOCATIONS
 CREATE TABLE locations (
 	location_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -645,3 +646,180 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- 26. CART TABLE (Persistent, session-scoped)
+
+CREATE TABLE IF NOT EXISTS concessions_cart_items (
+    session_id VARCHAR(100) NOT NULL,
+    item_id BINARY(16) NOT NULL,
+    quantity INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (session_id, item_id)
+);
+
+-- 27. STORED PROCEDURE: Process Concessions Sale
+
+DROP PROCEDURE IF EXISTS process_concessions_sale;
+
+DELIMITER //
+
+CREATE PROCEDURE process_concessions_sale (
+    IN location_id_param INT,
+    IN employee_id_param INT,
+    IN session_id_param VARCHAR(100)
+)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+
+    DECLARE item_id_var BINARY(16);
+    DECLARE quantity_var INT;
+
+    DECLARE item_price DECIMAL(10,2);
+    DECLARE item_stock INT;
+
+    DECLARE total_amount DECIMAL(10,2) DEFAULT 0;
+    DECLARE last_sale_id INT;
+
+    -- Cursor scoped to this session/cart
+    DECLARE item_cursor CURSOR FOR
+        SELECT item_id, quantity
+        FROM concessions_cart_items
+        WHERE session_id = session_id_param;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Rollback on error
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Validate cart is not empty
+    IF (
+        SELECT COUNT(*)
+        FROM concessions_cart_items
+        WHERE session_id = session_id_param) = 0 
+        THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cart is empty';
+    END IF;
+
+    -- Create sale header
+    INSERT INTO concessions_sales (
+        location_id,
+        employee_id,
+        sale_datetime,
+        total_amount
+    )
+    VALUES (
+        location_id_param,
+        employee_id_param,
+        CURRENT_TIMESTAMP,
+        0
+    );
+
+    SET last_sale_id = LAST_INSERT_ID();
+
+    -- Process cart items
+    OPEN item_cursor;
+
+    read_loop: LOOP
+        FETCH item_cursor INTO item_id_var, quantity_var;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Validate quantity
+        IF quantity_var IS NULL OR quantity_var <= 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Invalid quantity in cart';
+        END IF;
+
+        -- Get current price
+        SELECT price INTO item_price
+        FROM concessions_pricing
+        WHERE item_id = item_id_var
+          AND location_id = location_id_param
+          AND is_active = TRUE
+        LIMIT 1;
+
+        IF item_price IS NULL THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Item not available for sale';
+        END IF;
+
+        -- Lock inventory row
+        SELECT item_quantity INTO item_stock
+        FROM inventory
+        WHERE item_id = item_id_var
+          AND location_id = location_id_param
+        FOR UPDATE;
+
+        IF item_stock IS NULL THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Item not found in inventory';
+        END IF;
+
+        IF item_stock < quantity_var THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Insufficient stock';
+        END IF;
+
+        -- Insert line item
+        INSERT INTO concessions_sales_items (
+            sale_id,
+            item_id,
+            quantity,
+            unit_price
+        )
+        VALUES (
+            last_sale_id,
+            item_id_var,
+            quantity_var,
+            item_price
+        );
+
+        -- Update inventory
+        UPDATE inventory
+        SET item_quantity = item_quantity - quantity_var
+        WHERE item_id = item_id_var
+          AND location_id = location_id_param;
+
+        -- Accumulate total
+        SET total_amount = total_amount + (quantity_var * item_price);
+
+    END LOOP;
+
+    CLOSE item_cursor;
+
+    -- Update total in header
+    UPDATE concessions_sales
+    SET total_amount = total_amount
+    WHERE sale_id = last_sale_id;
+
+    -- Cleanup cart after successful sale
+    DELETE FROM concessions_cart_items
+    WHERE session_id = session_id_param;
+
+    COMMIT;
+
+    -- Return result
+    SELECT last_sale_id AS sale_id, total_amount;
+
+END //
+
+DELIMITER ;
+
+-- 28. Example Usage
+
+-- Add items to cart
+-- INSERT INTO concessions_cart_items (session_id, item_id, quantity)
+-- VALUES
+-- ('session_123', UUID_TO_BIN('uuid-1'), 2),
+-- ('session_123', UUID_TO_BIN('uuid-2'), 1);
+
+-- Process sale
+-- CALL process_concessions_sale(1, 101, 'session_123');
