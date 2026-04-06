@@ -70,26 +70,7 @@ CREATE TABLE scheduled_shows (
         CHECK (end_datetime > start_datetime)
 );
 
--- 5. EMPLOYEES
-CREATE TABLE employees (
-    employee_id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
-    middle_name VARCHAR(50),
-    last_name VARCHAR(50) NOT NULL,
-    employee_start_title VARCHAR(50) NOT NULL,
-    employee_current_title VARCHAR(50) NOT NULL,
-    employee_start_date DATE NOT NULL,
-    employee_end_date DATE,
-    employee_dob DATE NOT NULL,
-    employee_phone VARCHAR(20) NOT NULL,
-    employee_email VARCHAR(100) NOT NULL UNIQUE,
-    employee_st_address VARCHAR(100),
-    employee_city VARCHAR(50) NOT NULL,
-    employee_state VARCHAR(40) NOT NULL,
-    employee_zipcode VARCHAR(10) NOT NULL
-);
-
--- 6. CUSTOMERS
+-- 5. CUSTOMERS
 CREATE TABLE customers (
     customer_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
@@ -100,7 +81,7 @@ CREATE TABLE customers (
     customer_category ENUM('Child','Adult','Senior','Matinee') DEFAULT 'Adult'
 );
 
--- 7. PRICE TIERS
+-- 6. PRICE TIERS
 CREATE TABLE price_tiers (
     price_tier_id INT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL,
@@ -110,7 +91,7 @@ CREATE TABLE price_tiers (
     description VARCHAR(255)
 );
 
--- 8. POPULATE PRICE TIERS
+-- 7. POPULATE PRICE TIERS
 INSERT INTO price_tiers (category_name, format_type, price, description) VALUES
 ('Adult Standard', '2D', 16.00, 'Standard adult admission'),
 ('Child Standard', '2D', 9.00, 'Children ages 2-12'),
@@ -118,7 +99,7 @@ INSERT INTO price_tiers (category_name, format_type, price, description) VALUES
 ('Adult IMAX', 'IMAX', 21.00, 'Premium IMAX experience'),
 ('Matinee Special', '2D', 9.00, 'All shows before 2:00 PM');
 
--- 9. TICKETS
+-- 8. TICKETS
 CREATE TABLE tickets (
     ticket_id INT PRIMARY KEY AUTO_INCREMENT,
     show_id INT NOT NULL,
@@ -148,7 +129,7 @@ CREATE TABLE tickets (
 
 CREATE INDEX idx_tickets_show_id ON tickets(show_id);
 
--- 10. TRIGGER: Enforce Guest OR Member Rule (INSERT)
+-- 9. TRIGGER: Enforce Guest OR Member Rule (INSERT)
 DROP TRIGGER IF EXISTS trg_ticket_insert_check;
 
 DELIMITER //
@@ -169,7 +150,7 @@ END //
 
 DELIMITER ;
 
--- 11. TRIGGER: Enforce Guest OR Member Rule (UPDATE)
+-- 10. TRIGGER: Enforce Guest OR Member Rule (UPDATE)
 DROP TRIGGER IF EXISTS trg_ticket_update_check;
 
 DELIMITER //
@@ -190,7 +171,7 @@ END //
 
 DELIMITER ;
 
--- 12. PROCEDURE: Insert Movie Data
+-- 11. PROCEDURE: Insert Movie Data
 
 DELIMITER //
 CREATE PROCEDURE insert_movie (
@@ -215,7 +196,7 @@ VALUES (movie_name_param, genre_param, mpa_rating_param, run_time_param);
 
 END//
 
--- 13. PROCEDURE: Add new scheduled movie showings
+-- 12. PROCEDURE: Add new scheduled movie showings
 
 DELIMITER //
 
@@ -253,7 +234,7 @@ VALUES
 
 END//
 
--- 14. VIEW: Shows movies that customers can go see in theaters
+-- 13. VIEW: Shows movies that customers can go see in theaters
 CREATE VIEW in_theaters_now AS 
 SELECT 
     m.movie_name,
@@ -272,7 +253,7 @@ JOIN locations l
 WHERE s.is_active = TRUE
 	AND l.is_active = TRUE
     
--- 15. Prevent Overselling + Increment
+-- 14. Prevent Overselling + Increment
 
 DROP TRIGGER IF EXISTS trg_ticket_insert;
 
@@ -309,7 +290,7 @@ END //
 
 DELIMITER ;
 
--- 16. Handle Ticket Cancellation (DELETE)
+-- 15. Handle Ticket Cancellation (DELETE)
 
 DROP TRIGGER IF EXISTS trg_ticket_delete;
 
@@ -326,7 +307,7 @@ END //
 
 DELIMITER ;
 
--- 17. Create Tickets When Ticket_Sold
+-- 16. Create Tickets When Ticket_Sold
 
 DROP PROCEDURE IF EXISTS create_ticket;
 
@@ -367,7 +348,7 @@ DROP PROCEDURE IF EXISTS get_ticket_details;
 
 DELIMITER //
 
--- 18. Get Ticket Details
+-- 17. Get Ticket Details
 
 CREATE PROCEDURE get_ticket_details (
     IN ticket_id_param INT
@@ -398,7 +379,7 @@ END //
 
 DELIMITER ;
 
--- 19. Add Inventory and Vendors table
+-- 18. Add Inventory and Vendors table
 CREATE TABLE vendors (
 	vendor_id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
 	vendor_name VARCHAR(255) NOT NULL, 
@@ -435,7 +416,7 @@ CREATE TABLE inventory (
         ON UPDATE CASCADE
 );
 
--- 20. Add concessions inventory purchase order table
+-- 19. Add concessions inventory purchase order table
 CREATE TABLE concessions_orders (
 	order_id INT PRIMARY KEY AUTO_INCREMENT,
     order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
@@ -460,7 +441,7 @@ CREATE TABLE concessions_orders (
         REFERENCES locations(location_id)
 );
 
--- 21. Add concessions orders received logic
+-- 20. Add concessions orders received logic
 -- Trigger: Set order_received_date when order is marked as received
 -- and increase inventory by quantity in purchase order
 DROP TRIGGER IF EXISTS trg_set_order_received_date;
@@ -497,6 +478,56 @@ BEGIN
 END//
 
 DELIMITER ;
+
+-- 21. Create Employee Roles Table and Employee PII Table
+
+CREATE TABLE employee_roles (
+	role_id INT PRIMARY KEY AUTO_INCREMENT, 
+    role_name VARCHAR(255) NOT NULL UNIQUE,
+    role_description VARCHAR(255) NOT NULL 
+);
+
+-- Seed employee_roles table
+INSERT INTO employee_roles (
+    role_name,
+    role_description
+)
+VALUES 
+    ('Theater Manager', 'Oversees operations, staff, and performance'),
+    ('Box Office Associate', 'Sells tickets and assists customers'),
+    ('Concessions Associate', 'Prepares and sells food and beverages'),
+    ('Usher', 'Checks tickets and assists guests in theaters'),
+    ('Facilities Associate', 'Maintains cleanliness and basic upkeep of building')
+    ON DUPLICATE KEY UPDATE
+	role_name = VALUES(role_name),
+	role_description = VALUES(role_description);
+    
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    employee_start_title VARCHAR(50) NOT NULL,
+    role_id INT NOT NULL,
+    employee_start_date DATE NOT NULL,
+    employee_end_date DATE,
+    employee_dob DATE NOT NULL,
+    employee_phone VARCHAR(20) NOT NULL,
+    employee_email VARCHAR(100) NOT NULL UNIQUE,
+    employee_st_address VARCHAR(100),
+    employee_city VARCHAR(50) NOT NULL,
+    employee_state ENUM(
+    'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+    'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+    'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+    'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+    'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY') NOT NULL,
+    employee_zipcode VARCHAR(10) NOT NULL,
+    
+    CONSTRAINT fk_emp_role
+		FOREIGN KEY (role_id)
+        REFERENCES employee_roles(role_id)
+);
 
 -- 22. Add concessions sales tables
 CREATE TABLE concessions_sales (
@@ -823,3 +854,4 @@ DELIMITER ;
 
 -- Process sale
 -- CALL process_concessions_sale(1, 101, 'session_123');
+-- -------------------------------------------------------
