@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Connects the program to the database
+
+using Microsoft.EntityFrameworkCore;
 using ScrumFlix.Models;
 
 namespace ScrumFlix.Data;
@@ -7,7 +9,9 @@ public class AppDbContext : DbContext
 {
     public DbSet<Movie> Movies => Set<Movie>();
     public DbSet<TheaterScreen> TheaterScreen => Set<TheaterScreen>();
-    public DbSet<Showtime> ShowTimes => Set<Showtime>();
+    public DbSet<Showtime> Showtime => Set<Showtime>();
+    public DbSet<Location> Location => Set<Location>();
+    public DbSet<Ticket> Ticket { get; set; }
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -29,5 +33,11 @@ public class AppDbContext : DbContext
             "SslMode=Required;";
 
         optionsBuilder.UseMySQL(aiven);
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TheaterScreen>()
+            .Property(t => t.Capacity)
+            .HasDefaultValue(50);
     }
 }

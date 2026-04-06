@@ -41,6 +41,7 @@
             // 
             txtTitle.Location = new Point(12, 12);
             txtTitle.Name = "txtTitle";
+            txtTitle.PlaceholderText = "Enter Title";
             txtTitle.Size = new Size(130, 29);
             txtTitle.TabIndex = 0;
             // 
@@ -48,6 +49,7 @@
             // 
             txtRating.Location = new Point(148, 12);
             txtRating.Name = "txtRating";
+            txtRating.PlaceholderText = "Enter Rating";
             txtRating.Size = new Size(130, 29);
             txtRating.TabIndex = 1;
             // 
@@ -63,6 +65,7 @@
             txtDescription.Location = new Point(12, 47);
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
+            txtDescription.PlaceholderText = "Enter Description";
             txtDescription.ScrollBars = ScrollBars.Vertical;
             txtDescription.Size = new Size(428, 164);
             txtDescription.TabIndex = 3;

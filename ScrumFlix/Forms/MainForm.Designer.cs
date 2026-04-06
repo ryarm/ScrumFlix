@@ -28,46 +28,102 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             btnMovies = new Button();
-            showtimes = new Button();
+            btnShowtimes = new Button();
+            btnTheaterScreen = new Button();
+            btnLocation = new Button();
+            PicLogo = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)PicLogo).BeginInit();
             SuspendLayout();
             // 
             // btnMovies
             // 
-            btnMovies.Location = new Point(462, 282);
+            btnMovies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnMovies.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnMovies.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            btnMovies.Location = new Point(164, 240);
             btnMovies.Name = "btnMovies";
-            btnMovies.Size = new Size(98, 30);
+            btnMovies.Size = new Size(429, 105);
             btnMovies.TabIndex = 0;
-            btnMovies.Text = "Movies";
+            btnMovies.Text = "Manage Movies";
             btnMovies.UseVisualStyleBackColor = true;
             btnMovies.Click += btnMovies_Click;
             // 
-            // showtimes
+            // btnShowtimes
             // 
-            showtimes.Location = new Point(425, 318);
-            showtimes.Name = "showtimes";
-            showtimes.Size = new Size(171, 30);
-            showtimes.TabIndex = 1;
-            showtimes.Text = "Manage Showtimes";
-            showtimes.UseVisualStyleBackColor = true;
-            showtimes.Click += button1_Click;
+            btnShowtimes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnShowtimes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnShowtimes.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            btnShowtimes.Location = new Point(679, 240);
+            btnShowtimes.Name = "btnShowtimes";
+            btnShowtimes.Size = new Size(429, 105);
+            btnShowtimes.TabIndex = 1;
+            btnShowtimes.Text = "Manage Showtimes";
+            btnShowtimes.UseVisualStyleBackColor = true;
+            btnShowtimes.Click += btnShowtimes_Click;
+            // 
+            // btnTheaterScreen
+            // 
+            btnTheaterScreen.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnTheaterScreen.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnTheaterScreen.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+            btnTheaterScreen.Location = new Point(164, 470);
+            btnTheaterScreen.Name = "btnTheaterScreen";
+            btnTheaterScreen.Size = new Size(429, 105);
+            btnTheaterScreen.TabIndex = 2;
+            btnTheaterScreen.Text = "Manage Screens";
+            btnTheaterScreen.UseVisualStyleBackColor = true;
+            btnTheaterScreen.Click += btnTheaterScreen_Click;
+            // 
+            // btnLocation
+            // 
+            btnLocation.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnLocation.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnLocation.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+            btnLocation.Location = new Point(679, 470);
+            btnLocation.Name = "btnLocation";
+            btnLocation.Size = new Size(429, 105);
+            btnLocation.TabIndex = 3;
+            btnLocation.Text = "Manage Locations";
+            btnLocation.UseVisualStyleBackColor = true;
+            btnLocation.Click += button1_Click;
+            // 
+            // PicLogo
+            // 
+            PicLogo.Image = (Image)resources.GetObject("PicLogo.Image");
+            PicLogo.Location = new Point(12, 12);
+            PicLogo.Name = "PicLogo";
+            PicLogo.Size = new Size(257, 222);
+            PicLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            PicLogo.TabIndex = 4;
+            PicLogo.TabStop = false;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1038, 616);
-            Controls.Add(showtimes);
+            BackColor = SystemColors.ActiveCaption;
+            ClientSize = new Size(1294, 732);
+            Controls.Add(PicLogo);
+            Controls.Add(btnLocation);
+            Controls.Add(btnTheaterScreen);
+            Controls.Add(btnShowtimes);
             Controls.Add(btnMovies);
             Name = "MainForm";
-            Text = "Form1";
+            Text = "ScrumFlix";
+            FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
+            ((System.ComponentModel.ISupportInitialize)PicLogo).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Button btnMovies;
-        private Button showtimes;
+        private Button btnShowtimes;
+        private Button btnTheaterScreen;
+        private Button btnLocation;
+        private PictureBox PicLogo;
     }
 }

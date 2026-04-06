@@ -1,4 +1,7 @@
+// Program.cs runs when the project is started
+
 using ScrumFlix.Data;
+using ScrumFlix.Forms;
 using ScrumFlix.Models;
 using System;
 
@@ -11,7 +14,9 @@ internal static class Program
     {
         ApplicationConfiguration.Initialize();
 
-        using (var db = new AppDbContext())
+        // Database initialization code that is no longer needed since switching from SQLite to MySQL
+
+        /* using (var db = new AppDbContext())
         {
             db.Database.EnsureCreated();
             if (!db.TheaterScreen.Any())
@@ -51,8 +56,8 @@ internal static class Program
 
                 db.SaveChanges();
             }
-        }
+        } */
 
-        Application.Run(new MainForm());
+        Application.Run(new LoginForm());
     }
 }

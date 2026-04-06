@@ -1,4 +1,6 @@
-﻿using ScrumFlix.Models;
+﻿// This form is the edit form that opens when someone adds or edits a movie in the MoviesForm.cs form
+
+using ScrumFlix.Models;
 
 namespace ScrumFlix.Forms;
 
@@ -14,7 +16,7 @@ public partial class MovieEditForm : Form
         numRuntime.Maximum = 600;
         numRuntime.Value = 90;
     }
-    public MovieEditForm(Movie existing) : this()
+    public MovieEditForm(Movie existing) : this() // Constructor used when editing an existing movie, copies existing movie data into the form fields
     {
         Movie = new Movie
         {
@@ -31,7 +33,7 @@ public partial class MovieEditForm : Form
         txtDescription.Text = Movie.Description ?? "";
     }
 
-    private void btnOk_Click(object sender, EventArgs e)
+    private void btnOk_Click(object sender, EventArgs e) // Validates the form input and updates the Movie object before returning to the parent form
     {
         string title = txtTitle.Text.Trim();
         if (string.IsNullOrWhiteSpace(title))

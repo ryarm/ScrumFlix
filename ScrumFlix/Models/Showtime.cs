@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// This model represents a showtime and is used by EF Core to map the Showtime class to the database
+
+using System.ComponentModel.DataAnnotations;
 using System;
 
 namespace ScrumFlix.Models;
@@ -11,5 +13,18 @@ public class Showtime
     public int TheaterScreenId { get; set; }
     public TheaterScreen? TheaterScreen { get; set; }
     public DateTime StartTime { get; set; }
+
+    public int Capacity { get; set; } = 50;
+
+    public bool SellTicket(int amount)
+    {
+        if (Capacity - amount < 0)
+        {
+            return false; // not enough tickets
+        }
+
+        Capacity -= amount;
+        return true;
+    }
 
 }
