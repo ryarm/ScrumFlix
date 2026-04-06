@@ -649,12 +649,12 @@ DELIMITER ;
 
 -- 26. CART TABLE (Persistent, session-scoped)
 
-CREATE TABLE IF NOT EXISTS concessions_cart_items (
-    session_id VARCHAR(100) NOT NULL,
+CREATE TABLE concessions_cart_items (
+    session_id BINARY(16) NOT NULL,
     item_id BINARY(16) NOT NULL,
     quantity INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (session_id, item_id)
+    UNIQUE KEY (session_id, item_id)
 );
 
 -- 27. STORED PROCEDURE: Process Concessions Sale
@@ -666,7 +666,7 @@ DELIMITER //
 CREATE PROCEDURE process_concessions_sale (
     IN location_id_param INT,
     IN employee_id_param INT,
-    IN session_id_param VARCHAR(100)
+    IN session_id_param BINARY(16)
 )
 BEGIN
     DECLARE done INT DEFAULT FALSE;
@@ -818,8 +818,8 @@ DELIMITER ;
 -- Add items to cart
 -- INSERT INTO concessions_cart_items (session_id, item_id, quantity)
 -- VALUES
--- ('session_123', UUID_TO_BIN('uuid-1'), 2),
--- ('session_123', UUID_TO_BIN('uuid-2'), 1);
+-- (UUID_TO_BIN('uuid-0'), UUID_TO_BIN('uuid-1'), 2),
+-- (UUID_TO_BIN('uuid-1'), UUID_TO_BIN('uuid-2'), 1);
 
 -- Process sale
 -- CALL process_concessions_sale(1, 101, 'session_123');
