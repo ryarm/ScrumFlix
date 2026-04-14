@@ -34,6 +34,7 @@
             btnTheaterScreen = new Button();
             btnLocation = new Button();
             PicLogo = new PictureBox();
+            btnUsers = new Button();
             ((System.ComponentModel.ISupportInitialize)PicLogo).BeginInit();
             SuspendLayout();
             // 
@@ -99,12 +100,23 @@
             PicLogo.TabIndex = 4;
             PicLogo.TabStop = false;
             // 
+            // btnUsers
+            // 
+            btnUsers.Location = new Point(272, 642);
+            btnUsers.Name = "btnUsers";
+            btnUsers.Size = new Size(193, 30);
+            btnUsers.TabIndex = 5;
+            btnUsers.Text = "Manage User Accounts";
+            btnUsers.UseVisualStyleBackColor = true;
+            btnUsers.Click += btnUsers_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(1294, 732);
+            Controls.Add(btnUsers);
             Controls.Add(PicLogo);
             Controls.Add(btnLocation);
             Controls.Add(btnTheaterScreen);
@@ -125,5 +137,6 @@
         private Button btnTheaterScreen;
         private Button btnLocation;
         private PictureBox PicLogo;
+        private Button btnUsers;
     }
 }

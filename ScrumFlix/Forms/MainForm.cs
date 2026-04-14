@@ -71,5 +71,11 @@ namespace ScrumFlix
         {
             Application.Exit();
         }
+
+        private void btnUsers_Click(object sender, EventArgs e)
+        {
+            using var f = new UserManagementForm();
+            f.ShowDialog();
+        }
     }
 }
