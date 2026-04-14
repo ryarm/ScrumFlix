@@ -46,7 +46,7 @@
             gridUsers.MultiSelect = false;
             gridUsers.Name = "gridUsers";
             gridUsers.ReadOnly = true;
-            gridUsers.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            gridUsers.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
             gridUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             gridUsers.Size = new Size(724, 325);
             gridUsers.TabIndex = 0;
@@ -92,7 +92,7 @@
             btnDelete.UseVisualStyleBackColor = true;
             btnDelete.Click += btnDelete_Click;
             // 
-            // UserManagement
+            // UserManagementForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -102,7 +102,7 @@
             Controls.Add(btnEdit);
             Controls.Add(btnAdd);
             Controls.Add(gridUsers);
-            Name = "UserManagement";
+            Name = "UserManagementForm";
             Text = "UserManagement";
             Load += UserManagement_Load;
             ((System.ComponentModel.ISupportInitialize)gridUsers).EndInit();

@@ -37,6 +37,7 @@
             btnUsers = new Button();
             btnConcessions = new Button();
             lblTitle = new Label();
+            btnEmployees = new Button();
             ((System.ComponentModel.ISupportInitialize)PicLogo).BeginInit();
             SuspendLayout();
             // 
@@ -134,12 +135,23 @@
             lblTitle.TabIndex = 7;
             lblTitle.Text = "Welcome!";
             // 
+            // btnEmployees
+            // 
+            btnEmployees.Location = new Point(935, 648);
+            btnEmployees.Name = "btnEmployees";
+            btnEmployees.Size = new Size(173, 30);
+            btnEmployees.TabIndex = 8;
+            btnEmployees.Text = "Manage Employees";
+            btnEmployees.UseVisualStyleBackColor = true;
+            btnEmployees.Click += btnEmployees_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
             ClientSize = new Size(1294, 732);
+            Controls.Add(btnEmployees);
             Controls.Add(lblTitle);
             Controls.Add(btnConcessions);
             Controls.Add(btnUsers);
@@ -167,5 +179,6 @@
         private Button btnUsers;
         private Button btnConcessions;
         private Label lblTitle;
+        private Button btnEmployees;
     }
 }

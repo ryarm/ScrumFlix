@@ -98,5 +98,11 @@ namespace ScrumFlix
             using var f = new ConcessionsAdminForm();
             f.ShowDialog();
         }
+
+        private void btnEmployees_Click(object sender, EventArgs e)
+        {
+            using var f = new EmployeeManagementForm();
+            f.ShowDialog();
+        }
     }
 }
