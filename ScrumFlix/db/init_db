@@ -409,7 +409,7 @@ CREATE TABLE vendors (
     'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
     'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY') NOT NULL,
     vendor_zipcode INT(9) NOT NULL, 
-    vendor_phone INT(9) NOT NULL, 
+    vendor_phone VARCHAR(20) NOT NULL, 
     vendor_contact_name VARCHAR(255) NOT NULL, 
     vendor_email VARCHAR(255) NOT NULL
 );
