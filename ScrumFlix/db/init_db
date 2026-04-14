@@ -104,6 +104,7 @@ CREATE TABLE tickets (
     ticket_id INT PRIMARY KEY AUTO_INCREMENT,
     show_id INT NOT NULL,
     price_tier_id INT NOT NULL,
+    price_at_purchase DECIMAL(6,2) NOT NULL,
     customer_id INT NULL,
     guest_email VARCHAR(255),
     ticket_date DATE NOT NULL,
@@ -253,7 +254,7 @@ JOIN locations l
 WHERE s.is_active = TRUE
 	AND l.is_active = TRUE
     
--- 14. Prevent Overselling + Increment
+-- 14. Tickets: Prevent Overselling + Increment
 
 DROP TRIGGER IF EXISTS trg_ticket_insert;
 
@@ -320,11 +321,27 @@ CREATE PROCEDURE create_ticket (
     IN guest_email_param VARCHAR(255)
 )
 BEGIN
+    DECLARE price_at_purchase_var DECIMAL(6,2);
 
-    -- Insert ticket (your existing triggers handle validation + oversell protection)
+    -- 1. Get current price
+    SELECT price
+    INTO price_at_purchase_var
+    FROM price_tiers
+    WHERE price_tier_id = price_tier_id_param
+      AND is_active = TRUE
+    LIMIT 1;
+
+    -- 2. Validate
+    IF price_at_purchase_var IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Invalid or inactive price tier';
+    END IF;
+
+    -- 3. Insert ticket with correct value alignment
     INSERT INTO tickets (
         show_id,
         price_tier_id,
+        price_at_purchase,
         customer_id,
         guest_email,
         ticket_date
@@ -332,12 +349,13 @@ BEGIN
     VALUES (
         show_id_param,
         price_tier_id_param,
+        price_at_purchase_var,
         customer_id_param,
         guest_email_param,
         CURDATE()
     );
-    
-    -- Return new ticket ID
+
+    -- 4. Return ID
     SELECT LAST_INSERT_ID() AS ticket_id;
 
 END //
@@ -364,7 +382,7 @@ BEGIN
         l.location_address,
         tr.room_name,
         pt.category_name,
-        pt.price,
+        t.price_at_purchase AS price,
         COALESCE(c.customer_email, t.guest_email) AS purchaser_email,
         t.ticket_date
     FROM tickets t
@@ -372,7 +390,6 @@ BEGIN
     JOIN movies m ON s.movie_id = m.movie_id
     JOIN locations l ON s.location_id = l.location_id
     JOIN theater_rooms tr ON s.room_id = tr.room_id
-    JOIN price_tiers pt ON t.price_tier_id = pt.price_tier_id
     LEFT JOIN customers c ON t.customer_id = c.customer_id
     WHERE t.ticket_id = ticket_id_param;
 END //
@@ -479,7 +496,7 @@ END//
 
 DELIMITER ;
 
--- 21. Create Employee Roles Table and Employee PII Table
+-- 21. Create Employee Roles Table 
 
 CREATE TABLE employee_roles (
 	role_id INT PRIMARY KEY AUTO_INCREMENT, 
@@ -648,7 +665,7 @@ BEGIN
         m.movie_id,
         m.movie_name,
         COUNT(t.ticket_id) AS tickets_sold,
-        COALESCE(SUM(pt.price), 0) AS total_revenue
+        COALESCE(SUM(t.price_at_purchase), 0) AS total_revenue
 
     FROM scheduled_shows ss
     INNER JOIN locations l 
@@ -657,8 +674,6 @@ BEGIN
         ON ss.movie_id = m.movie_id
     LEFT JOIN tickets t 
         ON ss.show_id = t.show_id
-    LEFT JOIN price_tiers pt 
-        ON t.price_tier_id = pt.price_tier_id
     WHERE ss.show_date BETWEEN start_date_range_param AND end_date_range_param
     -- if the location_id_param is left blank the report will return totals for all locations
       AND (ss.location_id = location_id_param OR location_id_param IS NULL)
