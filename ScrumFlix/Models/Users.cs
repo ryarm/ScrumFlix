@@ -14,5 +14,6 @@ namespace ScrumFlix.Models
         [MaxLength(20)]
         public string UserPassword { get; set; }
         public int RoleId { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Role> Roles => Set<Role>();
+    public DbSet<ConcessionItem> ConcessionItem => Set<ConcessionItem>();
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -49,5 +50,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TheaterScreen>()
             .Property(t => t.Capacity)
             .HasDefaultValue(50);
+
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.User)
+            .WithMany()
+            .HasForeignKey(t => t.UserAtSale);
+
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.Showtime)
+            .WithMany()
+            .HasForeignKey(t => t.ShowtimeId);
     }
 }

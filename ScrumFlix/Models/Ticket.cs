@@ -10,4 +10,7 @@ public class Ticket
 
     public int ShowtimeId { get; set; }
     public Showtime? Showtime { get; set; }
+    public int UserAtSale { get; set; }
+    public User? User { get; set; }
+    public DateTime TimeOfSale { get; set; }
 }

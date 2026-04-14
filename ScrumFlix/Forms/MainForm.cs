@@ -8,6 +8,7 @@ the forms folder includes all the forms the project uses,
 the models folder holds all the object classes for the movies, showtimes, screens, and locations.
 Program.cs is what runs when starting the program, opening the main form */
 
+using Microsoft.EntityFrameworkCore;
 using ScrumFlix.Data;
 using ScrumFlix.Forms;
 using ScrumFlix.Models;
@@ -41,6 +42,20 @@ namespace ScrumFlix
 
             // int count = db.Movies.Count();
             // MessageBox.Show($"Movies in database: {count}");
+
+            using var context = new AppDbContext();
+
+            var user = context.Users
+                .Include(u => u.Employee)
+                .FirstOrDefault(u => u.UserId == Session.UserId);
+
+            if (user != null && user.Employee != null)
+            {
+                string fullName = $"{user.Employee.FirstName} {user.Employee.LastName}";
+                lblTitle.Text = $"Welcome {fullName}!";
+            }
+            lblTitle.AutoSize = true;
+            lblTitle.Left = (this.ClientSize.Width - lblTitle.Width) / 2;
         }
         // Opens MovieForm.cs when clicked
         private void btnMovies_Click(object sender, EventArgs e)
@@ -75,6 +90,12 @@ namespace ScrumFlix
         private void btnUsers_Click(object sender, EventArgs e)
         {
             using var f = new UserManagementForm();
+            f.ShowDialog();
+        }
+
+        private void btnConcessions_Click(object sender, EventArgs e)
+        {
+            using var f = new ConcessionsAdminForm();
             f.ShowDialog();
         }
     }

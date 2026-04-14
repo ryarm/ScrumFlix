@@ -123,7 +123,9 @@ namespace ScrumFlix.Forms
                     var ticket = new Ticket
                     {
                         TicketCode = int.Parse(code),
-                        ShowtimeId = showtime.ShowtimeId
+                        ShowtimeId = showtime.ShowtimeId,
+                        UserAtSale = Session.UserId,
+                        TimeOfSale = DateTime.Now
                     };
 
                     context.Ticket.Add(ticket);
