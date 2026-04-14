@@ -38,6 +38,7 @@
             btnConcessions = new Button();
             lblTitle = new Label();
             btnEmployees = new Button();
+            lblStockAlert = new Label();
             ((System.ComponentModel.ISupportInitialize)PicLogo).BeginInit();
             SuspendLayout();
             // 
@@ -97,7 +98,7 @@
             // 
             PicLogo.BackColor = Color.Transparent;
             PicLogo.Image = (Image)resources.GetObject("PicLogo.Image");
-            PicLogo.Location = new Point(-18, -35);
+            PicLogo.Location = new Point(-15, -29);
             PicLogo.Name = "PicLogo";
             PicLogo.Size = new Size(240, 278);
             PicLogo.SizeMode = PictureBoxSizeMode.Zoom;
@@ -145,12 +146,22 @@
             btnEmployees.UseVisualStyleBackColor = true;
             btnEmployees.Click += btnEmployees_Click;
             // 
+            // lblStockAlert
+            // 
+            lblStockAlert.AutoSize = true;
+            lblStockAlert.BackColor = Color.Red;
+            lblStockAlert.Location = new Point(1147, 26);
+            lblStockAlert.Name = "lblStockAlert";
+            lblStockAlert.Size = new Size(0, 21);
+            lblStockAlert.TabIndex = 9;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
             ClientSize = new Size(1294, 732);
+            Controls.Add(lblStockAlert);
             Controls.Add(btnEmployees);
             Controls.Add(lblTitle);
             Controls.Add(btnConcessions);
@@ -180,5 +191,6 @@
         private Button btnConcessions;
         private Label lblTitle;
         private Button btnEmployees;
+        private Label lblStockAlert;
     }
 }

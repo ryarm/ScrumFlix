@@ -50,8 +50,8 @@ namespace ScrumFlix.Forms
                         }
                         else if (user.RoleId == 3)
                         {
-                            EmployeeForm employeeForm = new EmployeeForm();
-                            employeeForm.Show();
+                            EmployeeMenu EmployeeMenu = new EmployeeMenu();
+                            EmployeeMenu.Show();
                             this.Hide();
                         }
                     }

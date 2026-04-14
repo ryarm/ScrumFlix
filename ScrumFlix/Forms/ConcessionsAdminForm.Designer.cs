@@ -49,6 +49,9 @@
             // gridConcessions
             // 
             gridConcessions.AllowUserToAddRows = false;
+            gridConcessions.AllowUserToDeleteRows = false;
+            gridConcessions.AllowUserToResizeColumns = false;
+            gridConcessions.AllowUserToResizeRows = false;
             gridConcessions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             gridConcessions.Location = new Point(26, 23);
             gridConcessions.MultiSelect = false;

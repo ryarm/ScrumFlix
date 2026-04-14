@@ -17,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<ConcessionItem> ConcessionItem => Set<ConcessionItem>();
+    public DbSet<ConcessionSale> ConcessionSale => Set<ConcessionSale>();
+    public DbSet<ConcessionSaleItem> ConcessionSaleItem => Set<ConcessionSaleItem>();
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -60,5 +62,21 @@ public class AppDbContext : DbContext
             .HasOne(t => t.Showtime)
             .WithMany()
             .HasForeignKey(t => t.ShowtimeId);
+
+
+        modelBuilder.Entity<ConcessionSale>()
+            .HasOne(cs => cs.User)
+            .WithMany()
+            .HasForeignKey(cs => cs.UserId);
+
+        modelBuilder.Entity<ConcessionSaleItem>()
+            .HasOne(csi => csi.ConcessionSale)
+            .WithMany(cs => cs.SaleItems)
+            .HasForeignKey(csi => csi.ConcessionSaleId);
+
+        modelBuilder.Entity<ConcessionSaleItem>()
+            .HasOne(csi => csi.ConcessionItem)
+            .WithMany()
+            .HasForeignKey(csi => csi.ConcessionItemId);
     }
 }

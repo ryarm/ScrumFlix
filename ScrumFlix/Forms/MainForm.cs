@@ -15,6 +15,7 @@ using ScrumFlix.Models;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace ScrumFlix
 {
@@ -56,7 +57,36 @@ namespace ScrumFlix
             }
             lblTitle.AutoSize = true;
             lblTitle.Left = (this.ClientSize.Width - lblTitle.Width) / 2;
+
+            LoadStockAlert();
         }
+
+        private void LoadStockAlert()
+        {
+            using var context = new AppDbContext();
+
+            var lowStockItems = context.ConcessionItem
+                .Where(c => c.is_active && c.QuantityInStock <= c.Minimum)
+                .OrderBy(c => c.ItemName)
+                .Select(c => new
+                {
+                    c.ItemName,
+                    c.QuantityInStock
+                })
+                .ToList();
+
+            if (lowStockItems.Count == 0)
+            {
+                lblStockAlert.Text = "";
+                return;
+            }
+
+            lblStockAlert.ForeColor = Color.White;
+            lblStockAlert.AutoSize = true;
+            lblStockAlert.Text = "Low stock:\n" +
+                string.Join("\n", lowStockItems.Select(i => $"{i.ItemName} ({i.QuantityInStock})"));
+        }
+
         // Opens MovieForm.cs when clicked
         private void btnMovies_Click(object sender, EventArgs e)
         {

@@ -85,25 +85,25 @@ namespace ScrumFlix.Forms
 
             if (string.IsNullOrWhiteSpace(itemName))
             {
-                MessageBox.Show("Enter an item name.");
+                MessageBox.Show("Enter a concession name please");
                 return false;
             }
 
             if (!decimal.TryParse(txtPrice.Text.Trim(), out price) || price < 0)
             {
-                MessageBox.Show("Enter a valid price.");
+                MessageBox.Show("Enter a valid price");
                 return false;
             }
 
             if (!int.TryParse(txtQuantity.Text.Trim(), out quantity) || quantity < 0)
             {
-                MessageBox.Show("Enter a valid quantity.");
+                MessageBox.Show("Enter a valid quantity");
                 return false;
             }
 
             if (!int.TryParse(txtMinimum.Text.Trim(), out minimum) || minimum < 0)
             {
-                MessageBox.Show("Enter a valid minimum.");
+                MessageBox.Show("Enter a valid minimum quantity");
                 return false;
             }
 
@@ -137,7 +137,7 @@ namespace ScrumFlix.Forms
 
             if (exists)
             {
-                MessageBox.Show("An item with that name already exists.");
+                MessageBox.Show("An item with that name already exists!");
                 return;
             }
 
@@ -164,7 +164,7 @@ namespace ScrumFlix.Forms
 
             if (itemId == null)
             {
-                MessageBox.Show("Select an item from the grid to update.");
+                MessageBox.Show("Select an item from the grid to update");
                 return;
             }
 
@@ -177,7 +177,7 @@ namespace ScrumFlix.Forms
 
             if (item == null)
             {
-                MessageBox.Show("Item not found.");
+                MessageBox.Show("Item not found");
                 return;
             }
 
@@ -187,7 +187,7 @@ namespace ScrumFlix.Forms
 
             if (duplicateName)
             {
-                MessageBox.Show("Another item already uses that name.");
+                MessageBox.Show("Another item already has that name");
                 return;
             }
 
@@ -208,7 +208,7 @@ namespace ScrumFlix.Forms
 
             if (itemId == null)
             {
-                MessageBox.Show("Select an item from the grid to deactivate.");
+                MessageBox.Show("Select an item from the grid to deactivate it");
                 return;
             }
 
@@ -218,7 +218,7 @@ namespace ScrumFlix.Forms
 
             if (item == null)
             {
-                MessageBox.Show("Item not found.");
+                MessageBox.Show("Item not found");
                 return;
             }
 
@@ -268,19 +268,19 @@ namespace ScrumFlix.Forms
         {
             if (comboConcessionItem.SelectedValue == null)
             {
-                MessageBox.Show("Select an item.");
+                MessageBox.Show("Select an item");
                 return;
             }
 
             if (!int.TryParse(comboConcessionItem.SelectedValue.ToString(), out int itemId))
             {
-                MessageBox.Show("Invalid item selected.");
+                MessageBox.Show("Invalid item selected");
                 return;
             }
 
             if (!int.TryParse(txtStockQuantity.Text.Trim(), out int newQuantity) || newQuantity < 0)
             {
-                MessageBox.Show("Enter a valid stock quantity.");
+                MessageBox.Show("Enter a valid stock quantity");
                 return;
             }
 
@@ -290,7 +290,7 @@ namespace ScrumFlix.Forms
 
             if (item == null)
             {
-                MessageBox.Show("Item not found.");
+                MessageBox.Show("Item not found");
                 return;
             }
 
@@ -336,7 +336,7 @@ namespace ScrumFlix.Forms
 
             if (itemId == null)
             {
-                MessageBox.Show("Select an item to reactivate.");
+                MessageBox.Show("Select an item to reactivate it");
                 return;
             }
 
@@ -346,7 +346,7 @@ namespace ScrumFlix.Forms
 
             if (item == null)
             {
-                MessageBox.Show("Item not found.");
+                MessageBox.Show("Item not found");
                 return;
             }
 
