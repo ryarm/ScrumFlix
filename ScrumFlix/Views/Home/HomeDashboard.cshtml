@@ -1,0 +1,157 @@
+@*
+ * File: /ScrumFlix/Views/Home/HomeDashboard.cshtml
+ * Description: Home page featuring a cinematic hero banner, featured movies grid, and now-showing showtimes.
+*@
+@{
+    ViewData["Title"] = "Welcome";
+    var featuredMovies = ViewBag.FeaturedMovies as List<ScrumFlix.Models.Movie> ?? new();
+    var nowShowing     = ViewBag.NowShowing     as List<ScrumFlix.Models.ScheduledShow> ?? new();
+}
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════════ -->
+<section class="sf-hero" aria-label="Hero banner">
+    <div class="sf-hero-overlay"></div>
+    <div class="sf-hero-content container-xl">
+        <p class="sf-hero-eyebrow">Now Playing Across DFW</p>
+        <h1 class="sf-hero-headline">Lights. Camera.<br /><span class="sf-gold">Action.</span></h1>
+        <p class="sf-hero-sub">10 premium locations. IMAX screens. Unbeatable concessions.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            <a asp-controller="Movies" asp-action="MovieCatalog" class="btn sf-btn-primary btn-lg">
+                <i class="bi bi-film me-2"></i>Browse Movies
+            </a>
+            <a asp-controller="Concessions" asp-action="ConcessionsCatalog" class="btn sf-btn-outline btn-lg">
+                <i class="bi bi-cup-straw me-2"></i>Order Concessions
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══ FEATURED MOVIES ═══════════════════════════════════════════════════════ -->
+@if (featuredMovies.Any())
+{
+    <section class="sf-section" aria-labelledby="featured-heading">
+        <div class="container-xl">
+            <div class="sf-section-header">
+                <h2 class="sf-section-title" id="featured-heading">
+                    <span class="sf-gold-bar"></span>Featured This Week
+                </h2>
+                <a asp-controller="Movies" asp-action="MovieCatalog" class="sf-see-all">
+                    See All <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="row g-4">
+                @foreach (var movie in featuredMovies)
+                {
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <article class="sf-movie-card h-100" aria-label="@movie.MovieName">
+                            <div class="sf-movie-poster">
+                                <div class="sf-poster-placeholder">
+                                    <i class="bi bi-film"></i>
+                                </div>
+                                <div class="sf-poster-overlay">
+                                    <a asp-controller="Movies" asp-action="MovieDetail" asp-route-id="@movie.MovieId"
+                                       class="btn sf-btn-primary btn-sm w-100">
+                                        Details
+                                    </a>
+                                </div>
+                                <span class="sf-rating-badge">@movie.MpaRating</span>
+                            </div>
+                            <div class="sf-movie-card-body">
+                                <h3 class="sf-movie-title">@movie.MovieName</h3>
+                                <div class="sf-movie-meta">
+                                    <span class="sf-genre-pill">@movie.Genre</span>
+                                    <span class="sf-runtime">@movie.FormattedRunTime</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- ══ NOW SHOWING ═══════════════════════════════════════════════════════════ -->
+@if (nowShowing.Any())
+{
+    <section class="sf-section sf-section-alt" aria-labelledby="nowshowing-heading">
+        <div class="container-xl">
+            <div class="sf-section-header">
+                <h2 class="sf-section-title" id="nowshowing-heading">
+                    <span class="sf-gold-bar"></span>Showing Today
+                </h2>
+            </div>
+            <div class="row g-3">
+                @foreach (var show in nowShowing)
+                {
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <article class="sf-showtime-card h-100" aria-label="@show.Movie?.MovieName showtime">
+                            <div class="sf-showtime-card-top">
+                                <h3 class="sf-showtime-movie">@show.Movie?.MovieName</h3>
+                                <span class="sf-showtime-genre">@show.Movie?.Genre</span>
+                            </div>
+                            <div class="sf-showtime-details">
+                                <div class="sf-showtime-row">
+                                    <i class="bi bi-clock"></i>
+                                    <span>@show.StartDateTime.ToString("h:mm tt")</span>
+                                </div>
+                                <div class="sf-showtime-row">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>@show.Location?.LocationName</span>
+                                </div>
+                                <div class="sf-showtime-row">
+                                    <i class="bi bi-display"></i>
+                                    <span>@show.TheaterRoom?.RoomName</span>
+                                </div>
+                                <div class="sf-showtime-row">
+                                    <i class="bi bi-people"></i>
+                                    <span>@show.AvailableSeats seats left</span>
+                                </div>
+                            </div>
+                            <a asp-controller="Showtimes" asp-action="ShowtimeBooking" asp-route-id="@show.ShowId"
+                               class="btn sf-btn-primary w-100 mt-3" aria-label="Buy tickets for @show.Movie?.MovieName">
+                                <i class="bi bi-ticket-perforated me-2"></i>Buy Tickets
+                            </a>
+                        </article>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- ══ PERKS STRIP ═══════════════════════════════════════════════════════════ -->
+<section class="sf-perks-strip" aria-label="ScrumFlix perks">
+    <div class="container-xl">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="sf-perk">
+                    <i class="bi bi-display sf-perk-icon"></i>
+                    <h4 class="sf-perk-title">IMAX Screens</h4>
+                    <p class="sf-perk-desc">Immersive premium format at select locations</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="sf-perk">
+                    <i class="bi bi-cup-hot sf-perk-icon"></i>
+                    <h4 class="sf-perk-title">Fresh Concessions</h4>
+                    <p class="sf-perk-desc">18 signature items made fresh daily</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="sf-perk">
+                    <i class="bi bi-geo-alt sf-perk-icon"></i>
+                    <h4 class="sf-perk-title">10 DFW Locations</h4>
+                    <p class="sf-perk-desc">Always a theater near you in the Metroplex</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="sf-perk">
+                    <i class="bi bi-ticket-perforated sf-perk-icon"></i>
+                    <h4 class="sf-perk-title">Easy Booking</h4>
+                    <p class="sf-perk-desc">Buy tickets and concessions in one checkout</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

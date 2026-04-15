@@ -1,0 +1,222 @@
+@*
+ * File: /ScrumFlix/Views/Concessions/ConcessionsCatalog.cshtml
+ * Description: Concessions browsing page with location selector, product cards, and add-to-cart functionality.
+*@
+@model ConcessionsCatalogViewModel
+@{
+	ViewData["Title"] = "Concessions";
+}
+
+<div class="sf-page-header">
+	<div class="container-xl">
+		<h1 class="sf-page-title"><i class="bi bi-cup-straw me-3"></i>Concessions</h1>
+		<p class="sf-page-subtitle">Fresh snacks and drinks available for pickup or with your tickets.</p>
+	</div>
+</div>
+
+<section class="sf-section">
+	<div class="container-xl">
+
+		<!-- Ticket-flow contextual banner -->
+		@if (Model.IsTicketFlow)
+		{
+			<div class="alert d-flex align-items-center gap-3 mb-4 sf-ticket-flow-banner" role="status">
+				<i class="bi bi-ticket-perforated-fill fs-4 flex-shrink-0"></i>
+				<div>
+					<strong>Showing concessions for @(Model.TicketLocationName ?? "your theater")</strong>
+					<div class="small mt-1 opacity-75">
+						These items match the location of the tickets in your cart.
+						Want a different theater?
+						<a asp-controller="Concessions" asp-action="ConcessionsCatalog" class="sf-banner-link">
+							Browse all locations
+						</a>
+					</div>
+				</div>
+			</div>
+		}
+
+		<!-- Location Selector (hidden in ticket flow — location is locked to the ticket's theater) -->
+		@if (Model.Locations.Any() && !Model.IsTicketFlow)
+		{
+			<div class="sf-location-selector mb-5" role="navigation" aria-label="Select theater location">
+				<span class="sf-location-label me-3">
+					<i class="bi bi-geo-alt me-1"></i>Location:
+				</span>
+				<div class="d-flex flex-wrap gap-2">
+					@foreach (var loc in Model.Locations)
+					{
+						<a asp-controller="Concessions" asp-action="ConcessionsCatalog"
+							   asp-route-locationId="@loc.LocationId"
+							   class="sf-genre-chip @(Model.SelectedLocationId == loc.LocationId ? "active" : "")"
+							   aria-current="@(Model.SelectedLocationId == loc.LocationId ? "page" : "false")">
+							@loc.LocationName
+						</a>
+					}
+				</div>
+			</div>
+		}
+
+		<!-- Items Grid -->
+		@if (Model.Items.Any())
+		{
+			<div class="row g-4">
+				@foreach (var item in Model.Items)
+				{
+					<div class="col-6 col-md-4 col-lg-3">
+						<article class="sf-concession-card h-100" aria-label="@item.Item.ItemName">
+							<div class="sf-concession-icon" aria-hidden="true">
+								@{
+									var iconFile = item.Item.ItemName.ToLower() switch
+									{
+										var n when n.Contains("popcorn") => "popcorn_drink_combo.png",
+										var n when n.Contains("kids") => "kids_combo.png",
+										var n when n.Contains("fountain drink") => "fountain_drink.png",
+										var n when n.Contains("icee") => "icee.png",
+										var n when n.Contains("water") => "bottled_water.png",
+										var n when n.Contains("candy") => "candy_box.png",
+										var n when n.Contains("hot dog") => "hot_dog.png",
+										var n when n.Contains("nachos") => "nachos.png",
+										var n when n.Contains("pretzel") => "pretzel.png",
+										var n when n.Contains("souvenir") => "souvenir.png",
+										_ => "logo.png"
+									};
+								}
+
+								<img src="~/images/@iconFile"
+									 alt=""
+									 class="sf-icon-img" />
+							</div>
+							@*    <div class="sf-concession-icon" aria-hidden="true">
+                                @{
+                                    var icon = item.Item.ItemName.ToLower() switch
+                                    {
+                                        var n when n.Contains("popcorn") => "bi-box-seam",
+                                        var n when n.Contains("drink") || n.Contains("icee") || n.Contains("water") => "bi-cup-straw",
+                                        var n when n.Contains("nachos") => "bi-triangle",
+                                        var n when n.Contains("hot dog") => "bi-emoji-smile",
+                                        var n when n.Contains("pretzel") => "bi-infinity",
+                                        var n when n.Contains("candy") => "bi-star",
+                                        var n when n.Contains("combo") => "bi-collection",
+                                        _ => "bi-bag"
+                                    };
+                                }
+                                <i class="bi @icon"></i>
+                            </div> *@
+							<div class="sf-concession-body">
+								<h3 class="sf-concession-name">@item.Item.ItemName</h3>
+								<p class="sf-concession-price">@item.Price.ToString("C")</p>
+
+								<form asp-controller="Concessions" asp-action="AddConcessionToCart"
+									  method="post" class="js-add-concession">
+									@Html.AntiForgeryToken()
+									<input type="hidden" name="itemIdBase64" value="@item.ItemIdBase64" />
+									<input type="hidden" name="itemName" value="@item.Item.ItemName" />
+									<input type="hidden" name="price" value="@item.Price" />
+									<input type="hidden" name="locationId" value="@Model.SelectedLocationId" />
+
+									<div class="sf-qty-control sf-qty-sm mb-3">
+										<button type="button" class="sf-qty-btn"
+												onclick="this.nextElementSibling.value = Math.max(1, parseInt(this.nextElementSibling.value)-1)"
+												aria-label="Decrease">
+											−
+										</button>
+										<input type="number" name="quantity" value="1" min="1" max="20"
+											   class="sf-qty-input" aria-label="Quantity" />
+										<button type="button" class="sf-qty-btn"
+												onclick="this.previousElementSibling.value = Math.min(20, parseInt(this.previousElementSibling.value)+1)"
+												aria-label="Increase">
+											+
+										</button>
+									</div>
+
+									<button type="submit" class="btn sf-btn-primary w-100 btn-sm">
+										<i class="bi bi-cart-plus me-1"></i>Add to Cart
+									</button>
+								</form>
+							</div>
+						</article>
+					</div>
+				}
+			</div>
+
+			<div class="d-flex justify-content-end mb-3">
+				<a asp-controller="Cart" asp-action="CartReview" class="btn sf-btn-primary btn-sm">
+					<i class="bi bi-cart-check me-1"></i>Proceed to Checkout
+				</a>
+			</div>
+		}
+		else
+		{
+			<div class="sf-empty-state text-center py-5">
+				<i class="bi bi-cup sf-empty-icon"></i>
+				<h3 class="mt-3">No items available</h3>
+				<p class="text-muted">Please select a different location.</p>
+			</div>
+		}
+
+	</div>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            function showToast(message) {
+                const t = document.createElement('div');
+                t.className = 'sf-toast';
+                t.textContent = message;
+                Object.assign(t.style, {
+                    position: 'fixed',
+                    right: '20px',
+                    bottom: '20px',
+                    background: '#0d6efd',
+                    color: 'white',
+                    padding: '10px 14px',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    zIndex: 1200
+                });
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 2000);
+            }
+
+            document.querySelectorAll('form.js-add-concession').forEach(form => {
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.disabled = true;
+
+                    try {
+                        const resp = await fetch(form.action, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            // X-Requested-With is what ConcessionsController checks to detect AJAX
+                            // and return JSON instead of a redirect.
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            body: new FormData(form)
+                        });
+
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            if (data && data.success) {
+                                showToast(data.message || 'Added to cart');
+                                // Single authoritative refresh — lets the server recalculate and
+                                // refreshCartBadge() in the layout handles all DOM updates.
+                                refreshCartBadge();
+                            } else {
+                                showToast((data && data.message) || 'Could not add to cart');
+                            }
+                        } else {
+                            console.error('AddConcession failed', resp.status);
+                            showToast('Could not add to cart');
+                        }
+                    } catch (err) {
+                        console.error('AddConcession network error:', err);
+                        showToast('Network error — please try again');
+                    } finally {
+                        if (submitBtn) submitBtn.disabled = false;
+                    }
+                });
+            });
+        })();
+    </script>
+}

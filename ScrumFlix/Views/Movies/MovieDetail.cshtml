@@ -1,0 +1,129 @@
+@*
+ * File: /ScrumFlix/Views/Movies/MovieDetail.cshtml
+ * Description: Full movie detail page showing metadata, trailer placeholder, and available showtimes.
+*@
+@model MovieDetailViewModel
+@{
+	ViewData["Title"] = Model.Movie.MovieName;
+	var groupedShows = Model.UpcomingShows
+		.GroupBy(s => s.ShowDate.Date)
+		.OrderBy(g => g.Key)
+		.ToList();
+}
+
+<!-- Back Link -->
+<div class="container-xl pt-4">
+	<a asp-controller="Movies" asp-action="MovieCatalog" class="sf-back-link">
+		<i class="bi bi-arrow-left me-1"></i>Back to Movies
+	</a>
+</div>
+
+<!-- Movie Header -->
+<section class="sf-movie-detail-hero" aria-label="Movie details">
+	<div class="container-xl">
+		<div class="row g-5 align-items-start">
+
+			<!-- Poster -->
+			<div class="col-md-3">
+				<div class="sf-detail-poster">
+					<div class="sf-poster-placeholder sf-poster-lg">
+						<i class="bi bi-film"></i>
+					</div>
+				</div>
+			</div>
+
+			<!-- Info -->
+			<div class="col-md-9">
+				<div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+					<span class="sf-rating-badge-lg">@Model.Movie.MpaRating</span>
+					<span class="sf-genre-pill">@Model.Movie.Genre</span>
+					<span class="sf-runtime-lg">
+						<i class="bi bi-clock me-1"></i>@Model.Movie.FormattedRunTime
+					</span>
+				</div>
+
+				<h1 class="sf-detail-title">@Model.Movie.MovieName</h1>
+
+				<p class="sf-detail-synopsis mt-3">
+					An unforgettable cinematic experience awaits. @Model.Movie.MovieName brings
+					@Model.Movie.Genre.ToLower() storytelling to life on the big screen.
+					Rated @Model.Movie.MpaRating — running @Model.Movie.FormattedRunTime.
+				</p>
+
+				<!-- Trailer Placeholder -->
+				<div class="sf-trailer-placeholder mt-4" role="img" aria-label="Trailer unavailable">
+					<div class="sf-trailer-inner">
+						<i class="bi bi-play-circle-fill sf-play-icon"></i>
+						<p class="mt-2 mb-0">Official Trailer</p>
+						<small class="text-muted">Trailer coming soon</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Showtimes -->
+<section class="sf-section" aria-labelledby="showtimes-heading">
+	<div class="container-xl">
+		<h2 class="sf-section-title mb-4" id="showtimes-heading">
+			<span class="sf-gold-bar"></span>Showtimes
+		</h2>
+
+		@if (groupedShows.Any())
+		{
+			foreach (var dayGroup in groupedShows)
+			{
+				<div class="sf-showtime-day mb-4">
+					<h3 class="sf-showtime-date-label">
+						@(dayGroup.Key.Date == DateTime.Today ? "Today" :
+						  dayGroup.Key.Date == DateTime.Today.AddDays(1) ? "Tomorrow" :
+						  dayGroup.Key.ToString("dddd, MMMM d"))
+					</h3>
+					<div class="row g-3">
+						@foreach (var show in dayGroup.OrderBy(s => s.StartDateTime))
+						{
+							<div class="col-12 col-sm-6 col-lg-4">
+								<div class="sf-showtime-slot">
+									<div class="sf-slot-info">
+										<span class="sf-slot-time">@show.StartDateTime.ToString("h:mm tt")</span>
+										<span class="sf-slot-room">@show.TheaterRoom?.RoomName</span>
+										<span class="sf-slot-location">
+											<i class="bi bi-geo-alt me-1"></i>@show.Location?.LocationName
+										</span>
+										<span class="sf-slot-seats @(show.AvailableSeats < 20 ? "sf-low-seats" : "")">
+											@show.AvailableSeats seats available
+										</span>
+									</div>
+									@if (show.AvailableSeats > 0)
+									{
+										<a asp-controller="Showtimes" asp-action="ShowtimeBooking"
+											   asp-route-id="@show.ShowId"
+											   class="btn sf-btn-primary btn-sm"
+											   aria-label="Book tickets for @show.StartDateTime.ToString("h:mm tt") showing">
+											<i class="bi bi-ticket-perforated me-1"></i>Book
+										</a>
+									}
+									else
+									{
+										<button type="button" class="btn sf-btn-primary btn-sm" disabled aria-disabled="true" aria-label="Sold out">
+											<i class="bi bi-ticket-perforated me-1"></i>Sold Out
+										</button>
+									}
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="sf-empty-state text-center py-4">
+				<i class="bi bi-calendar-x sf-empty-icon"></i>
+				<h3 class="mt-3">No upcoming showtimes</h3>
+				<p class="text-muted">Check back soon for scheduled screenings.</p>
+			</div>
+		}
+	</div>
+</section>
