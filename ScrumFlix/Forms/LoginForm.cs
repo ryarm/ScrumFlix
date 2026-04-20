@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using ScrumFlix.Data;
+using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ScrumFlix.Forms
@@ -17,23 +14,56 @@ namespace ScrumFlix.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string password = txtLogin.Text;
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text;
 
-            if (password == "a123")
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                MainForm adminForm = new MainForm();
-                adminForm.Show();
-                this.Hide();
+                MessageBox.Show("Please enter a username and password.");
+                return;
             }
-            else if (password == "e123")
+
+            try
             {
-                EmployeeForm employeeForm = new EmployeeForm();
-                employeeForm.Show();
-                this.Hide();
+                using (var db = new AppDbContext())
+                {
+                    var user = db.Users
+                        .FirstOrDefault(u => u.UserName == username && u.UserPassword == password);
+
+                    if (user == null)
+                    {
+                        MessageBox.Show("Invalid username or password.");
+                        return;
+                    }
+
+                    if (user != null)
+                    {
+                        Session.UserId = user.UserId;
+                        Session.UserName = user.UserName;
+                        Session.RoleId = user.RoleId;
+
+                        if (user.RoleId == 1 || user.RoleId == 2)
+                        {
+                            MainForm mainForm = new MainForm();
+                            mainForm.Show();
+                            this.Hide();
+                        }
+                        else if (user.RoleId == 3)
+                        {
+                            EmployeeMenu EmployeeMenu = new EmployeeMenu();
+                            EmployeeMenu.Show();
+                            this.Hide();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("This user has an invalid role.");
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Invalid password");
+                MessageBox.Show("Login error: " + ex.Message);
             }
         }
     }

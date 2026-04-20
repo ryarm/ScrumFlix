@@ -34,6 +34,11 @@
             btnTheaterScreen = new Button();
             btnLocation = new Button();
             PicLogo = new PictureBox();
+            btnUsers = new Button();
+            btnConcessions = new Button();
+            lblTitle = new Label();
+            btnEmployees = new Button();
+            lblStockAlert = new Label();
             ((System.ComponentModel.ISupportInitialize)PicLogo).BeginInit();
             SuspendLayout();
             // 
@@ -42,7 +47,7 @@
             btnMovies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             btnMovies.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnMovies.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            btnMovies.Location = new Point(164, 240);
+            btnMovies.Location = new Point(164, 264);
             btnMovies.Name = "btnMovies";
             btnMovies.Size = new Size(429, 105);
             btnMovies.TabIndex = 0;
@@ -55,7 +60,7 @@
             btnShowtimes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             btnShowtimes.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnShowtimes.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            btnShowtimes.Location = new Point(679, 240);
+            btnShowtimes.Location = new Point(679, 264);
             btnShowtimes.Name = "btnShowtimes";
             btnShowtimes.Size = new Size(429, 105);
             btnShowtimes.TabIndex = 1;
@@ -91,20 +96,76 @@
             // 
             // PicLogo
             // 
+            PicLogo.BackColor = Color.Transparent;
             PicLogo.Image = (Image)resources.GetObject("PicLogo.Image");
-            PicLogo.Location = new Point(12, 12);
+            PicLogo.Location = new Point(-15, -29);
             PicLogo.Name = "PicLogo";
-            PicLogo.Size = new Size(257, 222);
+            PicLogo.Size = new Size(240, 278);
             PicLogo.SizeMode = PictureBoxSizeMode.Zoom;
             PicLogo.TabIndex = 4;
             PicLogo.TabStop = false;
+            // 
+            // btnUsers
+            // 
+            btnUsers.Location = new Point(272, 642);
+            btnUsers.Name = "btnUsers";
+            btnUsers.Size = new Size(193, 30);
+            btnUsers.TabIndex = 5;
+            btnUsers.Text = "Manage User Accounts";
+            btnUsers.UseVisualStyleBackColor = true;
+            btnUsers.Click += btnUsers_Click;
+            // 
+            // btnConcessions
+            // 
+            btnConcessions.Location = new Point(714, 648);
+            btnConcessions.Name = "btnConcessions";
+            btnConcessions.Size = new Size(189, 30);
+            btnConcessions.TabIndex = 6;
+            btnConcessions.Text = "Manage Concessions";
+            btnConcessions.UseVisualStyleBackColor = true;
+            btnConcessions.Click += btnConcessions_Click;
+            // 
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Franklin Gothic Medium Cond", 47.808F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(467, 40);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(352, 104);
+            lblTitle.TabIndex = 7;
+            lblTitle.Text = "Welcome!";
+            // 
+            // btnEmployees
+            // 
+            btnEmployees.Location = new Point(935, 648);
+            btnEmployees.Name = "btnEmployees";
+            btnEmployees.Size = new Size(173, 30);
+            btnEmployees.TabIndex = 8;
+            btnEmployees.Text = "Manage Employees";
+            btnEmployees.UseVisualStyleBackColor = true;
+            btnEmployees.Click += btnEmployees_Click;
+            // 
+            // lblStockAlert
+            // 
+            lblStockAlert.AutoSize = true;
+            lblStockAlert.BackColor = Color.Red;
+            lblStockAlert.Location = new Point(1147, 26);
+            lblStockAlert.Name = "lblStockAlert";
+            lblStockAlert.Size = new Size(0, 21);
+            lblStockAlert.TabIndex = 9;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.ActiveCaption;
+            BackColor = Color.Teal;
             ClientSize = new Size(1294, 732);
+            Controls.Add(lblStockAlert);
+            Controls.Add(btnEmployees);
+            Controls.Add(lblTitle);
+            Controls.Add(btnConcessions);
+            Controls.Add(btnUsers);
             Controls.Add(PicLogo);
             Controls.Add(btnLocation);
             Controls.Add(btnTheaterScreen);
@@ -116,6 +177,7 @@
             Load += MainForm_Load;
             ((System.ComponentModel.ISupportInitialize)PicLogo).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -125,5 +187,10 @@
         private Button btnTheaterScreen;
         private Button btnLocation;
         private PictureBox PicLogo;
+        private Button btnUsers;
+        private Button btnConcessions;
+        private Label lblTitle;
+        private Button btnEmployees;
+        private Label lblStockAlert;
     }
 }

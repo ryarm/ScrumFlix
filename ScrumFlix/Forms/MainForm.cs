@@ -8,12 +8,14 @@ the forms folder includes all the forms the project uses,
 the models folder holds all the object classes for the movies, showtimes, screens, and locations.
 Program.cs is what runs when starting the program, opening the main form */
 
+using Microsoft.EntityFrameworkCore;
 using ScrumFlix.Data;
 using ScrumFlix.Forms;
 using ScrumFlix.Models;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace ScrumFlix
 {
@@ -41,7 +43,50 @@ namespace ScrumFlix
 
             // int count = db.Movies.Count();
             // MessageBox.Show($"Movies in database: {count}");
+
+            using var context = new AppDbContext();
+
+            var user = context.Users
+                .Include(u => u.Employee)
+                .FirstOrDefault(u => u.UserId == Session.UserId);
+
+            if (user != null && user.Employee != null)
+            {
+                string fullName = $"{user.Employee.FirstName} {user.Employee.LastName}";
+                lblTitle.Text = $"Welcome {fullName}!";
+            }
+            lblTitle.AutoSize = true;
+            lblTitle.Left = (this.ClientSize.Width - lblTitle.Width) / 2;
+
+            LoadStockAlert();
         }
+
+        private void LoadStockAlert()
+        {
+            using var context = new AppDbContext();
+
+            var lowStockItems = context.ConcessionItem
+                .Where(c => c.is_active && c.QuantityInStock <= c.Minimum)
+                .OrderBy(c => c.ItemName)
+                .Select(c => new
+                {
+                    c.ItemName,
+                    c.QuantityInStock
+                })
+                .ToList();
+
+            if (lowStockItems.Count == 0)
+            {
+                lblStockAlert.Text = "";
+                return;
+            }
+
+            lblStockAlert.ForeColor = Color.White;
+            lblStockAlert.AutoSize = true;
+            lblStockAlert.Text = "Low stock:\n" +
+                string.Join("\n", lowStockItems.Select(i => $"{i.ItemName} ({i.QuantityInStock})"));
+        }
+
         // Opens MovieForm.cs when clicked
         private void btnMovies_Click(object sender, EventArgs e)
         {
@@ -70,6 +115,24 @@ namespace ScrumFlix
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void btnUsers_Click(object sender, EventArgs e)
+        {
+            using var f = new UserManagementForm();
+            f.ShowDialog();
+        }
+
+        private void btnConcessions_Click(object sender, EventArgs e)
+        {
+            using var f = new ConcessionsAdminForm();
+            f.ShowDialog();
+        }
+
+        private void btnEmployees_Click(object sender, EventArgs e)
+        {
+            using var f = new EmployeeManagementForm();
+            f.ShowDialog();
         }
     }
 }

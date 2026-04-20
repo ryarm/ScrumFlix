@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             LoginLabel = new Label();
-            txtLogin = new TextBox();
+            txtUsername = new TextBox();
             btnLogin = new Button();
+            txtPassword = new TextBox();
             SuspendLayout();
             // 
             // LoginLabel
@@ -42,12 +43,12 @@
             LoginLabel.TabIndex = 0;
             LoginLabel.Text = "Enter password to login:";
             // 
-            // txtLogin
+            // txtUsername
             // 
-            txtLogin.Location = new Point(209, 92);
-            txtLogin.Name = "txtLogin";
-            txtLogin.Size = new Size(130, 29);
-            txtLogin.TabIndex = 1;
+            txtUsername.Location = new Point(209, 92);
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(130, 29);
+            txtUsername.TabIndex = 1;
             // 
             // btnLogin
             // 
@@ -59,13 +60,22 @@
             btnLogin.UseVisualStyleBackColor = true;
             btnLogin.Click += btnLogin_Click;
             // 
+            // txtPassword
+            // 
+            txtPassword.Location = new Point(345, 92);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(130, 29);
+            txtPassword.TabIndex = 3;
+            txtPassword.UseSystemPasswordChar = true;
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(txtPassword);
             Controls.Add(btnLogin);
-            Controls.Add(txtLogin);
+            Controls.Add(txtUsername);
             Controls.Add(LoginLabel);
             Name = "LoginForm";
             Text = "LoginForm";
@@ -76,7 +86,8 @@
         #endregion
 
         private Label LoginLabel;
-        private TextBox txtLogin;
+        private TextBox txtUsername;
         private Button btnLogin;
+        private TextBox txtPassword;
     }
 }
