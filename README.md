@@ -7,7 +7,7 @@ Use ASP.NET Core User Secrets to store your Aiven MySQL connection string locall
 ```bash
 cd ScrumFlix
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=mysql-scrumtheater-scrumflix-theater.b.aivencloud.com;Port=YOUR_PORT;Database=defaultdb;User=avnadmin;Password=YOUR_PASSWORD;SslMode=Required;"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=mysql-scrumtheater-scrumflix-theater.b.aivencloud.com;Port=YOUR_PORT;Database=defaultdb;User=API_1;Password=YOUR_PASSWORD;SslMode=Required;"
 ```
 
 For deployment to somee.com, set the connection string via the somee.com control panel environment variables or web.config transformation — never in appsettings.json.
