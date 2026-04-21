@@ -14,7 +14,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Remove="Views\Movies\MovieCatalog - Copy.cshtml" />
 		<Content Remove="Views\Showtimes\ShowtimeBooking - Copy.cshtml" />
+		<Content Remove="wwwroot\css\scrumflix - Copy.css" />
+		<Content Remove="wwwroot\css\scrumflix_old.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Models.zip" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,7 +32,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 
 </Project>

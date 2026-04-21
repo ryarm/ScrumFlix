@@ -31,3 +31,5 @@ logs/
 
 # Environment-specific config
 appsettings.Production.json
+/ScrumFlix/Views/Movies/MovieCatalog - Copy.cshtml
+/ScrumFlix/wwwroot/css/scrumflix_old.css

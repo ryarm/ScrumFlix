@@ -1,112 +1,285 @@
 @*
  * File: /ScrumFlix/Views/Movies/MovieCatalog.cshtml
- * Description: Movie browsing page with search bar, genre filter chips, and responsive poster grid.
+ * Description: Movie browsing page with:
+ *   - Keyword title search bar
+ *   - Cascading Genre → Movie Title dropdowns
+ *   - Genre chip pills (synced, clears search on click)
+ *   - MPA rating age-restriction overlays:
+ *       R         → warning badge for guests and under-17 logged-in viewers
+ *       NC-17     → login-required lock for guests; hard block for under-18 logged-in viewers
 *@
 @model MovieCatalogViewModel
 @{
-    ViewData["Title"] = "Movies";
+	ViewData["Title"] = "Movies";
+	var moviesByGenreJson = System.Text.Json.JsonSerializer.Serialize(
+		Model.MoviesByGenre.ToDictionary(
+			kvp => kvp.Key,
+			kvp => kvp.Value.Select(t => new { id = t.MovieId, name = t.MovieName })
+		)
+	);
 }
 
 <div class="sf-page-header">
-    <div class="container-xl">
-        <h1 class="sf-page-title"><i class="bi bi-film me-3"></i>Movies</h1>
-        <p class="sf-page-subtitle">Browse our full catalog of currently showing films.</p>
-    </div>
+	<div class="container-xl">
+		<h1 class="sf-page-title"><i class="bi bi-film me-3"></i>Movies</h1>
+		<p class="sf-page-subtitle">Browse our full catalog of currently showing films.</p>
+	</div>
 </div>
 
 <section class="sf-section" aria-label="Movie catalog">
-    <div class="container-xl">
+	<div class="container-xl" id="movieCatalog" data-movies='@Html.Raw(moviesByGenreJson)'>
 
-        <!-- Search + Filter Bar -->
-        <form method="get" asp-controller="Movies" asp-action="MovieCatalog"
-              class="sf-filter-bar" role="search" aria-label="Filter movies">
-            <div class="sf-search-wrap">
-                <i class="bi bi-search sf-search-icon" aria-hidden="true"></i>
-                <input type="text" name="search" value="@Model.SearchTerm"
-                       class="sf-search-input" placeholder="Search movies…"
-                       aria-label="Search movies by title" />
-            </div>
-            <button type="submit" class="btn sf-btn-primary">Search</button>
-            @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedGenre))
-            {
-                <a asp-controller="Movies" asp-action="MovieCatalog" class="btn sf-btn-outline">
-                    <i class="bi bi-x-circle me-1"></i>Clear
-                </a>
-            }
-            <input type="hidden" name="genre" value="@Model.SelectedGenre" />
-        </form>
+		<!-- Row 1: Keyword Title Search -->
+		<form method="get" asp-controller="Movies" asp-action="MovieCatalog"
+			  class="sf-filter-bar mb-3" role="search" aria-label="Search movies by title"
+			  id="titleSearchForm">
+			<div class="sf-search-wrap">
+				<i class="bi bi-search sf-search-icon" aria-hidden="true"></i>
+				<input type="text" name="search" id="titleSearchInput"
+					   value="@Model.SearchTerm"
+					   class="sf-search-input"
+					   placeholder="Search by movie title…"
+					   aria-label="Search by movie title"
+					   autocomplete="off" />
+			</div>
+			<input type="hidden" name="genre" value="@Model.SelectedGenre" />
+			<button type="submit" class="btn sf-btn-primary">
+				<i class="bi bi-search me-1"></i>Search
+			</button>
+			@if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedGenre))
+			{
+				<a asp-controller="Movies" asp-action="MovieCatalog" class="btn sf-btn-outline">
+					<i class="bi bi-x-circle me-1"></i>Clear
+				</a>
+			}
+		</form>
 
-        <!-- Genre Filter Pills -->
-        @if (Model.Genres.Any())
-        {
-            <div class="sf-genre-filter mb-5" role="navigation" aria-label="Filter by genre">
-                <a asp-controller="Movies" asp-action="MovieCatalog"
-                   asp-route-search="@Model.SearchTerm"
-                   class="sf-genre-chip @(string.IsNullOrEmpty(Model.SelectedGenre) ? "active" : "")">
-                    All
-                </a>
-                @foreach (var genre in Model.Genres)
-                {
-                    <a asp-controller="Movies" asp-action="MovieCatalog"
-                       asp-route-genre="@genre"
-                       asp-route-search="@Model.SearchTerm"
-                       class="sf-genre-chip @(Model.SelectedGenre == genre ? "active" : "")">
-                        @genre
-                    </a>
-                }
-            </div>
-        }
+		<!-- Row 2: Cascading Genre → Movie Title Dropdowns -->
+		<form method="get" asp-controller="Movies" asp-action="MovieCatalog"
+			  class="sf-filter-bar sf-cascade-bar mb-4" aria-label="Browse by genre and title"
+			  id="cascadeForm">
+			<div class="sf-cascade-wrap">
+				<label class="sf-cascade-label" for="genreDropdown">
+					<i class="bi bi-tags me-1"></i>Genre
+				</label>
+				<select id="genreDropdown" name="genre" class="sf-select sf-cascade-select"
+						aria-label="Select a genre">
+					<option value="">— Select Genre —</option>
+					@foreach (var g in Model.Genres)
+					{
+						if (Model.SelectedGenre == g)
+						{
+							<option value="@g" selected="selected">@g</option>
+						}
+						else
+						{
+							<option value="@g">@g</option>
+						}
+					}
+				</select>
+			</div>
+			<div class="sf-cascade-arrow" aria-hidden="true">
+				<i class="bi bi-chevron-right"></i>
+			</div>
+			<div class="sf-cascade-wrap">
+				<label class="sf-cascade-label" for="movieDropdown">
+					<i class="bi bi-film me-1"></i>Movie Title
+				</label>
+				<select id="movieDropdown" name="movieId" class="sf-select sf-cascade-select"
+						aria-label="Select a movie title" disabled>
+					<option value="">— Select Genre First —</option>
+				</select>
+			</div>
+			<button type="submit" class="btn sf-btn-primary sf-cascade-btn"
+					id="cascadeSearchBtn">
+				<i class="bi bi-funnel me-1"></i>Filter Genre
+			</button>
+		</form>
 
-        <!-- Results Count -->
-        <p class="sf-results-count mb-4" aria-live="polite">
-            @Model.Movies.Count movie@(Model.Movies.Count == 1 ? "" : "s") found
-            @if (!string.IsNullOrEmpty(Model.SearchTerm)) { <span>for "<strong>@Model.SearchTerm</strong>"</span> }
-            @if (!string.IsNullOrEmpty(Model.SelectedGenre)) { <span>in <strong>@Model.SelectedGenre</strong></span> }
-        </p>
+		<!-- Genre Chip Pills -->
+		@if (Model.Genres.Any())
+		{
+			<div class="sf-genre-filter mb-5" role="navigation" aria-label="Filter by genre">
+				<a asp-controller="Movies" asp-action="MovieCatalog"
+					   class="sf-genre-chip @(string.IsNullOrEmpty(Model.SelectedGenre) ? "active" : "")">
+					All
+				</a>
+				@foreach (var genre in Model.Genres)
+				{
+					<a asp-controller="Movies" asp-action="MovieCatalog"
+						   asp-route-genre="@genre"
+						   class="sf-genre-chip @(Model.SelectedGenre == genre ? "active" : "")">
+						@genre
+					</a>
+				}
+			</div>
+		}
 
-        <!-- Movie Grid -->
-        @if (Model.Movies.Any())
-        {
-            <div class="row g-4">
-                @foreach (var movie in Model.Movies)
-                {
-                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-                        <article class="sf-movie-card h-100" aria-label="@movie.MovieName">
-                            <div class="sf-movie-poster">
-                                <div class="sf-poster-placeholder">
-                                    <i class="bi bi-film"></i>
-                                </div>
-                                <div class="sf-poster-overlay">
-                                    <a asp-controller="Movies" asp-action="MovieDetail" asp-route-id="@movie.MovieId"
-                                       class="btn sf-btn-primary btn-sm w-100 mb-2">
-                                        Details
-                                    </a>
-                                </div>
-                                <span class="sf-rating-badge">@movie.MpaRating</span>
-                            </div>
-                            <div class="sf-movie-card-body">
-                                <h2 class="sf-movie-title">@movie.MovieName</h2>
-                                <div class="sf-movie-meta">
-                                    <span class="sf-genre-pill">@movie.Genre</span>
-                                    <span class="sf-runtime">@movie.FormattedRunTime</span>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="sf-empty-state text-center py-5">
-                <i class="bi bi-film sf-empty-icon"></i>
-                <h3 class="mt-3">No movies found</h3>
-                <p class="text-muted">Try adjusting your search or filter.</p>
-                <a asp-controller="Movies" asp-action="MovieCatalog" class="btn sf-btn-primary mt-2">
-                    View All Movies
-                </a>
-            </div>
-        }
+		<!-- Results Count -->
+		<p class="sf-results-count mb-4" aria-live="polite">
+			@Model.Movies.Count movie@(Model.Movies.Count == 1 ? "" : "s") found
+			@if (!string.IsNullOrEmpty(Model.SearchTerm))
+			{
+				<span>for "<strong>@Model.SearchTerm</strong>"</span>
+			}
+			@if (!string.IsNullOrEmpty(Model.SelectedGenre))
+			{
+				<span>· in <strong>@Model.SelectedGenre</strong></span>
+			}
+		</p>
 
-    </div>
+		<!-- Movie Grid -->
+		@if (Model.Movies.Any())
+		{
+			<div class="row g-4">
+				@foreach (var movie in Model.Movies)
+				{
+					var ratingState = Model.GetRatingState(movie.MpaRating);
+					<div class="col-6 col-md-4 col-lg-3 col-xl-2">
+						<article class="sf-movie-card h-100 @(ratingState != "none" ? "sf-age-flagged" : "")"
+								 aria-label="@movie.MovieName">
+							<div class="sf-movie-poster">
+								<div class="sf-poster-placeholder @(ratingState == "nc17-hard-blocked" || ratingState == "nc17-login-required" ? "sf-poster-locked" : "")">
+									<i class="bi bi-film"></i>
+								</div>
+
+								@* Normal hover overlay — hidden when hard-blocked *@
+								@if (ratingState != "nc17-hard-blocked")
+								{
+									<div class="sf-poster-overlay">
+										<a asp-controller="Movies" asp-action="MovieDetail"
+											   asp-route-id="@movie.MovieId"
+											   class="btn sf-btn-primary btn-sm w-100 mb-2">
+											Details
+										</a>
+									</div>
+								}
+
+								@* Age restriction overlays *@
+								@if (ratingState == "r-warning")
+								{
+									<div class="sf-age-overlay sf-age-overlay--warning" aria-label="Age advisory">
+										<i class="bi bi-exclamation-triangle-fill"></i>
+										<span>Rated R</span>
+										<small>Viewer discretion advised.<br />Under 17 requires a parent or guardian.</small>
+										<a asp-controller="Movies" asp-action="MovieDetail"
+											   asp-route-id="@movie.MovieId"
+											   class="btn sf-btn-outline btn-sm mt-2 w-100">
+											View Details
+										</a>
+									</div>
+								}
+								else if (ratingState == "nc17-login-required")
+								{
+									<div class="sf-age-overlay sf-age-overlay--locked" aria-label="Login required">
+										<i class="bi bi-lock-fill"></i>
+										<span>Rated NC-17</span>
+										<small>Login required for age verification.</small>
+										<a asp-controller="Account" asp-action="Login"
+											   asp-route-returnUrl="@Url.Action("MovieDetail", "Movies", new { id = movie.MovieId })"
+											   class="btn sf-btn-primary btn-sm mt-2 w-100">
+											<i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+										</a>
+									</div>
+								}
+								else if (ratingState == "nc17-hard-blocked")
+								{
+									<div class="sf-age-overlay sf-age-overlay--blocked" aria-label="Age restricted">
+										<i class="bi bi-shield-fill-x"></i>
+										<span>Rated NC-17</span>
+										<small>You must be 18 or older to view this title.</small>
+									</div>
+								}
+
+								<span class="sf-rating-badge @(ratingState == "r-warning" ? "sf-rating-badge--r" : ratingState != "none" ? "sf-rating-badge--nc17" : "")">
+									@movie.MpaRating
+								</span>
+							</div>
+
+							<div class="sf-movie-card-body">
+								<h2 class="sf-movie-title">@movie.MovieName</h2>
+								<div class="sf-movie-meta">
+									<span class="sf-genre-pill">@movie.Genre</span>
+									<span class="sf-runtime">@movie.FormattedRunTime</span>
+								</div>
+							</div>
+						</article>
+					</div>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="sf-empty-state text-center py-5">
+				<i class="bi bi-film sf-empty-icon"></i>
+				<h3 class="mt-3">No movies found</h3>
+				<p class="text-muted">Try adjusting your search or filter.</p>
+				<a asp-controller="Movies" asp-action="MovieCatalog" class="btn sf-btn-primary mt-2">
+					View All Movies
+				</a>
+			</div>
+		}
+
+	</div>
 </section>
+
+@section Scripts {
+	<script type="text/javascript">
+		(function () {
+		const moviesByGenre = JSON.parse('@Html.Raw(string.IsNullOrEmpty(moviesByGenreJson) ? "{}" : moviesByGenreJson)');
+		const genreDropdown = document.getElementById('genreDropdown');
+		const movieDropdown = document.getElementById('movieDropdown');
+		const cascadeBtn    = document.getElementById('cascadeSearchBtn');
+		const titleInput    = document.getElementById('titleSearchInput');
+
+		function populateMovies(selectedGenre) {
+		movieDropdown.innerHTML = '';
+		movieDropdown.disabled  = true;
+
+		if (!selectedGenre || !moviesByGenre[selectedGenre]) {
+		movieDropdown.innerHTML = '<option value="">— Select Genre First —</option>';
+		return;
+		}
+
+		const placeholder = document.createElement('option');
+		placeholder.value       = '';
+		placeholder.textContent = `— All ${selectedGenre} Movies —`;
+		movieDropdown.appendChild(placeholder);
+
+		moviesByGenre[selectedGenre].forEach(m => {
+		const opt = document.createElement('option');
+		opt.value       = m.id;
+		opt.textContent = m.name;
+		movieDropdown.appendChild(opt);
+		});
+
+		movieDropdown.disabled = false;
+		}
+
+		genreDropdown.addEventListener('change', function () {
+		populateMovies(this.value);
+
+		// Sync chip pills visually
+		document.querySelectorAll('.sf-genre-chip').forEach(chip => {
+		const href = chip.getAttribute('href');
+		const match = href ? href.match(/genre=([^&]*)/) : null;
+		const chipGenre = match ? decodeURIComponent(match[1]) : '';
+		chip.classList.toggle('active', chipGenre === this.value || (!chipGenre && !this.value));
+		});
+
+		if (titleInput) titleInput.value = '';
+		});
+
+		movieDropdown.addEventListener('change', function () {
+		if (this.value) document.getElementById('cascadeForm').submit();
+		});
+
+		// Restore on page load if genre pre-selected
+		if (genreDropdown.value) populateMovies(genreDropdown.value);
+
+		document.getElementById('cascadeForm').addEventListener('submit', function (e) {
+		if (!genreDropdown.value && !movieDropdown.value) e.preventDefault();
+		});
+		})();
+	</script>
+}

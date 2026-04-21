@@ -524,6 +524,60 @@ img {
         color: var(--sf-muted);
     }
 
+/* ── Search Mode Radio Pills ────────────────────────────────────────────── */
+.sf-search-mode {
+    display: flex;
+    gap: 0;
+    background: var(--sf-dark-card);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sf-mode-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+}
+
+.sf-mode-label {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .55rem 1rem;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--sf-muted);
+    cursor: pointer;
+    transition: all var(--sf-transition);
+    user-select: none;
+    white-space: nowrap;
+    border-right: 1px solid var(--sf-border);
+}
+
+    .sf-mode-label:last-child {
+        border-right: none;
+    }
+
+    .sf-mode-label:hover {
+        color: var(--sf-white);
+        background: var(--sf-dark-alt);
+    }
+
+    .sf-mode-label.active {
+        background: var(--sf-gold);
+        color: var(--sf-black);
+        border-color: var(--sf-gold);
+    }
+
+    .sf-mode-label.active + .sf-mode-label {
+        border-left-color: var(--sf-gold);
+    }
+
+/* ── Genre Filter Chips ─────────────────────────────────────────────────── */
 .sf-genre-filter {
     display: flex;
     flex-wrap: wrap;
@@ -552,6 +606,206 @@ img {
 .sf-results-count {
     color: var(--sf-muted);
     font-size: .9rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AGE RESTRICTION — CATALOG CARD OVERLAYS & DETAIL BANNERS
+   States: r-warning · nc17-login-required · nc17-hard-blocked
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Locked poster tint (NC-17) */
+.sf-poster-locked {
+    filter: brightness(0.35) saturate(0.4);
+}
+
+/* Age overlay — base */
+.sf-age-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: .75rem;
+    gap: .3rem;
+    opacity: 0;
+    transition: opacity var(--sf-transition);
+    z-index: 2;
+}
+
+.sf-age-overlay i {
+    font-size: 1.6rem;
+}
+
+.sf-age-overlay span {
+    font-family: var(--sf-font-display);
+    font-size: 1rem;
+    letter-spacing: .08em;
+}
+
+.sf-age-overlay small {
+    font-size: .7rem;
+    line-height: 1.3;
+    opacity: .85;
+}
+
+/* Show overlay on card hover */
+.sf-movie-card:hover .sf-age-overlay {
+    opacity: 1;
+}
+
+/* R warning — amber toned */
+.sf-age-overlay--warning {
+    background: rgba(20, 14, 0, .88);
+    color: #f5c518;
+    border: 1px solid rgba(245, 197, 24, .25);
+}
+
+.sf-age-overlay--warning i {
+    color: #f5a623;
+}
+
+/* NC-17 login required — blue-tinted lock */
+.sf-age-overlay--locked {
+    background: rgba(10, 18, 35, .92);
+    color: var(--sf-white);
+    border: 1px solid rgba(80, 140, 240, .3);
+}
+
+.sf-age-overlay--locked i {
+    color: #6fa3ef;
+}
+
+/* NC-17 hard blocked — always visible, red shield */
+.sf-age-overlay--blocked {
+    background: rgba(20, 8, 8, .92);
+    color: var(--sf-white);
+    border: 1px solid rgba(224, 82, 82, .3);
+    opacity: 1 !important; /* always visible, not just on hover */
+}
+
+.sf-age-overlay--blocked i {
+    color: var(--sf-danger);
+}
+
+/* Rating badge color variants */
+.sf-rating-badge--r {
+    background: rgba(245, 166, 35, .2) !important;
+    border-color: #f5a623 !important;
+    color: #f5a623 !important;
+}
+
+.sf-rating-badge--nc17 {
+    background: rgba(224, 82, 82, .2) !important;
+    border-color: var(--sf-danger) !important;
+    color: var(--sf-danger) !important;
+}
+
+/* ── Detail Page Banners ───────────────────────────────────────────────── */
+.sf-rating-banner {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+    border-radius: var(--sf-radius);
+    padding: .85rem 1.2rem;
+    font-size: .9rem;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.sf-rating-banner-sub {
+    display: block;
+    width: 100%;
+    font-size: .8rem;
+    font-weight: 400;
+    opacity: .75;
+    margin-top: .2rem;
+}
+
+.sf-rating-banner--warning {
+    background: rgba(245, 166, 35, .12);
+    border: 1px solid rgba(245, 166, 35, .35);
+    color: #f5c518;
+}
+
+.sf-rating-banner--locked {
+    background: rgba(80, 140, 240, .1);
+    border: 1px solid rgba(80, 140, 240, .3);
+    color: #a8c8f8;
+}
+
+.sf-rating-banner--blocked {
+    background: rgba(224, 82, 82, .1);
+    border: 1px solid rgba(224, 82, 82, .3);
+    color: #f08080;
+}
+
+/* ── Cascading Genre → Title Dropdowns ─────────────────────────────────── */
+.sf-cascade-bar {
+    align-items: flex-end;
+    gap: .6rem;
+    background: var(--sf-dark-card);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-lg);
+    padding: .85rem 1.1rem;
+}
+
+.sf-cascade-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    flex: 1;
+    min-width: 160px;
+}
+
+.sf-cascade-label {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--sf-muted);
+}
+
+.sf-cascade-select {
+    /* inherits .sf-select — gold border on focus, dark background, chevron arrow */
+}
+
+.sf-cascade-arrow {
+    color: var(--sf-gold);
+    font-size: 1.1rem;
+    padding-bottom: .5rem;
+    flex-shrink: 0;
+    opacity: .6;
+}
+
+.sf-cascade-btn {
+    flex-shrink: 0;
+    align-self: flex-end;
+    white-space: nowrap;
+}
+
+/* Disabled state for movie title dropdown before a genre is chosen */
+.sf-cascade-select:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+@media (max-width: 576px) {
+    .sf-cascade-bar {
+        flex-direction: column;
+    }
+
+    .sf-cascade-arrow {
+        transform: rotate(90deg);
+        align-self: center;
+        padding-bottom: 0;
+    }
+
+    .sf-cascade-btn {
+        width: 100%;
+    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
