@@ -134,5 +134,40 @@ namespace ScrumFlix
             using var f = new EmployeeManagementForm();
             f.ShowDialog();
         }
+
+        private void btnSchedules_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDashboard_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnBackupRestore_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPOS_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnPayroll_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
