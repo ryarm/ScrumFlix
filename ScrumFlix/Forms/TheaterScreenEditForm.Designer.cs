@@ -34,6 +34,7 @@
             btnCancel = new Button();
             numCapacity = new NumericUpDown();
             labelCapacity = new Label();
+            chkIsActive = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)numCapacity).BeginInit();
             SuspendLayout();
             // 
@@ -56,9 +57,9 @@
             // btnOk
             // 
             btnOk.DialogResult = DialogResult.OK;
-            btnOk.Location = new Point(218, 65);
+            btnOk.Location = new Point(288, 65);
             btnOk.Name = "btnOk";
-            btnOk.Size = new Size(98, 30);
+            btnOk.Size = new Size(52, 30);
             btnOk.TabIndex = 2;
             btnOk.Text = "Ok";
             btnOk.UseVisualStyleBackColor = true;
@@ -67,9 +68,9 @@
             // btnCancel
             // 
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnCancel.Location = new Point(322, 65);
+            btnCancel.Location = new Point(346, 65);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(98, 30);
+            btnCancel.Size = new Size(74, 30);
             btnCancel.TabIndex = 3;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -90,11 +91,22 @@
             labelCapacity.TabIndex = 5;
             labelCapacity.Text = "Capacity";
             // 
+            // chkIsActive
+            // 
+            chkIsActive.AutoSize = true;
+            chkIsActive.Location = new Point(177, 68);
+            chkIsActive.Name = "chkIsActive";
+            chkIsActive.Size = new Size(89, 25);
+            chkIsActive.TabIndex = 6;
+            chkIsActive.Text = "Is Active";
+            chkIsActive.UseVisualStyleBackColor = true;
+            // 
             // TheaterScreenEditForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(435, 107);
+            Controls.Add(chkIsActive);
             Controls.Add(labelCapacity);
             Controls.Add(numCapacity);
             Controls.Add(btnCancel);
@@ -116,5 +128,6 @@
         private Button btnCancel;
         private NumericUpDown numCapacity;
         private Label labelCapacity;
+        private CheckBox chkIsActive;
     }
 }

@@ -10,7 +10,13 @@ namespace ScrumFlix.Models
     public class Location
     {
         public int LocationId { get; set; }
+
         [MaxLength(100)]
         public string LocationName { get; set; }
+
+        [MaxLength(255)]
+        public string? LocationAddress { get; set; }
+
+        public bool is_active { get; set; } = true;
     }
 }

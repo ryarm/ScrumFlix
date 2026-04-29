@@ -153,6 +153,20 @@ namespace ScrumFlix.Forms
             context.ConcessionItem.Add(item);
             context.SaveChanges();
 
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_CONCESSION_ITEM",
+                TableName = "ConcessionItem",
+                ObjectId = item.ConcessionItemId,
+                ActionTime = DateTime.Now,
+                Description = $"Added concession item '{item.ItemName}'",
+                OldValues = null,
+                NewValues = $"ItemName={item.ItemName}, Price={item.Price}, QuantityInStock={item.QuantityInStock}, Minimum={item.Minimum}, is_active={item.is_active}"
+            });
+
+            context.SaveChanges();
+
             ClearCrudFields();
             LoadItems();
             LoadStockItems();
@@ -191,10 +205,28 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            var oldName = item.ItemName;
+            var oldPrice = item.Price;
+            var oldQuantity = item.QuantityInStock;
+            var oldMinimum = item.Minimum;
+            var oldActive = item.is_active;
+
             item.ItemName = itemName;
             item.Price = price;
             item.QuantityInStock = quantity;
             item.Minimum = minimum;
+
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_CONCESSION_ITEM",
+                TableName = "ConcessionItem",
+                ObjectId = item.ConcessionItemId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated concession item '{oldName}'",
+                OldValues = $"ItemName={oldName}, Price={oldPrice}, QuantityInStock={oldQuantity}, Minimum={oldMinimum}, is_active={oldActive}",
+                NewValues = $"ItemName={item.ItemName}, Price={item.Price}, QuantityInStock={item.QuantityInStock}, Minimum={item.Minimum}, is_active={item.is_active}"
+            });
 
             context.SaveChanges();
 
@@ -222,7 +254,20 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            var oldActive = item.is_active;
             item.is_active = false;
+
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DEACTIVATE_CONCESSION_ITEM",
+                TableName = "ConcessionItem",
+                ObjectId = item.ConcessionItemId,
+                ActionTime = DateTime.Now,
+                Description = $"Deactivated concession item '{item.ItemName}'",
+                OldValues = $"is_active={oldActive}",
+                NewValues = $"is_active={item.is_active}"
+            });
             context.SaveChanges();
 
             LoadItems();
@@ -294,7 +339,20 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            var oldQuantity = item.QuantityInStock;
             item.QuantityInStock = newQuantity;
+
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_CONCESSION_STOCK",
+                TableName = "ConcessionItem",
+                ObjectId = item.ConcessionItemId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated stock for concession item '{item.ItemName}'",
+                OldValues = $"QuantityInStock={oldQuantity}",
+                NewValues = $"QuantityInStock={item.QuantityInStock}"
+            });
             context.SaveChanges();
 
             LoadItems();
@@ -350,7 +408,20 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            var oldActive = item.is_active;
             item.is_active = true;
+
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "REACTIVATE_CONCESSION_ITEM",
+                TableName = "ConcessionItem",
+                ObjectId = item.ConcessionItemId,
+                ActionTime = DateTime.Now,
+                Description = $"Reactivated concession item '{item.ItemName}'",
+                OldValues = $"is_active={oldActive}",
+                NewValues = $"is_active={item.is_active}"
+            });
             context.SaveChanges();
 
             LoadItems();

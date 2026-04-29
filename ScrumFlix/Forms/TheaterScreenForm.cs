@@ -3,15 +3,9 @@
 using ScrumFlix.Data;
 using ScrumFlix.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using ScrumFlix.Forms;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace ScrumFlix.Forms
 {
@@ -21,6 +15,7 @@ namespace ScrumFlix.Forms
         {
             InitializeComponent();
         }
+
         private async void TheaterScreenForm_Load(object sender, EventArgs e) // When form loads it loads the data from the db
         {
             await LoadTheaterScreenAsync();
@@ -51,8 +46,24 @@ namespace ScrumFlix.Forms
 
             if (form.ShowDialog() != DialogResult.OK)
                 return;
+
             using var db = new AppDbContext();
+
             db.TheaterScreen.Add(form.TheaterScreen);
+            await db.SaveChangesAsync();
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_THEATER_SCREEN",
+                TableName = "TheaterScreen",
+                ObjectId = form.TheaterScreen.TheaterScreenId,
+                ActionTime = DateTime.Now,
+                Description = $"Added theater screen '{form.TheaterScreen.ScreenName}'",
+                OldValues = null,
+                NewValues = $"ScreenName={form.TheaterScreen.ScreenName}, LocationId={form.TheaterScreen.LocationId}, Capacity={form.TheaterScreen.Capacity}, is_active={form.TheaterScreen.is_active}"
+            });
 
             await db.SaveChangesAsync();
 
@@ -80,8 +91,28 @@ namespace ScrumFlix.Forms
             var screen = await db.TheaterScreen.FindAsync(selected.TheaterScreenId);
             if (screen is null) return;
 
+            var oldScreenName = screen.ScreenName;
+            var oldLocationId = screen.LocationId;
+            var oldCapacity = screen.Capacity;
+            var oldActive = screen.is_active;
+
             screen.ScreenName = form.TheaterScreen.ScreenName;
             screen.LocationId = form.TheaterScreen.LocationId;
+            screen.Capacity = form.TheaterScreen.Capacity;
+            screen.is_active = form.TheaterScreen.is_active;
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_THEATER_SCREEN",
+                TableName = "TheaterScreen",
+                ObjectId = screen.TheaterScreenId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated theater screen '{oldScreenName}'",
+                OldValues = $"ScreenName={oldScreenName}, LocationId={oldLocationId}, Capacity={oldCapacity}, is_active={oldActive}",
+                NewValues = $"ScreenName={screen.ScreenName}, LocationId={screen.LocationId}, Capacity={screen.Capacity}, is_active={screen.is_active}"
+            });
 
             await db.SaveChangesAsync();
             await LoadTheaterScreenAsync();
@@ -116,6 +147,19 @@ namespace ScrumFlix.Forms
 
             var screen = await db.TheaterScreen.FindAsync(selected.TheaterScreenId);
             if (screen is null) return;
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DELETE_THEATER_SCREEN",
+                TableName = "TheaterScreen",
+                ObjectId = screen.TheaterScreenId,
+                ActionTime = DateTime.Now,
+                Description = $"Deleted theater screen '{screen.ScreenName}'",
+                OldValues = $"ScreenName={screen.ScreenName}, LocationId={screen.LocationId}, Capacity={screen.Capacity}, is_active={screen.is_active}",
+                NewValues = null
+            });
 
             db.TheaterScreen.Remove(screen);
             await db.SaveChangesAsync();

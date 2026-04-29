@@ -36,6 +36,20 @@ namespace ScrumFlix.Forms
             db.Users.Add(form.User);
             await db.SaveChangesAsync();
 
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_USER",
+                TableName = "Users",
+                ObjectId = form.User.UserId,
+                ActionTime = DateTime.Now,
+                Description = $"Added user '{form.User.UserName}'",
+                OldValues = null,
+                NewValues = $"UserName={form.User.UserName}, EmployeeId={form.User.EmployeeId}, RoleId={form.User.RoleId}"
+            });
+
+            await db.SaveChangesAsync();
+
             await LoadUsersAsync();
         }
 
@@ -57,10 +71,27 @@ namespace ScrumFlix.Forms
             var user = await db.Users.FindAsync(selected.UserId);
             if (user is null) return;
 
+            var oldUserName = user.UserName;
+            var oldPassword = user.UserPassword;
+            var oldEmployeeId = user.EmployeeId;
+            var oldRoleId = user.RoleId;
+
             user.UserName = form.User.UserName;
             user.UserPassword = form.User.UserPassword;
             user.EmployeeId = form.User.EmployeeId;
             user.RoleId = form.User.RoleId;
+
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_USER",
+                TableName = "Users",
+                ObjectId = user.UserId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated user '{oldUserName}'",
+                OldValues = $"UserName={oldUserName}, Password={oldPassword}, EmployeeId={oldEmployeeId}, RoleId={oldRoleId}",
+                NewValues = $"UserName={user.UserName}, Password=hidden, EmployeeId={user.EmployeeId}, RoleId={user.RoleId}"
+            });
 
             await db.SaveChangesAsync();
             await LoadUsersAsync();
@@ -92,6 +123,18 @@ namespace ScrumFlix.Forms
             using var db = new AppDbContext();
             var user = await db.Users.FindAsync(selected.UserId);
             if (user is null) return;
+
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DELETE_USER",
+                TableName = "Users",
+                ObjectId = user.UserId,
+                ActionTime = DateTime.Now,
+                Description = $"Deleted user '{user.UserName}'",
+                OldValues = $"UserName={user.UserName}, EmployeeId={user.EmployeeId}, RoleId={user.RoleId}",
+                NewValues = null
+            });
 
             db.Users.Remove(user);
             await db.SaveChangesAsync();

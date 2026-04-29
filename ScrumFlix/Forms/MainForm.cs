@@ -137,7 +137,8 @@ namespace ScrumFlix
 
         private void btnSchedules_Click(object sender, EventArgs e)
         {
-
+            using var f = new ScheduleManagementForm();
+            f.ShowDialog();
         }
 
         private void btnDashboard_Click(object sender, EventArgs e)
@@ -167,7 +168,50 @@ namespace ScrumFlix
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
+            using (var db = new AppDbContext())
+            {
+                db.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "LOGOUT",
+                    TableName = "Users",
+                    ObjectId = Session.UserId,
+                    ActionTime = DateTime.Now,
+                    Description = "User logged out",
+                    OldValues = null,
+                    NewValues = null
+                });
 
+                db.SaveChanges();
+            }
+
+            Session.UserId = 0;
+            Session.UserName = null;
+            Session.RoleId = 0;
+
+            new LoginForm().Show();
+            this.Hide();
+        }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Session.UserId != 0)
+            {
+                using var db = new AppDbContext();
+
+                db.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "APP_CLOSE",
+                    TableName = "Users",
+                    ObjectId = Session.UserId,
+                    ActionTime = DateTime.Now,
+                    Description = "User closed the application",
+                    OldValues = null,
+                    NewValues = null
+                });
+
+                db.SaveChanges();
+            }
         }
     }
 }

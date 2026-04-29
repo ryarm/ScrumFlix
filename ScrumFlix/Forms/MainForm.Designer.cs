@@ -196,7 +196,7 @@
             btnDashboard.Name = "btnDashboard";
             btnDashboard.Size = new Size(190, 87);
             btnDashboard.TabIndex = 13;
-            btnDashboard.Text = "Dashboard";
+            btnDashboard.Text = "Operations Dashboard";
             btnDashboard.UseVisualStyleBackColor = true;
             btnDashboard.Click += btnDashboard_Click;
             // 
@@ -293,6 +293,7 @@
             Controls.Add(btnMovies);
             Name = "MainForm";
             Text = "ScrumFlix";
+            FormClosing += MainForm_FormClosing;
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
             ((System.ComponentModel.ISupportInitialize)PicLogo).EndInit();

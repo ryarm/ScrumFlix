@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
 using ScrumFlix.Data;
 using ScrumFlix.Models;
-using System;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScrumFlix.Forms
 {
@@ -29,6 +24,7 @@ namespace ScrumFlix.Forms
             using var context = new AppDbContext();
 
             var employees = context.Employees
+                .Include(e => e.Location)
                 .OrderBy(e => e.LastName)
                 .ThenBy(e => e.FirstName)
                 .Select(e => new
@@ -40,7 +36,9 @@ namespace ScrumFlix.Forms
                     e.DOB,
                     e.Phone,
                     e.Email,
-                    e.Address
+                    e.Address,
+                    e.PayRate,
+                    Location = e.Location != null ? e.Location.LocationName : ""
                 })
                 .ToList();
 
@@ -79,6 +77,19 @@ namespace ScrumFlix.Forms
                 context.Employees.Add(form.EmployeeRecord);
                 context.SaveChanges();
 
+                context.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "ADD_EMPLOYEE",
+                    TableName = "Employees",
+                    ObjectId = form.EmployeeRecord.EmployeeId,
+                    ActionTime = DateTime.Now,
+                    Description = $"Added employee '{form.EmployeeRecord.FullName}'",
+                    OldValues = null,
+                    NewValues = $"FirstName={form.EmployeeRecord.FirstName}, MiddleName={form.EmployeeRecord.MiddleName}, LastName={form.EmployeeRecord.LastName}, DOB={form.EmployeeRecord.DOB}, Phone={form.EmployeeRecord.Phone}, Email={form.EmployeeRecord.Email}, Address={form.EmployeeRecord.Address}, PayRate={form.EmployeeRecord.PayRate}, LocationId={form.EmployeeRecord.LocationId}"
+                });
+
+                context.SaveChanges();
                 LoadEmployees();
             }
         }
@@ -107,6 +118,16 @@ namespace ScrumFlix.Forms
 
             if (form.ShowDialog() == DialogResult.OK)
             {
+                var oldFirstName = employee.FirstName;
+                var oldMiddleName = employee.MiddleName;
+                var oldLastName = employee.LastName;
+                var oldDOB = employee.DOB;
+                var oldPhone = employee.Phone;
+                var oldEmail = employee.Email;
+                var oldAddress = employee.Address;
+                var oldPayRate = employee.PayRate;
+                var oldLocationId = employee.LocationId;
+
                 employee.FirstName = form.EmployeeRecord.FirstName;
                 employee.MiddleName = form.EmployeeRecord.MiddleName;
                 employee.LastName = form.EmployeeRecord.LastName;
@@ -114,6 +135,20 @@ namespace ScrumFlix.Forms
                 employee.Phone = form.EmployeeRecord.Phone;
                 employee.Email = form.EmployeeRecord.Email;
                 employee.Address = form.EmployeeRecord.Address;
+                employee.PayRate = form.EmployeeRecord.PayRate;
+                employee.LocationId = form.EmployeeRecord.LocationId;
+
+                context.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "UPDATE_EMPLOYEE",
+                    TableName = "Employees",
+                    ObjectId = employee.EmployeeId,
+                    ActionTime = DateTime.Now,
+                    Description = $"Updated employee '{oldFirstName} {oldLastName}'",
+                    OldValues = $"FirstName={oldFirstName}, MiddleName={oldMiddleName}, LastName={oldLastName}, DOB={oldDOB}, Phone={oldPhone}, Email={oldEmail}, Address={oldAddress}, PayRate={oldPayRate}, LocationId={oldLocationId}",
+                    NewValues = $"FirstName={employee.FirstName}, MiddleName={employee.MiddleName}, LastName={employee.LastName}, DOB={employee.DOB}, Phone={employee.Phone}, Email={employee.Email}, Address={employee.Address}, PayRate={employee.PayRate}, LocationId={employee.LocationId}"
+                });
 
                 context.SaveChanges();
                 LoadEmployees();
@@ -151,6 +186,18 @@ namespace ScrumFlix.Forms
 
             try
             {
+                context.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "DELETE_EMPLOYEE",
+                    TableName = "Employees",
+                    ObjectId = employee.EmployeeId,
+                    ActionTime = DateTime.Now,
+                    Description = $"Deleted employee '{employee.FullName}'",
+                    OldValues = $"FirstName={employee.FirstName}, MiddleName={employee.MiddleName}, LastName={employee.LastName}, DOB={employee.DOB}, Phone={employee.Phone}, Email={employee.Email}, Address={employee.Address}, PayRate={employee.PayRate}, LocationId={employee.LocationId}",
+                    NewValues = null
+                });
+
                 context.Employees.Remove(employee);
                 context.SaveChanges();
                 LoadEmployees();

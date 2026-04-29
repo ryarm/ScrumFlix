@@ -40,5 +40,10 @@ namespace ScrumFlix.Forms
             loginForm.Show();
             this.Hide();
         }
+
+        private void EmployeeMenu_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace ScrumFlix.Models
         [MaxLength(50)]
         public string FirstName { get; set; }
         [MaxLength(50)]
-        public string MiddleName { get; set; }
+        public string? MiddleName { get; set; }
         [MaxLength(50)]
         public string LastName { get; set; }
         public DateTime DOB {  get; set; }
@@ -20,7 +20,10 @@ namespace ScrumFlix.Models
         [MaxLength(100)]
         public string Email { get; set; }
         [MaxLength(200)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
+        public decimal PayRate { get; set; }
+        public int LocationId { get; set; }
+        public Location? Location { get; set; }
         public string FullName => $"{FirstName} {LastName}";
     }
 }

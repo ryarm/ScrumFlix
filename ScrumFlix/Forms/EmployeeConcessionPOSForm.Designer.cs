@@ -37,20 +37,22 @@
             btnClearCart = new Button();
             btnCheckout = new Button();
             txtEmail = new TextBox();
+            lblQuantity = new Label();
             ((System.ComponentModel.ISupportInitialize)gridCart).BeginInit();
             SuspendLayout();
             // 
             // comboItems
             // 
             comboItems.FormattingEnabled = true;
-            comboItems.Location = new Point(63, 40);
+            comboItems.Location = new Point(22, 31);
             comboItems.Name = "comboItems";
             comboItems.Size = new Size(158, 29);
             comboItems.TabIndex = 0;
+            comboItems.SelectedIndexChanged += comboItems_SelectedIndexChanged;
             // 
             // txtQuantity
             // 
-            txtQuantity.Location = new Point(278, 40);
+            txtQuantity.Location = new Point(186, 31);
             txtQuantity.Name = "txtQuantity";
             txtQuantity.PlaceholderText = "Quantity";
             txtQuantity.Size = new Size(130, 29);
@@ -58,7 +60,7 @@
             // 
             // btnAddToCart
             // 
-            btnAddToCart.Location = new Point(488, 38);
+            btnAddToCart.Location = new Point(322, 29);
             btnAddToCart.Name = "btnAddToCart";
             btnAddToCart.Size = new Size(98, 30);
             btnAddToCart.TabIndex = 2;
@@ -73,7 +75,7 @@
             gridCart.AllowUserToResizeColumns = false;
             gridCart.AllowUserToResizeRows = false;
             gridCart.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridCart.Location = new Point(59, 128);
+            gridCart.Location = new Point(22, 66);
             gridCart.MultiSelect = false;
             gridCart.Name = "gridCart";
             gridCart.ReadOnly = true;
@@ -85,7 +87,7 @@
             // lblTotal
             // 
             lblTotal.AutoSize = true;
-            lblTotal.Location = new Point(89, 412);
+            lblTotal.Location = new Point(26, 267);
             lblTotal.Name = "lblTotal";
             lblTotal.Size = new Size(40, 21);
             lblTotal.TabIndex = 4;
@@ -93,7 +95,7 @@
             // 
             // btnRemoveItem
             // 
-            btnRemoveItem.Location = new Point(141, 407);
+            btnRemoveItem.Location = new Point(257, 302);
             btnRemoveItem.Name = "btnRemoveItem";
             btnRemoveItem.Size = new Size(183, 30);
             btnRemoveItem.TabIndex = 5;
@@ -103,7 +105,7 @@
             // 
             // btnClearCart
             // 
-            btnClearCart.Location = new Point(330, 407);
+            btnClearCart.Location = new Point(446, 302);
             btnClearCart.Name = "btnClearCart";
             btnClearCart.Size = new Size(98, 30);
             btnClearCart.TabIndex = 6;
@@ -113,7 +115,7 @@
             // 
             // btnCheckout
             // 
-            btnCheckout.Location = new Point(462, 410);
+            btnCheckout.Location = new Point(550, 302);
             btnCheckout.Name = "btnCheckout";
             btnCheckout.Size = new Size(98, 30);
             btnCheckout.TabIndex = 7;
@@ -123,17 +125,27 @@
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(380, 347);
+            txtEmail.Location = new Point(343, 267);
             txtEmail.Name = "txtEmail";
             txtEmail.PlaceholderText = "Customers Email";
-            txtEmail.Size = new Size(130, 29);
+            txtEmail.Size = new Size(305, 29);
             txtEmail.TabIndex = 8;
+            // 
+            // lblQuantity
+            // 
+            lblQuantity.AutoSize = true;
+            lblQuantity.Location = new Point(22, 7);
+            lblQuantity.Name = "lblQuantity";
+            lblQuantity.Size = new Size(54, 21);
+            lblQuantity.TabIndex = 9;
+            lblQuantity.Text = "Stock: ";
             // 
             // EmployeeConcessionPOSForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(797, 556);
+            ClientSize = new Size(671, 350);
+            Controls.Add(lblQuantity);
             Controls.Add(txtEmail);
             Controls.Add(btnCheckout);
             Controls.Add(btnClearCart);
@@ -145,6 +157,7 @@
             Controls.Add(comboItems);
             Name = "EmployeeConcessionPOSForm";
             Text = "EmployeeConcessionPOSForm";
+            FormClosing += EmployeeConcessionPOSForm_FormClosing;
             FormClosed += EmployeeConcessionPOSForm_FormClosed;
             Load += EmployeeConcessionPOSForm_Load;
             ((System.ComponentModel.ISupportInitialize)gridCart).EndInit();
@@ -163,5 +176,6 @@
         private Button btnClearCart;
         private Button btnCheckout;
         private TextBox txtEmail;
+        private Label lblQuantity;
     }
 }

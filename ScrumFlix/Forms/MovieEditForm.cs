@@ -23,12 +23,14 @@ public partial class MovieEditForm : Form
             MovieId = existing.MovieId,
             Title = existing.Title,
             Rating = existing.Rating,
+            Genre = existing.Genre,
             RuntimeMinutes = existing.RuntimeMinutes,
             Description = existing.Description
         };
 
         txtTitle.Text = Movie.Title;
         txtRating.Text = Movie.Rating ?? "";
+        txtGenre.Text = Movie.Genre ?? "";
         numRuntime.Value = Movie.RuntimeMinutes > 0 ? Movie.RuntimeMinutes : 90;
         txtDescription.Text = Movie.Description ?? "";
     }
@@ -58,5 +60,16 @@ public partial class MovieEditForm : Form
 
         string desc = txtDescription.Text.Trim();
         Movie.Description = string.IsNullOrWhiteSpace(desc) ? null : desc;
+
+        string genre = txtGenre.Text.Trim();
+
+        if (genre.Length > 30)
+        {
+            MessageBox.Show("Genre must be 30 characters or less.");
+            DialogResult = DialogResult.None;
+            return;
+        }
+
+        Movie.Genre = string.IsNullOrWhiteSpace(genre) ? null : genre;
     }
 }

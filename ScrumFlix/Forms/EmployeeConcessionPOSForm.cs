@@ -237,6 +237,24 @@ namespace ScrumFlix.Forms
 
             context.SaveChanges();
 
+            string cartSummary = string.Join("; ", cart.Select(c =>
+                $"{c.ItemName} x{c.Quantity} @ {c.UnitPrice:C} = {c.LineTotal:C}"
+            ));
+
+            context.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "SELL_CONCESSION",
+                TableName = "ConcessionSale",
+                ObjectId = sale.ConcessionSaleId,
+                ActionTime = DateTime.Now,
+                Description = $"Sold concessions to '{email}' for {total:C}",
+                OldValues = null,
+                NewValues = $"CustomerEmail={email}, Total={total}, Items={cartSummary}"
+            });
+
+            context.SaveChanges();
+
             try
             {
                 SendReceiptEmail(email, sale, cart);
@@ -296,6 +314,36 @@ namespace ScrumFlix.Forms
         private void EmployeeConcessionPOSForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void comboItems_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboItems.SelectedItem is ConcessionItem item)
+            {
+                lblQuantity.Text = $"Stock: {item.QuantityInStock}";
+            }
+        }
+
+        private void EmployeeConcessionPOSForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Session.UserId != 0)
+            {
+                using var db = new AppDbContext();
+
+                db.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "APP_CLOSE",
+                    TableName = "Users",
+                    ObjectId = Session.UserId,
+                    ActionTime = DateTime.Now,
+                    Description = "User closed the application",
+                    OldValues = null,
+                    NewValues = null
+                });
+
+                db.SaveChanges();
+            }
         }
     }
 }

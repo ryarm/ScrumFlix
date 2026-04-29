@@ -4,13 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ScrumFlix.Data;
 using ScrumFlix.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace ScrumFlix.Forms
 {
@@ -19,6 +15,7 @@ namespace ScrumFlix.Forms
         public LocationForm()
         {
             InitializeComponent();
+            gridLocations.CellClick += gridLocations_CellClick;
         }
 
         private async Task LoadLocationAsync() // Loads data from database
@@ -27,10 +24,11 @@ namespace ScrumFlix.Forms
             var locations = await db.Location
                 .OrderBy(s => s.LocationId)
                 .ToListAsync();
+
             gridLocations.AutoGenerateColumns = true;
             gridLocations.DataSource = locations;
 
-            gridLocations.Columns[gridLocations.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            gridLocations.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private async void LocationForm_Load(object sender, EventArgs e) // When form loads it loads the data from the db
@@ -38,65 +36,121 @@ namespace ScrumFlix.Forms
             await LoadLocationAsync();
         }
 
-        private async void btnAdd_Click(object sender, EventArgs e) // When the add button is clicked it prompts the user for a location name then adds that location to the db
-        {
-            string locationName = Interaction.InputBox(
-                "Enter the new location name:",
-                "Add location"
-            );
-
-            if (!string.IsNullOrEmpty(locationName))
-            {
-                using var db = new AppDbContext();
-
-                var location = new Location
-                {
-                    LocationName = locationName
-                };
-
-                db.Location.Add(location);
-                await db.SaveChangesAsync();
-
-                await LoadLocationAsync();
-            }
-        }
         private Location? SelectedLocation() // When selecting an item in the dataviewgrid this function returns that object
         {
             return gridLocations.CurrentRow?.DataBoundItem as Location;
         }
 
-        private async void btnEdit_Click(object sender, EventArgs e) // When the edit button is clicked it pulls the name from the selected row and updates that locations name in the db
+        private void ClearFields() // Clears textbox inputs after actions
+        {
+            txtName.Text = "";
+            txtAddress.Text = "";
+            chkIsActive.Checked = true;
+        }
+
+        private void gridLocations_CellClick(object? sender, DataGridViewCellEventArgs e) // When a row is clicked it fills the textboxes with that locations data
         {
             var selected = SelectedLocation();
-            if (selected is null) 
-            { 
-                MessageBox.Show("Select a screen first please.");
+            if (selected == null) return;
+
+            txtName.Text = selected.LocationName;
+            txtAddress.Text = selected.LocationAddress ?? "";
+            chkIsActive.Checked = selected.is_active;
+        }
+
+        private async void btnAdd_Click(object sender, EventArgs e) // When the add button is clicked it adds a new location using textbox values
+        {
+            string name = txtName.Text.Trim();
+            string address = txtAddress.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Location name is required.");
                 return;
             }
 
-            string locationName = Interaction.InputBox(
-                "Edit location name:",
-                "Edit Location",
-                selected.LocationName
-            );
+            using var db = new AppDbContext();
 
-            if (!string.IsNullOrEmpty(locationName))
+            var location = new Location
             {
-                using var db = new AppDbContext();
+                LocationName = name,
+                LocationAddress = string.IsNullOrWhiteSpace(address) ? null : address,
+                is_active = chkIsActive.Checked
+            };
 
-                var location = await db.Location.FindAsync(selected.LocationId);
-                if (location == null)
-                    return;
+            db.Location.Add(location);
+            await db.SaveChangesAsync();
 
-                location.LocationName = locationName;
-                
-                await db.SaveChangesAsync();
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_LOCATION",
+                TableName = "Location",
+                ObjectId = location.LocationId,
+                ActionTime = DateTime.Now,
+                Description = $"Added location '{location.LocationName}'",
+                OldValues = null,
+                NewValues = $"LocationName={location.LocationName}, LocationAddress={location.LocationAddress}, is_active={location.is_active}"
+            });
 
-                await LoadLocationAsync();
-            }
+            await db.SaveChangesAsync();
+
+            ClearFields();
+            await LoadLocationAsync();
         }
 
-        private async void btnDelete_Click(object sender, EventArgs e) // When the delete button is clicked it checks to make sure there are no screens attached to the location before removing it from the db
+        private async void btnUpdate_Click(object sender, EventArgs e) // When the update button is clicked it updates the selected locations name/address/active status
+        {
+            var selected = SelectedLocation();
+            if (selected is null)
+            {
+                MessageBox.Show("Select a location first please.");
+                return;
+            }
+
+            string name = txtName.Text.Trim();
+            string address = txtAddress.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Location name is required.");
+                return;
+            }
+
+            using var db = new AppDbContext();
+
+            var location = await db.Location.FindAsync(selected.LocationId);
+            if (location == null) return;
+
+            var oldName = location.LocationName;
+            var oldAddress = location.LocationAddress;
+            var oldActive = location.is_active;
+
+            location.LocationName = name;
+            location.LocationAddress = string.IsNullOrWhiteSpace(address) ? null : address;
+            location.is_active = chkIsActive.Checked;
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_LOCATION",
+                TableName = "Location",
+                ObjectId = location.LocationId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated location '{oldName}'",
+                OldValues = $"LocationName={oldName}, LocationAddress={oldAddress}, is_active={oldActive}",
+                NewValues = $"LocationName={location.LocationName}, LocationAddress={location.LocationAddress}, is_active={location.is_active}"
+            });
+
+            await db.SaveChangesAsync();
+
+            ClearFields();
+            await LoadLocationAsync();
+        }
+
+        private async void btnDelete_Click(object sender, EventArgs e) // When the delete button is clicked it checks to make sure there are no screens attached before removing the location
         {
             var selected = SelectedLocation();
             if (selected is null)
@@ -104,7 +158,9 @@ namespace ScrumFlix.Forms
                 MessageBox.Show("Select a location first please");
                 return;
             }
+
             using var db = new AppDbContext();
+
             // If location has screens won't delete the location
             bool hasScreens = await db.TheaterScreen.AnyAsync(s => s.LocationId == selected.LocationId);
             if (hasScreens)
@@ -125,14 +181,29 @@ namespace ScrumFlix.Forms
             var location = await db.Location.FindAsync(selected.LocationId);
             if (location == null) return;
 
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DELETE_LOCATION",
+                TableName = "Location",
+                ObjectId = location.LocationId,
+                ActionTime = DateTime.Now,
+                Description = $"Deleted location '{location.LocationName}'",
+                OldValues = $"LocationName={location.LocationName}, LocationAddress={location.LocationAddress}, is_active={location.is_active}",
+                NewValues = null
+            });
+
             db.Location.Remove(location);
             await db.SaveChangesAsync();
 
+            ClearFields();
             await LoadLocationAsync();
         }
 
-        private async void btnRefresh_Click(object sender, EventArgs e) // When the refresh button is clicked it refreshes the data in the gridview (in case changes are made to the database while this form is still open on the admin computer)
+        private async void btnRefresh_Click(object sender, EventArgs e) // When the refresh button is clicked it refreshes the data in the gridview
         {
+            ClearFields();
             await LoadLocationAsync();
         }
     }

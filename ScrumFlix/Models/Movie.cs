@@ -13,6 +13,9 @@ public class Movie
 
     [MaxLength(20)]
     public string? Rating { get; set; }
+    
+    [MaxLength(30)]
+    public string? Genre { get; set; }
 
     public int RuntimeMinutes { get; set; }
 

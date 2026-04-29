@@ -45,6 +45,10 @@
             txtAddress = new TextBox();
             btnSubmit = new Button();
             btnCancel = new Button();
+            txtPayRate = new TextBox();
+            label8 = new Label();
+            comboLocation = new ComboBox();
+            label9 = new Label();
             SuspendLayout();
             // 
             // txtFirst
@@ -169,7 +173,7 @@
             // btnSubmit
             // 
             btnSubmit.DialogResult = DialogResult.OK;
-            btnSubmit.Location = new Point(206, 180);
+            btnSubmit.Location = new Point(208, 241);
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Size = new Size(98, 30);
             btnSubmit.TabIndex = 14;
@@ -180,7 +184,7 @@
             // btnCancel
             // 
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnCancel.Location = new Point(310, 180);
+            btnCancel.Location = new Point(312, 241);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(98, 30);
             btnCancel.TabIndex = 15;
@@ -188,11 +192,48 @@
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
             // 
+            // txtPayRate
+            // 
+            txtPayRate.Location = new Point(12, 201);
+            txtPayRate.Name = "txtPayRate";
+            txtPayRate.Size = new Size(170, 29);
+            txtPayRate.TabIndex = 16;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(12, 177);
+            label8.Name = "label8";
+            label8.Size = new Size(69, 21);
+            label8.TabIndex = 17;
+            label8.Text = "Pay Rate";
+            // 
+            // comboLocation
+            // 
+            comboLocation.FormattingEnabled = true;
+            comboLocation.Location = new Point(189, 201);
+            comboLocation.Name = "comboLocation";
+            comboLocation.Size = new Size(221, 29);
+            comboLocation.TabIndex = 18;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(186, 177);
+            label9.Name = "label9";
+            label9.Size = new Size(69, 21);
+            label9.TabIndex = 19;
+            label9.Text = "Location";
+            // 
             // EmployeeEditForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(413, 217);
+            ClientSize = new Size(413, 283);
+            Controls.Add(label9);
+            Controls.Add(comboLocation);
+            Controls.Add(label8);
+            Controls.Add(txtPayRate);
             Controls.Add(btnCancel);
             Controls.Add(btnSubmit);
             Controls.Add(txtAddress);
@@ -234,5 +275,9 @@
         private TextBox txtAddress;
         private Button btnSubmit;
         private Button btnCancel;
+        private TextBox txtPayRate;
+        private Label label8;
+        private ComboBox comboLocation;
+        private Label label9;
     }
 }

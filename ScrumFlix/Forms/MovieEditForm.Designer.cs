@@ -34,6 +34,7 @@
             txtDescription = new TextBox();
             btnOk = new Button();
             btnCancel = new Button();
+            txtGenre = new TextBox();
             ((System.ComponentModel.ISupportInitialize)numRuntime).BeginInit();
             SuspendLayout();
             // 
@@ -50,14 +51,14 @@
             txtRating.Location = new Point(148, 12);
             txtRating.Name = "txtRating";
             txtRating.PlaceholderText = "Enter Rating";
-            txtRating.Size = new Size(130, 29);
+            txtRating.Size = new Size(110, 29);
             txtRating.TabIndex = 1;
             // 
             // numRuntime
             // 
-            numRuntime.Location = new Point(284, 12);
+            numRuntime.Location = new Point(389, 12);
             numRuntime.Name = "numRuntime";
-            numRuntime.Size = new Size(156, 29);
+            numRuntime.Size = new Size(51, 29);
             numRuntime.TabIndex = 2;
             // 
             // txtDescription
@@ -91,11 +92,20 @@
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
+            // txtGenre
+            // 
+            txtGenre.Location = new Point(264, 12);
+            txtGenre.Name = "txtGenre";
+            txtGenre.PlaceholderText = "Enter Genre";
+            txtGenre.Size = new Size(115, 29);
+            txtGenre.TabIndex = 6;
+            // 
             // MovieEditForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(450, 271);
+            Controls.Add(txtGenre);
             Controls.Add(btnCancel);
             Controls.Add(btnOk);
             Controls.Add(txtDescription);
@@ -117,5 +127,6 @@
         private TextBox txtDescription;
         private Button btnOk;
         private Button btnCancel;
+        private TextBox txtGenre;
     }
 }

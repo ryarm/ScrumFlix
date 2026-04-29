@@ -30,9 +30,12 @@
         {
             gridLocations = new DataGridView();
             btnAdd = new Button();
-            btnEdit = new Button();
+            btnUpdate = new Button();
             btnDelete = new Button();
             btnRefresh = new Button();
+            txtName = new TextBox();
+            txtAddress = new TextBox();
+            chkIsActive = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)gridLocations).BeginInit();
             SuspendLayout();
             // 
@@ -45,7 +48,7 @@
             gridLocations.ReadOnly = true;
             gridLocations.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             gridLocations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            gridLocations.Size = new Size(675, 306);
+            gridLocations.Size = new Size(675, 261);
             gridLocations.TabIndex = 0;
             // 
             // btnAdd
@@ -58,15 +61,15 @@
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += btnAdd_Click;
             // 
-            // btnEdit
+            // btnUpdate
             // 
-            btnEdit.Location = new Point(116, 324);
-            btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(98, 30);
-            btnEdit.TabIndex = 2;
-            btnEdit.Text = "Edit";
-            btnEdit.UseVisualStyleBackColor = true;
-            btnEdit.Click += btnEdit_Click;
+            btnUpdate.Location = new Point(116, 324);
+            btnUpdate.Name = "btnUpdate";
+            btnUpdate.Size = new Size(98, 30);
+            btnUpdate.TabIndex = 2;
+            btnUpdate.Text = "Update";
+            btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.Click += btnUpdate_Click;
             // 
             // btnDelete
             // 
@@ -88,14 +91,43 @@
             btnRefresh.UseVisualStyleBackColor = true;
             btnRefresh.Click += btnRefresh_Click;
             // 
+            // txtName
+            // 
+            txtName.Location = new Point(12, 279);
+            txtName.Name = "txtName";
+            txtName.PlaceholderText = "Location Name";
+            txtName.Size = new Size(174, 29);
+            txtName.TabIndex = 5;
+            // 
+            // txtAddress
+            // 
+            txtAddress.Location = new Point(192, 279);
+            txtAddress.Name = "txtAddress";
+            txtAddress.PlaceholderText = "Location Address";
+            txtAddress.Size = new Size(292, 29);
+            txtAddress.TabIndex = 6;
+            // 
+            // chkIsActive
+            // 
+            chkIsActive.AutoSize = true;
+            chkIsActive.Location = new Point(490, 281);
+            chkIsActive.Name = "chkIsActive";
+            chkIsActive.Size = new Size(89, 25);
+            chkIsActive.TabIndex = 7;
+            chkIsActive.Text = "Is Active";
+            chkIsActive.UseVisualStyleBackColor = true;
+            // 
             // LocationForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(699, 366);
+            Controls.Add(chkIsActive);
+            Controls.Add(txtAddress);
+            Controls.Add(txtName);
             Controls.Add(btnRefresh);
             Controls.Add(btnDelete);
-            Controls.Add(btnEdit);
+            Controls.Add(btnUpdate);
             Controls.Add(btnAdd);
             Controls.Add(gridLocations);
             Name = "LocationForm";
@@ -103,14 +135,18 @@
             Load += LocationForm_Load;
             ((System.ComponentModel.ISupportInitialize)gridLocations).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private DataGridView gridLocations;
         private Button btnAdd;
-        private Button btnEdit;
+        private Button btnUpdate;
         private Button btnDelete;
         private Button btnRefresh;
+        private TextBox txtName;
+        private TextBox txtAddress;
+        private CheckBox chkIsActive;
     }
 }

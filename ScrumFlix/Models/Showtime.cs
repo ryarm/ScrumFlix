@@ -16,6 +16,11 @@ public class Showtime
 
     public int Capacity { get; set; } = 50;
 
+    [Range(0, 99999999.99)]
+    public decimal PricePerTicket { get; set; } = 0.00m;
+
+    public bool is_active { get; set; } = true;
+
     public bool SellTicket(int amount)
     {
         if (Capacity - amount < 0)

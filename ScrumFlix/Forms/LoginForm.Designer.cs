@@ -79,6 +79,7 @@
             Controls.Add(LoginLabel);
             Name = "LoginForm";
             Text = "LoginForm";
+            FormClosed += LoginForm_FormClosed;
             ResumeLayout(false);
             PerformLayout();
         }

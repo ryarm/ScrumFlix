@@ -24,6 +24,8 @@ namespace ScrumFlix.Forms
         {
             InitializeComponent();
             LoadData();
+
+            chkIsActive.Checked = true;
         }
         public TheaterScreenEditForm(TheaterScreen existing) : this() // Constructor used when editing an existing screen, copies existing screen data into the forms fields
         {
@@ -32,10 +34,14 @@ namespace ScrumFlix.Forms
                 TheaterScreenId = existing.TheaterScreenId,
                 ScreenName = existing.ScreenName,
                 LocationId = existing.LocationId,
+                Capacity = existing.Capacity,
+                is_active = existing.is_active
             };
 
             screenName.Text = TheaterScreen.ScreenName;
             screenLocation.SelectedValue = TheaterScreen.LocationId;
+            numCapacity.Value = TheaterScreen.Capacity;
+            chkIsActive.Checked = TheaterScreen.is_active;
         }
 
         private void btnOk_Click(object sender, EventArgs e) // Validates the form input and updates the TheaterScreen object before returning to the parent form
@@ -52,6 +58,8 @@ namespace ScrumFlix.Forms
             TheaterScreen.Capacity = (int)numCapacity.Value;
 
             TheaterScreen.LocationId = Convert.ToInt32(screenLocation.SelectedValue);
+
+            TheaterScreen.is_active = chkIsActive.Checked;
         }
     }
 }

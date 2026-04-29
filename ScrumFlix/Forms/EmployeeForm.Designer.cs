@@ -34,7 +34,9 @@
             btnShowAll = new Button();
             btnSell = new Button();
             txtEmail = new TextBox();
+            numQuantity = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)gridMovieShowtimes).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numQuantity).BeginInit();
             SuspendLayout();
             // 
             // gridMovieShowtimes
@@ -89,16 +91,24 @@
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(1207, 688);
+            txtEmail.Location = new Point(1143, 688);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(329, 29);
             txtEmail.TabIndex = 5;
+            // 
+            // numQuantity
+            // 
+            numQuantity.Location = new Point(1478, 689);
+            numQuantity.Name = "numQuantity";
+            numQuantity.Size = new Size(58, 29);
+            numQuantity.TabIndex = 6;
             // 
             // EmployeeForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1729, 806);
+            Controls.Add(numQuantity);
             Controls.Add(txtEmail);
             Controls.Add(btnSell);
             Controls.Add(btnShowAll);
@@ -107,9 +117,11 @@
             Controls.Add(gridMovieShowtimes);
             Name = "EmployeeForm";
             Text = "EmployeeForm";
+            FormClosing += EmployeeForm_FormClosing;
             FormClosed += EmployeeForm_FormClosed;
             Load += EmployeeForm_Load;
             ((System.ComponentModel.ISupportInitialize)gridMovieShowtimes).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numQuantity).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -122,5 +134,6 @@
         private Button btnShowAll;
         private Button btnSell;
         private TextBox txtEmail;
+        private NumericUpDown numQuantity;
     }
 }

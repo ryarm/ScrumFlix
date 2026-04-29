@@ -15,6 +15,7 @@ namespace ScrumFlix.Forms
         {
             InitializeComponent();
             EmployeeRecord = new Employee();
+            LoadLocations();
         }
 
         public EmployeeEditForm(Employee employee)
@@ -22,6 +23,7 @@ namespace ScrumFlix.Forms
             InitializeComponent();
 
             EmployeeRecord = employee;
+            LoadLocations();
 
             txtFirst.Text = employee.FirstName;
             txtMiddle.Text = employee.MiddleName;
@@ -30,6 +32,7 @@ namespace ScrumFlix.Forms
             txtPhone.Text = employee.Phone;
             txtEmail.Text = employee.Email;
             txtAddress.Text = employee.Address;
+            txtPayRate.Text = employee.PayRate.ToString("F2");
         }
 
         private bool IsValidEmail(string email)
@@ -88,6 +91,11 @@ namespace ScrumFlix.Forms
                 MessageBox.Show("That email is already in use.");
                 return;
             }
+            if (!decimal.TryParse(txtPayRate.Text.Trim(), out decimal payRate) || payRate < 0)
+            {
+                MessageBox.Show("Enter a valid pay rate.");
+                return;
+            }
 
             EmployeeRecord.FirstName = first;
             EmployeeRecord.MiddleName = string.IsNullOrWhiteSpace(middle) ? null : middle;
@@ -96,6 +104,8 @@ namespace ScrumFlix.Forms
             EmployeeRecord.Phone = phone;
             EmployeeRecord.Email = email;
             EmployeeRecord.Address = string.IsNullOrWhiteSpace(address) ? null : address;
+            EmployeeRecord.PayRate = payRate;
+            EmployeeRecord.LocationId = Convert.ToInt32(comboLocation.SelectedValue);
 
             DialogResult = DialogResult.OK;
             Close();
@@ -105,6 +115,18 @@ namespace ScrumFlix.Forms
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+        private void LoadLocations()
+        {
+            using var db = new AppDbContext();
+
+            var locations = db.Location
+                .OrderBy(l => l.LocationName)
+                .ToList();
+
+            comboLocation.DisplayMember = "LocationName";
+            comboLocation.ValueMember = "LocationId";
+            comboLocation.DataSource = locations;
         }
     }
 }

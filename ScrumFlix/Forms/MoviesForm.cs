@@ -45,7 +45,22 @@ namespace ScrumFlix.Forms
                 return;
 
             using var db = new AppDbContext();
+
             db.Movies.Add(form.Movie);
+            await db.SaveChangesAsync();
+
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_MOVIE",
+                TableName = "Movies",
+                ObjectId = form.Movie.MovieId,
+                ActionTime = DateTime.Now,
+                Description = $"Added movie '{form.Movie.Title}'",
+                OldValues = null,
+                NewValues = $"Title={form.Movie.Title}, Genre={form.Movie.Genre}, Rating={form.Movie.Rating}, Runtime={form.Movie.RuntimeMinutes}, Description={form.Movie.Description}"
+            });
+
             await db.SaveChangesAsync();
 
             await LoadMoviesAsync();
@@ -78,10 +93,30 @@ namespace ScrumFlix.Forms
             var movie = await db.Movies.FindAsync(selected.MovieId);
             if (movie is null) return;
 
+            var oldTitle = movie.Title;
+            var oldGenre = movie.Genre;
+            var oldRating = movie.Rating;
+            var oldRuntime = movie.RuntimeMinutes;
+            var oldDescription = movie.Description;
+
+
             movie.Title = form.Movie.Title;
+            movie.Genre = form.Movie.Genre;
             movie.Rating = form.Movie.Rating;
             movie.RuntimeMinutes = form.Movie.RuntimeMinutes;
             movie.Description = form.Movie.Description;
+
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_MOVIE",
+                TableName = "Movies",
+                ObjectId = movie.MovieId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated movie '{oldTitle}'",
+                OldValues = $"Title={oldTitle}, Genre={oldGenre}, Rating={oldRating}, Runtime={oldRuntime}, Description={oldDescription}",
+                NewValues = $"Title={movie.Title}, Genre={movie.Genre}, Rating={movie.Rating}, Runtime={movie.RuntimeMinutes}, Description={movie.Description}"
+            });
 
             await db.SaveChangesAsync();
             await LoadMoviesAsync();
@@ -116,6 +151,18 @@ namespace ScrumFlix.Forms
 
             var movie = await db.Movies.FindAsync(selected.MovieId);
             if (movie is null) return;
+
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DELETE_MOVIE",
+                TableName = "Movies",
+                ObjectId = movie.MovieId,
+                ActionTime = DateTime.Now,
+                Description = $"Deleted movie '{movie.Title}'",
+                OldValues = $"Title={movie.Title}, Genre={movie.Genre}, Rating={movie.Rating}, Runtime={movie.RuntimeMinutes}, Description={movie.Description}",
+                NewValues = null
+            });
 
             db.Movies.Remove(movie);
             await db.SaveChangesAsync();

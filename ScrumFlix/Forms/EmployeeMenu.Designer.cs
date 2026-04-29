@@ -73,6 +73,7 @@
             Controls.Add(btnTickets);
             Name = "EmployeeMenu";
             Text = "EmployeeMenu";
+            FormClosed += EmployeeMenu_FormClosed;
             ResumeLayout(false);
         }
 

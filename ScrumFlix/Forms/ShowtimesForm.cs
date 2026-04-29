@@ -3,14 +3,9 @@
 using ScrumFlix.Data;
 using ScrumFlix.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ScrumFlix.Forms
 {
@@ -19,6 +14,10 @@ namespace ScrumFlix.Forms
         public ShowtimesForm()
         {
             InitializeComponent();
+
+            showtimesGrid.CellClick += showtimesGrid_CellClick;
+            chkIsActive.CheckedChanged += chkIsActive_CheckedChanged;
+
             LoadData();
             LoadShowtimes();
         }
@@ -30,7 +29,7 @@ namespace ScrumFlix.Forms
                 .Include(s => s.Location)
                 .OrderBy(s => s.TheaterScreenId)
                 .ToList();
-            
+
             screenCombo.DisplayMember = "ScreenDisplay";
             screenCombo.ValueMember = "TheaterScreenId";
             screenCombo.DataSource = screens;
@@ -65,7 +64,10 @@ namespace ScrumFlix.Forms
                     s.ShowtimeId,
                     MovieTitle = s.Movie!.Title,
                     StartTime = s.StartTime,
-                    EndTime = s.StartTime.AddMinutes(s.Movie!.RuntimeMinutes)
+                    EndTime = s.StartTime.AddMinutes(s.Movie!.RuntimeMinutes),
+                    s.Capacity,
+                    s.PricePerTicket,
+                    s.is_active
                 })
                 .OrderBy(r => r.StartTime)
                 .ToList();
@@ -76,11 +78,29 @@ namespace ScrumFlix.Forms
                 showtimesGrid.Columns["ShowtimeId"].Visible = false;
         }
 
+        private void showtimesGrid_CellClick(object sender, DataGridViewCellEventArgs e) // When a showtime row is clicked it fills the price textbox and active checkbox
+        {
+            if (showtimesGrid.CurrentRow == null)
+                return;
+
+            if (showtimesGrid.CurrentRow.Cells["PricePerTicket"].Value != null)
+                txtPricePerTicket.Text = showtimesGrid.CurrentRow.Cells["PricePerTicket"].Value.ToString();
+
+            if (showtimesGrid.CurrentRow.Cells["is_active"].Value != null)
+                chkIsActive.Checked = Convert.ToBoolean(showtimesGrid.CurrentRow.Cells["is_active"].Value);
+        }
+
         private void AddButton_Click(object sender, EventArgs e) // Adds a new showtime for the selected movie and screen, also makes sure the new showtime doesn't overlap with previous showtimes
         {
             if (screenCombo.SelectedValue is null || movieCombo.SelectedValue is null)
             {
                 MessageBox.Show("Please select a screen and a movie");
+                return;
+            }
+
+            if (!decimal.TryParse(txtPricePerTicket.Text.Trim(), out decimal pricePerTicket) || pricePerTicket < 0)
+            {
+                MessageBox.Show("Please enter a valid ticket price.");
                 return;
             }
 
@@ -92,6 +112,12 @@ namespace ScrumFlix.Forms
 
             var screen = db.TheaterScreen
                 .FirstOrDefault(s => s.TheaterScreenId == screenId);
+
+            if (screen == null)
+            {
+                MessageBox.Show("Selected screen was not found.");
+                return;
+            }
 
             var movie = db.Movies.First(m => m.MovieId == movieId);
             int runtime = movie.RuntimeMinutes;
@@ -122,10 +148,132 @@ namespace ScrumFlix.Forms
                 TheaterScreenId = screenId,
                 MovieId = movieId,
                 StartTime = startTime,
-                Capacity = screen.Capacity
+                Capacity = screen.Capacity,
+                PricePerTicket = pricePerTicket,
+                is_active = chkIsActive.Checked
             };
 
             db.Showtime.Add(showtime);
+            db.SaveChanges();
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "ADD_SHOWTIME",
+                TableName = "Showtime",
+                ObjectId = showtime.ShowtimeId,
+                ActionTime = DateTime.Now,
+                Description = $"Added showtime for '{movie.Title}'",
+                OldValues = null,
+                NewValues = $"MovieId={showtime.MovieId}, TheaterScreenId={showtime.TheaterScreenId}, StartTime={showtime.StartTime}, Capacity={showtime.Capacity}, PricePerTicket={showtime.PricePerTicket}, is_active={showtime.is_active}"
+            });
+
+            db.SaveChanges();
+
+            LoadShowtimes();
+        }
+
+        private void chkIsActive_CheckedChanged(object sender, EventArgs e) // When the active checkbox is changed it updates the selected showtimes active status
+        {
+            if (showtimesGrid.CurrentRow == null)
+                return;
+
+            var cellValue = showtimesGrid.CurrentRow.Cells["ShowtimeId"].Value;
+            if (cellValue == null)
+                return;
+
+            int showtimeId = (int)cellValue;
+
+            using var db = new AppDbContext();
+
+            var showtime = db.Showtime
+                .Include(s => s.Movie)
+                .FirstOrDefault(s => s.ShowtimeId == showtimeId);
+
+            if (showtime == null)
+                return;
+
+            bool oldActive = showtime.is_active;
+
+            if (oldActive == chkIsActive.Checked)
+                return;
+
+            showtime.is_active = chkIsActive.Checked;
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_SHOWTIME_ACTIVE_STATUS",
+                TableName = "Showtime",
+                ObjectId = showtime.ShowtimeId,
+                ActionTime = DateTime.Now,
+                Description = $"Changed active status for showtime '{showtime.Movie?.Title}'",
+                OldValues = $"is_active={oldActive}",
+                NewValues = $"is_active={showtime.is_active}"
+            });
+
+            db.SaveChanges();
+
+            LoadShowtimes();
+        }
+
+        private void btnUpdatePrice_Click(object sender, EventArgs e) // Updates the selected showtimes ticket price
+        {
+            if (showtimesGrid.CurrentRow == null)
+            {
+                MessageBox.Show("Choose a showtime to update.");
+                return;
+            }
+
+            if (!decimal.TryParse(txtPricePerTicket.Text.Trim(), out decimal newPrice) || newPrice < 0)
+            {
+                MessageBox.Show("Please enter a valid ticket price.");
+                return;
+            }
+
+            var cellValue = showtimesGrid.CurrentRow.Cells["ShowtimeId"].Value;
+            if (cellValue == null)
+            {
+                MessageBox.Show("Could not determine the selected showtime.");
+                return;
+            }
+
+            int showtimeId = (int)cellValue;
+
+            using var db = new AppDbContext();
+
+            var showtime = db.Showtime
+                .Include(s => s.Movie)
+                .FirstOrDefault(s => s.ShowtimeId == showtimeId);
+
+            if (showtime == null)
+            {
+                MessageBox.Show("That showtime no longer exists.");
+                LoadShowtimes();
+                return;
+            }
+
+            var oldPrice = showtime.PricePerTicket;
+            var oldActive = showtime.is_active;
+
+            showtime.PricePerTicket = newPrice;
+            showtime.is_active = chkIsActive.Checked;
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "UPDATE_SHOWTIME",
+                TableName = "Showtime",
+                ObjectId = showtime.ShowtimeId,
+                ActionTime = DateTime.Now,
+                Description = $"Updated showtime for '{showtime.Movie?.Title}'",
+                OldValues = $"PricePerTicket={oldPrice}, is_active={oldActive}",
+                NewValues = $"PricePerTicket={showtime.PricePerTicket}, is_active={showtime.is_active}"
+            });
+
             db.SaveChanges();
 
             LoadShowtimes();
@@ -159,13 +307,29 @@ namespace ScrumFlix.Forms
 
             using var db = new AppDbContext();
 
-            var showtime = db.Showtime.FirstOrDefault(s => s.ShowtimeId == showtimeId);
+            var showtime = db.Showtime
+                .Include(s => s.Movie)
+                .FirstOrDefault(s => s.ShowtimeId == showtimeId);
+
             if (showtime == null)
             {
                 MessageBox.Show("That showtime no longer exists.");
                 LoadShowtimes();
                 return;
             }
+
+            // Audit Log
+            db.AuditLog.Add(new AuditLog
+            {
+                UserId = Session.UserId,
+                ActionType = "DELETE_SHOWTIME",
+                TableName = "Showtime",
+                ObjectId = showtime.ShowtimeId,
+                ActionTime = DateTime.Now,
+                Description = $"Deleted showtime for '{showtime.Movie?.Title}'",
+                OldValues = $"MovieId={showtime.MovieId}, TheaterScreenId={showtime.TheaterScreenId}, StartTime={showtime.StartTime}, Capacity={showtime.Capacity}, PricePerTicket={showtime.PricePerTicket}, is_active={showtime.is_active}",
+                NewValues = null
+            });
 
             db.Showtime.Remove(showtime);
             db.SaveChanges();

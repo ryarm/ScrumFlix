@@ -95,7 +95,13 @@ namespace ScrumFlix.Forms
             if (gridMovieShowtimes.CurrentRow == null)
                 return;
 
-            int ticketsToSell = 1;
+            int ticketsToSell = (int)numQuantity.Value;
+
+            if (ticketsToSell <= 0)
+            {
+                MessageBox.Show("Select at least 1 ticket.");
+                return;
+            }
 
             var movieTitle = gridMovieShowtimes.CurrentRow.Cells["Movie"].Value.ToString();
             var startTime = (DateTime)gridMovieShowtimes.CurrentRow.Cells["ShowTime"].Value;
@@ -118,23 +124,35 @@ namespace ScrumFlix.Forms
                 {
                     context.SaveChanges();
 
-                    string code = new Random().Next(100000, 999999).ToString();
+                    var random = new Random();
+                    List<string> ticketCodes = new List<string>();
 
-                    var ticket = new Ticket
+                    decimal price = 0.00m;
+
+                    for (int i = 0; i < ticketsToSell; i++)
                     {
-                        TicketCode = int.Parse(code),
-                        ShowtimeId = showtime.ShowtimeId,
-                        UserAtSale = Session.UserId,
-                        TimeOfSale = DateTime.Now
-                    };
+                        string code = random.Next(100000, 999999).ToString();
+                        ticketCodes.Add(code);
 
-                    context.Ticket.Add(ticket);
+                        var ticket = new Ticket
+                        {
+                            TicketCode = int.Parse(code),
+                            ShowtimeId = showtime.ShowtimeId,
+                            UserAtSale = Session.UserId,
+                            TimeOfSale = DateTime.Now
+                        };
+
+                        context.Ticket.Add(ticket);
+                        price = price + showtime.PricePerTicket;
+                    }
+
                     context.SaveChanges();
 
                     try
                     {
-                        SendEmail(email, code, movieTitle, startTime, location, screen);
-                        MessageBox.Show("Ticket sold and email sent!");
+                        SendEmail(email, ticketCodes, ticketsToSell, movieTitle, startTime, location, screen, price);
+                        MessageBox.Show($"{ticketsToSell} ticket(s) sold and email sent!");
+                        txtEmail.Text = "";
                     }
                     catch (Exception ex)
                     {
@@ -169,7 +187,7 @@ namespace ScrumFlix.Forms
             }
         }
 
-        private void SendEmail(string toEmail, string code, string movie, DateTime showTime, string location, string screen)
+        private void SendEmail(string toEmail, List<string> codes, int ticketCount, string movie, DateTime showTime, string location, string screen, decimal price)
         {
             var fromAddress = new MailAddress("scrumflix@gmail.com");
             var toAddress = new MailAddress(toEmail);
@@ -184,11 +202,19 @@ namespace ScrumFlix.Forms
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
             };
 
+            string codeList = string.Join("\n", codes.Select(c => $"- {c}"));
+
             var message = new MailMessage(fromAddress, toAddress)
             {
-                Subject = "ScrumFlix Theaters Ticket Code",
-                Body = $"Your ticket code is: {code}" +
-                $"\n\nMovie: {movie}\r\nShowtime: {showTime}\r\nLocation: {location}\r\nScreen: {screen}"
+                Subject = "ScrumFlix Theaters Ticket Codes",
+                Body =
+                    $"Tickets sold: {ticketCount}" +
+                    $"\n\nTicket codes:\n{codeList}" +
+                    $"\n\nTotal price: {price}" +
+                    $"\n\nMovie: {movie}" +
+                    $"\nShowtime: {showTime}" +
+                    $"\nLocation: {location}" +
+                    $"\nScreen: {screen}"
             };
 
             smtp.Send(message);
@@ -218,6 +244,28 @@ namespace ScrumFlix.Forms
                     .ToList();
 
                 gridMovieShowtimes.DataSource = filtered;
+            }
+        }
+
+        private void EmployeeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Session.UserId != 0)
+            {
+                using var db = new AppDbContext();
+
+                db.AuditLog.Add(new AuditLog
+                {
+                    UserId = Session.UserId,
+                    ActionType = "APP_CLOSE",
+                    TableName = "Users",
+                    ObjectId = Session.UserId,
+                    ActionTime = DateTime.Now,
+                    Description = "User closed the application",
+                    OldValues = null,
+                    NewValues = null
+                });
+
+                db.SaveChanges();
             }
         }
     }
