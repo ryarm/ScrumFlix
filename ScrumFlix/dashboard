@@ -1,0 +1,191 @@
+from dash import Dash, html, dcc, callback, Output, Input, State
+import dash_ag_grid as dag
+import pandas as pd
+import plotly.express as px
+import dash_bootstrap_components as dbc
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+from datetime import date
+
+# --- DB CONNECTION ---
+DATABASE_URL = "mysql+pymysql://API_1:AVNS_lOsGHObbOCKcVlkygzR@mysql-scrumtheater-scrumflix-theater.b.aivencloud.com:12031/defaultdb"
+
+engine = create_engine(DATABASE_URL, echo=False, pool_recycle=3600)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_session():
+    return SessionLocal()
+
+# --- DATA FETCHING ---
+def get_location_options():
+    session = get_session()
+    try:
+        query = text("SELECT LocationId, LocationName FROM Location WHERE is_active = 1 ORDER BY LocationName ASC")
+        result = session.execute(query)
+        options = [{"label": "All Locations", "value": None}]
+        for row in result:
+            options.append({"label": row.LocationName, "value": row.LocationId})
+        return options
+    except Exception as e:
+        print(f"Error fetching locations: {e}")
+        return [{"label": "All Locations", "value": None}]
+    finally:
+        session.close()
+
+def fetch_ticket_data(location_id=None, start_date="2020-01-01", end_date="2026-12-31"):
+    try:
+        query_str = """
+            SELECT 
+                L.LocationName,
+                DATE(S.StartTime) AS SaleDate,
+                M.Title,
+                COUNT(T.TicketId) AS TicketsSold,
+                SUM(S.PricePerTicket) AS TotalRevenue
+            FROM Ticket T
+            JOIN Showtime S ON T.ShowtimeId = S.ShowtimeId
+            JOIN TheaterScreen TS ON S.TheaterScreenId = TS.TheaterScreenId
+            JOIN Location L ON TS.LocationId = L.LocationId
+            JOIN Movies M ON S.MovieId = M.MovieId
+            WHERE DATE(T.TimeOfSale) BETWEEN :start_date AND :end_date
+        """
+        params = {"start_date": start_date, "end_date": end_date}
+        if location_id is not None:
+            query_str += " AND L.LocationId = :loc_id"
+            params["loc_id"] = location_id
+        query_str += " GROUP BY L.LocationName, DATE(S.StartTime), M.Title ORDER BY SaleDate DESC"
+
+        with engine.connect() as conn:
+            df = pd.read_sql(text(query_str), conn, params=params)
+        if not df.empty:
+            df['SaleDate'] = pd.to_datetime(df['SaleDate'])
+        return df
+    except Exception as e:
+        print(f"Error fetching ticket data: {e}")
+        return pd.DataFrame()
+
+# --- STYLING ---
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "18rem",
+    "padding": "2rem 1rem",
+    "background-color": "#D4AF37",
+}
+
+CONTENT_STYLE = {
+    "margin-left": "20rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
+
+# --- APP SETUP ---
+app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH], suppress_callback_exceptions=True)
+
+sidebar = html.Div(
+    [
+        html.H1("Scrumflix Theaters", className="display-6 text-primary font-weight-bold"),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavLink("Home - Daily Operations", href="/", active="exact"),
+                dbc.NavLink("Theater Revenue Dashboard", href="/operations", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
+
+content = html.Div(id="page-content", style=CONTENT_STYLE)
+
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+# --- PAGE LAYOUTS ---
+def render_operations_layout():
+    return dbc.Container([
+        dcc.Download(id="download-dataframe-csv"),
+        dbc.Row(dbc.Col(html.Div("Theater Revenue Dashboard", className="text-primary fs-3 mb-4"), width=12)),
+        dbc.Row([
+            dbc.Col([
+                html.Label("Select Location:"),
+                dbc.RadioItems(options=get_location_options(), value=None, inline=True, id="location-selector"),
+            ], width=6),
+            dbc.Col([
+                html.Label("Select Date Range:"),
+                dcc.DatePickerRange(
+                    id='date-picker',
+                    min_date_allowed=date(2000, 1, 1),
+                    max_date_allowed=date(2100, 12, 31),
+                    start_date=date(2026, 1, 1),
+                    end_date=date(2026, 12, 31),
+                    className="d-block"
+                ),
+            ], width=4),
+            dbc.Col([
+                html.Label("Actions:"),
+                dbc.Button("Export CSV", id="btn-csv", color="primary", className="w-100"),
+            ], width=2),
+        ], className="mb-4 align-items-end"),
+        dbc.Row([
+            dbc.Col(dag.AgGrid(
+                id="data-grid",
+                columnDefs=[
+                    {"field": "LocationName", "headerName": "Location"},
+                    {"field": "SaleDate", "headerName": "Date"},
+                    {"field": "Title", "headerName": "Movie"},
+                    {"field": "TicketsSold", "headerName": "Tickets"},
+                    {"field": "TotalRevenue", "headerName": "Revenue", "valueFormatter": {"function": "d3.format('($,.2f')(params.value)"}},
+                ],
+                dashGridOptions={"pagination": True},
+                style={"height": "600px"}
+            ), width=8),
+            dbc.Col(dcc.Graph(id="revenue-graph"), width=4),
+        ]),
+    ], fluid=True)
+
+# --- ROUTING CALLBACK ---
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def display_page(pathname):
+    if pathname == "/":
+        return html.Div([
+            html.H1("Welcome to Scrumflix Daily Operations Dashboard"),
+            html.P("This is a snapshot of today's critical operations.")
+        ])
+    elif pathname == "/operations":
+        return render_operations_layout()
+    return html.H1("404: Not Found", className="text-danger")
+
+# --- DASHBOARD LOGIC CALLBACKS ---
+@callback(
+    Output("data-grid", "rowData"),
+    Output("revenue-graph", "figure"),
+    Input("location-selector", "value"),
+    Input("date-picker", "start_date"),
+    Input("date-picker", "end_date"),
+)
+def update_dashboard(selected_location, start, end):
+    df = fetch_ticket_data(selected_location, start, end)
+    if df.empty:
+        return [], px.histogram(title="No Data Found for Selection")
+
+    fig = px.bar(df, x="SaleDate", y="TotalRevenue", color="Title", 
+                 title="Revenue by Movie Over Time", barmode="group")
+    fig.update_xaxes(type='category') 
+    return df.to_dict("records"), fig
+
+@callback(
+    Output("download-dataframe-csv", "data"),
+    Input("btn-csv", "n_clicks"),
+    State("data-grid", "rowData"),
+    prevent_initial_call=True,
+)
+def export_csv(n_clicks, row_data):
+    if n_clicks and row_data:
+        df_to_export = pd.DataFrame(row_data)
+        return dcc.send_data_frame(df_to_export.to_csv, "scrumflix_ticket_report.csv", index=False)
+
+if __name__ == "__main__":
+    app.run(debug=True)
