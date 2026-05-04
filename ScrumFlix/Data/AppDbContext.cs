@@ -20,6 +20,8 @@ public class AppDbContext : DbContext
     public DbSet<ConcessionSale> ConcessionSale => Set<ConcessionSale>();
     public DbSet<ConcessionSaleItem> ConcessionSaleItem => Set<ConcessionSaleItem>();
     public DbSet<AuditLog> AuditLog => Set<AuditLog>();
+    public DbSet<Shift> Shifts => Set<Shift>();
+    public DbSet<ScheduleAssignment> ScheduleAssignments => Set<ScheduleAssignment>();
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -107,7 +107,7 @@
             // 
             PicLogo.BackColor = Color.Transparent;
             PicLogo.Image = (Image)resources.GetObject("PicLogo.Image");
-            PicLogo.Location = new Point(-15, -29);
+            PicLogo.Location = new Point(-21, -12);
             PicLogo.Name = "PicLogo";
             PicLogo.Size = new Size(240, 278);
             PicLogo.SizeMode = PictureBoxSizeMode.Zoom;

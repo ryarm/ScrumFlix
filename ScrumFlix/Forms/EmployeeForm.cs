@@ -92,6 +92,12 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            if ((DateTime)gridMovieShowtimes.CurrentRow.Cells["ShowTime"].Value < DateTime.Now.AddMinutes(-30))
+            {
+                MessageBox.Show("Please select a showtime that did not start more than 30 minutes ago");
+                return;
+            }
+
             if (gridMovieShowtimes.CurrentRow == null)
                 return;
 

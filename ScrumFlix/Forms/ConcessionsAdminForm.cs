@@ -160,7 +160,7 @@ namespace ScrumFlix.Forms
                 TableName = "ConcessionItem",
                 ObjectId = item.ConcessionItemId,
                 ActionTime = DateTime.Now,
-                Description = $"Added concession item '{item.ItemName}'",
+                Description = $"Added concession item '{item.ItemName}', Notes: '{txtNotes.Text}'",
                 OldValues = null,
                 NewValues = $"ItemName={item.ItemName}, Price={item.Price}, QuantityInStock={item.QuantityInStock}, Minimum={item.Minimum}, is_active={item.is_active}"
             });
@@ -170,6 +170,7 @@ namespace ScrumFlix.Forms
             ClearCrudFields();
             LoadItems();
             LoadStockItems();
+            txtNotes.Text = "";
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -223,7 +224,7 @@ namespace ScrumFlix.Forms
                 TableName = "ConcessionItem",
                 ObjectId = item.ConcessionItemId,
                 ActionTime = DateTime.Now,
-                Description = $"Updated concession item '{oldName}'",
+                Description = $"Updated concession item '{oldName}', Notes: '{txtNotes.Text}'",
                 OldValues = $"ItemName={oldName}, Price={oldPrice}, QuantityInStock={oldQuantity}, Minimum={oldMinimum}, is_active={oldActive}",
                 NewValues = $"ItemName={item.ItemName}, Price={item.Price}, QuantityInStock={item.QuantityInStock}, Minimum={item.Minimum}, is_active={item.is_active}"
             });
@@ -232,6 +233,7 @@ namespace ScrumFlix.Forms
 
             LoadItems();
             LoadStockItems();
+            txtNotes.Text = "";
         }
 
         private void btnDeactivate_Click(object sender, EventArgs e)
@@ -349,7 +351,7 @@ namespace ScrumFlix.Forms
                 TableName = "ConcessionItem",
                 ObjectId = item.ConcessionItemId,
                 ActionTime = DateTime.Now,
-                Description = $"Updated stock for concession item '{item.ItemName}'",
+                Description = $"Updated stock for concession item '{item.ItemName}', Notes: '{txtNotes.Text}'",
                 OldValues = $"QuantityInStock={oldQuantity}",
                 NewValues = $"QuantityInStock={item.QuantityInStock}"
             });
@@ -357,6 +359,7 @@ namespace ScrumFlix.Forms
 
             LoadItems();
             LoadStockItems();
+            txtNotes.Text = "";
         }
 
         private void comboConcessionItem_SelectedIndexChanged(object sender, EventArgs e)

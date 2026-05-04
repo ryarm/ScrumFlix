@@ -43,6 +43,9 @@
             btnDecreaseStock = new Button();
             btnSaveStock = new Button();
             btnReactivate = new Button();
+            txtNotes = new TextBox();
+            lblNotes = new Label();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)gridConcessions).BeginInit();
             SuspendLayout();
             // 
@@ -138,7 +141,7 @@
             // comboConcessionItem
             // 
             comboConcessionItem.FormattingEnabled = true;
-            comboConcessionItem.Location = new Point(454, 291);
+            comboConcessionItem.Location = new Point(481, 409);
             comboConcessionItem.Name = "comboConcessionItem";
             comboConcessionItem.Size = new Size(158, 29);
             comboConcessionItem.TabIndex = 9;
@@ -146,7 +149,7 @@
             // 
             // txtStockQuantity
             // 
-            txtStockQuantity.Location = new Point(634, 291);
+            txtStockQuantity.Location = new Point(661, 409);
             txtStockQuantity.Name = "txtStockQuantity";
             txtStockQuantity.PlaceholderText = "Select an item";
             txtStockQuantity.Size = new Size(130, 29);
@@ -154,7 +157,7 @@
             // 
             // btnIncreaseStock
             // 
-            btnIncreaseStock.Location = new Point(682, 255);
+            btnIncreaseStock.Location = new Point(709, 373);
             btnIncreaseStock.Name = "btnIncreaseStock";
             btnIncreaseStock.Size = new Size(32, 30);
             btnIncreaseStock.TabIndex = 11;
@@ -164,7 +167,7 @@
             // 
             // btnDecreaseStock
             // 
-            btnDecreaseStock.Location = new Point(682, 326);
+            btnDecreaseStock.Location = new Point(709, 444);
             btnDecreaseStock.Name = "btnDecreaseStock";
             btnDecreaseStock.Size = new Size(32, 30);
             btnDecreaseStock.TabIndex = 12;
@@ -174,7 +177,7 @@
             // 
             // btnSaveStock
             // 
-            btnSaveStock.Location = new Point(553, 367);
+            btnSaveStock.Location = new Point(580, 485);
             btnSaveStock.Name = "btnSaveStock";
             btnSaveStock.Size = new Size(98, 30);
             btnSaveStock.TabIndex = 13;
@@ -192,11 +195,41 @@
             btnReactivate.UseVisualStyleBackColor = true;
             btnReactivate.Click += btnReactivate_Click;
             // 
+            // txtNotes
+            // 
+            txtNotes.Location = new Point(26, 450);
+            txtNotes.Multiline = true;
+            txtNotes.Name = "txtNotes";
+            txtNotes.Size = new Size(335, 135);
+            txtNotes.TabIndex = 15;
+            // 
+            // lblNotes
+            // 
+            lblNotes.AutoSize = true;
+            lblNotes.Location = new Point(26, 426);
+            lblNotes.Name = "lblNotes";
+            lblNotes.Size = new Size(54, 21);
+            lblNotes.TabIndex = 16;
+            lblNotes.Text = "Notes:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 17.855999F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(501, 316);
+            label2.Name = "label2";
+            label2.Size = new Size(256, 42);
+            label2.TabIndex = 17;
+            label2.Text = "Quick Stock Edit";
+            // 
             // ConcessionsAdminForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(862, 459);
+            ClientSize = new Size(862, 606);
+            Controls.Add(label2);
+            Controls.Add(lblNotes);
+            Controls.Add(txtNotes);
             Controls.Add(btnReactivate);
             Controls.Add(btnSaveStock);
             Controls.Add(btnDecreaseStock);
@@ -237,5 +270,8 @@
         private Button btnDecreaseStock;
         private Button btnSaveStock;
         private Button btnReactivate;
+        private TextBox txtNotes;
+        private Label lblNotes;
+        private Label label2;
     }
 }
