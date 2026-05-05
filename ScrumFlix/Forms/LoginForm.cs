@@ -43,7 +43,7 @@ namespace ScrumFlix.Forms
                         Session.UserName = user.UserName;
                         Session.RoleId = user.RoleId;
 
-                        if (user.RoleId == 1 || user.RoleId == 2)
+                        if (user.RoleId == 1)
                         {
                             db.AuditLog.Add(new AuditLog
                             {
@@ -60,6 +60,25 @@ namespace ScrumFlix.Forms
                             db.SaveChanges();
                             MainForm mainForm = new MainForm();
                             mainForm.Show();
+                            this.Hide();
+                        }
+                        else if (user.RoleId == 2)
+                        {
+                            db.AuditLog.Add(new AuditLog
+                            {
+                                UserId = user.UserId,
+                                ActionType = "LOGIN",
+                                TableName = "Users",
+                                ObjectId = user.UserId,
+                                ActionTime = DateTime.Now,
+                                Description = $"User '{user.UserName}' logged in",
+                                OldValues = null,
+                                NewValues = null
+                            });
+
+                            db.SaveChanges();
+                            ManagerForm ManagerForm = new ManagerForm();
+                            ManagerForm.Show();
                             this.Hide();
                         }
                         else if (user.RoleId == 3)
