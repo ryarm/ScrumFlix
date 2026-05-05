@@ -148,7 +148,8 @@ namespace ScrumFlix
 
         private void btnBackupRestore_Click(object sender, EventArgs e)
         {
-
+            using var f = new BackupRestoreForm();
+            f.ShowDialog();
         }
 
         private void btnPOS_Click(object sender, EventArgs e)

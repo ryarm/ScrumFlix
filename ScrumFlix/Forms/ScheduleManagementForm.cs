@@ -651,6 +651,20 @@ namespace ScrumFlix.Forms
                 return;
             }
 
+            bool hasOverlap = db.ScheduleAssignments
+                .Include(a => a.Shift)
+                .Any(a =>
+                    a.UserId == user.UserId &&
+                    shift.StartTime < a.Shift!.EndTime &&
+                    a.Shift.StartTime < shift.EndTime
+                );
+
+            if (hasOverlap)
+            {
+                MessageBox.Show("This user already has an overlapping schedule assignment.");
+                return;
+            }
+
             int? showtimeId = null;
 
             if (comboShowtime.SelectedItem is ShowtimeComboItem selectedShowtime)
@@ -661,7 +675,7 @@ namespace ScrumFlix.Forms
             var assignment = new ScheduleAssignment
             {
                 AssignmentName = assignmentName,
-                UserId = user.EmployeeId,
+                UserId = user.UserId,
                 ShiftId = shift.ShiftId,
                 ShowtimeId = showtimeId
             };
@@ -678,7 +692,7 @@ namespace ScrumFlix.Forms
                 ActionTime = DateTime.Now,
                 Description = $"Added schedule assignment '{assignment.AssignmentName}'",
                 OldValues = null,
-                NewValues = $"EmployeeId={assignment.UserId}, ShiftId={assignment.ShiftId}, ShowtimeId={assignment.ShowtimeId}"
+                NewValues = $"UserId={assignment.UserId}, ShiftId={assignment.ShiftId}, ShowtimeId={assignment.ShowtimeId}"
             });
 
             db.SaveChanges();
@@ -736,6 +750,21 @@ namespace ScrumFlix.Forms
             if (user.RoleId != shift.RoleId)
             {
                 MessageBox.Show("This user does not have the same role as the selected shift.");
+                return;
+            }
+
+            bool hasOverlap = db.ScheduleAssignments
+                .Include(a => a.Shift)
+                .Any(a =>
+                    a.UserId == user.UserId &&
+                    a.AssignmentId != assignment.AssignmentId &&
+                    shift.StartTime < a.Shift!.EndTime &&
+                    a.Shift.StartTime < shift.EndTime
+                );
+
+            if (hasOverlap)
+            {
+                MessageBox.Show("This user already has an overlapping schedule assignment.");
                 return;
             }
 
