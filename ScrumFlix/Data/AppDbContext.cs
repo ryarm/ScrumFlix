@@ -22,6 +22,11 @@ public class AppDbContext : DbContext
     public DbSet<AuditLog> AuditLog => Set<AuditLog>();
     public DbSet<Shift> Shifts => Set<Shift>();
     public DbSet<ScheduleAssignment> ScheduleAssignments => Set<ScheduleAssignment>();
+    public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
+    public DbSet<PayPeriod> PayPeriods => Set<PayPeriod>();
+    public DbSet<Timesheet> Timesheets => Set<Timesheet>();
+    public DbSet<Payroll> Payrolls => Set<Payroll>();
+    public DbSet<PayStub> PayStubs => Set<PayStub>();
 
     /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

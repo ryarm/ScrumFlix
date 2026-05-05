@@ -163,7 +163,8 @@ namespace ScrumFlix
 
         private void btnPayroll_Click(object sender, EventArgs e)
         {
-
+            using var f = new PayrollManagementForm();
+            f.ShowDialog();
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
