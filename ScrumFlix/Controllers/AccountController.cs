@@ -73,9 +73,9 @@ public sealed class AccountController : Controller
             return activeRoleId switch
             {
                 1 => RedirectToAction("AdminDashboard", "AdminHome", new { area = "Admin" }),
-                2 => RedirectToAction("Index", "Schedule", new { area = "Admin" }),
-                // TODO Phase 4: Employee area scaffold — RoleId 3 → Employee home
-                _ => RedirectToAction("HomeDashboard", "Home")
+                2 => RedirectToAction("Index",          "Schedule",      new { area = "Admin" }),
+                3 => RedirectToAction("Index",          "EmployeeHome",  new { area = "Employee" }),
+                _ => RedirectToAction("HomeDashboard",  "Home")
             };
         }
 
@@ -125,11 +125,10 @@ public sealed class AccountController : Controller
                     // Mirror of StaffControllerBase.StaffHome() — keep in sync.
                     return roleId switch
                     {
-                        1 => RedirectToAction("AdminDashboard", "AdminHome", new { area = "Admin" }),
-                        2 => RedirectToAction("Index", "Schedule", new { area = "Admin" }),
-                        // TODO Phase 4: Employee area scaffold — change to
-                        //   RedirectToAction("Index", "EmployeeHome", new { area = "Employee" })
-                        _ => RedirectToAction("HomeDashboard", "Home", new { area = "" })
+                        1 => RedirectToAction("AdminDashboard", "AdminHome",     new { area = "Admin" }),
+                        2 => RedirectToAction("Index",          "Schedule",      new { area = "Admin" }),
+                        3 => RedirectToAction("Index",          "EmployeeHome",  new { area = "Employee" }),
+                        _ => RedirectToAction("HomeDashboard",  "Home",          new { area = "" })
                     };
                 }
 

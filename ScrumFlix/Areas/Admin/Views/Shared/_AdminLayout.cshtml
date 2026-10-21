@@ -49,15 +49,18 @@
         _ => "bi-person"
     };
     // Brand link — role-appropriate landing page (mirror of
-    // StaffControllerBase.StaffHome(); keep in sync):
-    //   Admin   → Admin Dashboard (RoleGuard(1))
-    //   Manager → Schedule Index  (RoleGuard(2))
-    //   Other   → consumer HomeDashboard (TODO Phase 4: Employee home)
+    // StaffControllerBase.StaffHome() and AccountController login switch — keep all three in sync
+    // when a new role/area mapping is added:
+    //   Admin    (1) → Admin Dashboard      (RoleGuard(1))
+    //   Manager  (2) → Schedule Index       (RoleGuard(2))
+    //   Employee (3) → Employee/EmployeeHome/Index (Phase 4)
+    //   Other        → consumer HomeDashboard
     var brandHref = roleId switch
     {
-        1 => Url.Action("AdminDashboard", "AdminHome", new { area = "Admin" }),
-        2 => Url.Action("Index", "Schedule", new { area = "Admin" }),
-        _ => Url.Action("HomeDashboard", "Home", new { area = "" })
+        1 => Url.Action("AdminDashboard", "AdminHome",    new { area = "Admin" }),
+        2 => Url.Action("Index",          "Schedule",     new { area = "Admin" }),
+        3 => Url.Action("Index",          "EmployeeHome", new { area = "Employee" }),
+        _ => Url.Action("HomeDashboard",  "Home",         new { area = "" })
     };
 }
 

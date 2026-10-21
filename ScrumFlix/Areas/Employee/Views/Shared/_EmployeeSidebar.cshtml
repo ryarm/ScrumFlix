@@ -1,0 +1,110 @@
+@*
+ * Partial: Areas/Employee/Views/Shared/_EmployeeSidebar.cshtml
+ * Persistent Employee portal sidebar.  Auto-hides on narrow screens with the
+ * same toggle tab used by _AdminSidebar.  Loaded by _EmployeeLayout via
+ * Html.PartialAsync — never included in the layout Scripts section.
+ *
+ * Requires:  LayoutViewModel in HttpContext.Items["LayoutViewModel"]
+ *            (populated by StaffControllerBase.OnActionExecuted)
+ *
+ * Role:      RoleId 3 (Employee) — the only role that lands on the Employee
+ *            Portal.  Admin (1) and Manager (2) can access Employee pages via
+ *            RoleGuard(3) but will not normally navigate here; if they do, their
+ *            role badge in the topbar still links them back to their own portal.
+ *
+ * Navigation sections (Phase 4 scaffold):
+ *   • Home          — Employee/EmployeeHome/Index  (live)
+ *   • MY WORK       — Schedule (Phase 6), Time Tracking (Phase 5) [disabled]
+ *   • PAYROLL       — Pay Stubs (Phase 8) [disabled]
+ *   • ACCOUNT       — Change Password, Log Out
+ *
+ * DISABLED LINKS: future-phase items are rendered as <span> with the
+ * "sf-admin-nav-link sf-admin-nav-link--disabled" modifier so they appear
+ * in the sidebar but are not clickable.  Remove the disabled class and add
+ * asp-area/asp-controller/asp-action when each phase ships.
+ *
+ * sf-admin-sidebar.js is loaded ONCE in _EmployeeLayout (not here) to avoid
+ * the double-load present in _AdminSidebar.  The sidebar collapse/toggle
+ * behaviour is driven entirely by that script.
+ *@
+@{
+    var lvm    = Context.Items["LayoutViewModel"] as ScrumFlix.ViewModels.LayoutViewModel
+                 ?? new ScrumFlix.ViewModels.LayoutViewModel();
+    var roleId = lvm.RoleId ?? 99;
+
+    // Active-link helper — highlights the current controller+action pair.
+    var ctrl   = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString()     ?? "";
+    string Nav(string c, string a) =>
+        ctrl.Equals(c,  StringComparison.OrdinalIgnoreCase) &&
+        action.Equals(a, StringComparison.OrdinalIgnoreCase)
+            ? "sf-admin-nav-link active"
+            : "sf-admin-nav-link";
+}
+
+<aside id="sf-admin-sidebar" class="sf-admin-sidebar" aria-label="Employee portal navigation">
+    <nav aria-label="Employee portal sections">
+
+        @* ── Home ───────────────────────────────────────────────────────── *@
+        <a asp-area="Employee" asp-controller="EmployeeHome" asp-action="Index"
+           class="@Nav("EmployeeHome", "Index")">
+            <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>My Dashboard
+        </a>
+
+        @* ── My Work ─────────────────────────────────────────────────────── *@
+        <div class="sf-divider mx-3 my-2" aria-hidden="true"></div>
+        <p class="sf-admin-nav-section-label px-3 mb-1">MY WORK</p>
+
+        @* Phase 6: Schedule View — disabled until Employee/Schedule/Index ships *@
+        <span class="sf-admin-nav-link sf-admin-nav-link--disabled"
+              title="Coming in Phase 6"
+              aria-disabled="true">
+            <i class="bi bi-calendar3 me-2" aria-hidden="true"></i>My Schedule
+            <span class="badge bg-secondary ms-auto" style="font-size:.65rem;">Soon</span>
+        </span>
+
+        @* Phase 5: Time Tracking — disabled until Employee/TimeTracking/ClockIn ships *@
+        <span class="sf-admin-nav-link sf-admin-nav-link--disabled"
+              title="Coming in Phase 5"
+              aria-disabled="true">
+            <i class="bi bi-clock me-2" aria-hidden="true"></i>Time Tracking
+            <span class="badge bg-secondary ms-auto" style="font-size:.65rem;">Soon</span>
+        </span>
+
+        @* ── Payroll ─────────────────────────────────────────────────────── *@
+        <div class="sf-divider mx-3 my-2" aria-hidden="true"></div>
+        <p class="sf-admin-nav-section-label px-3 mb-1">PAYROLL</p>
+
+        @* Phase 8: Pay Stubs — disabled until Employee/Paystubs/Index ships *@
+        <span class="sf-admin-nav-link sf-admin-nav-link--disabled"
+              title="Coming in Phase 8"
+              aria-disabled="true">
+            <i class="bi bi-receipt me-2" aria-hidden="true"></i>Pay Stubs
+            <span class="badge bg-secondary ms-auto" style="font-size:.65rem;">Soon</span>
+        </span>
+
+        @* ── Account ─────────────────────────────────────────────────────── *@
+        <div class="sf-divider mx-3 my-2" aria-hidden="true"></div>
+        <p class="sf-admin-nav-section-label px-3 mb-1">ACCOUNT</p>
+
+        <a href="@Url.Action("ChangePassword", "Account", new { area = "" })"
+           class="sf-admin-nav-link">
+            <i class="bi bi-key me-2" aria-hidden="true"></i>Change Password
+        </a>
+        <a href="@Url.Action("Logout", "Account", new { area = "" })"
+           class="sf-admin-nav-link sf-admin-nav-link--danger">
+            <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
+        </a>
+
+    </nav>
+</aside>
+
+@* Toggle tab — must be AFTER <aside> so the CSS '+' adjacent-sibling selector works *@
+<button id="sf-sidebar-toggle"
+        class="sf-sidebar-toggle-tab"
+        aria-label="Toggle navigation sidebar"
+        aria-expanded="true"
+        aria-controls="sf-admin-sidebar"
+        title="Toggle sidebar">
+    <i class="bi bi-layout-sidebar" aria-hidden="true"></i>
+</button>

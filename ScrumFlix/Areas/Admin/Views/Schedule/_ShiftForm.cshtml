@@ -2,13 +2,23 @@
  * Partial: _ShiftForm.cshtml
  * FIX RZ1031: <option selected> uses asp-* tag helpers, not inline C# ternary in attributes.
  * FIX: RoleId and LocationId bind correctly (no [BindNever]). EndTime > StartTime validated.
+ *
+ * FIX: Removed <script src="~/js/sf-shift-form.js"> from this partial.
+ *      HTMX does not re-execute external script tags in swapped content — the
+ *      script was silently dying on every edit-form load. It now lives in
+ *      Index.cshtml's @section Scripts where it executes once on page load and
+ *      remains active for all subsequent HTMX swaps.
+ *
+ * FIX: postUrl now uses Url.Action() instead of hardcoded string literals.
  *@
 @model ScrumFlix.Areas.Admin.ViewModels.ShiftFormViewModel
 @{
-    bool isEdit      = Model.ShiftId > 0;
-    string postUrl   = isEdit ? "/Admin/Schedule/UpdateShift" : "/Admin/Schedule/AddShift";
-    string btnIcon   = isEdit ? "bi-pencil" : "bi-plus-lg";
-    string btnLabel  = isEdit ? "Update Shift" : "Add Shift";
+    bool   isEdit   = Model.ShiftId > 0;
+    string postUrl  = isEdit
+        ? Url.Action("UpdateShift", "Schedule", new { area = "Admin" })!
+        : Url.Action("AddShift",    "Schedule", new { area = "Admin" })!;
+    string btnIcon  = isEdit ? "bi-pencil"    : "bi-plus-lg";
+    string btnLabel = isEdit ? "Update Shift" : "Add Shift";
 }
 
 <form id="shift-form" method="post" action="@postUrl"
@@ -102,4 +112,5 @@
     </div>
 </form>
 
-<script src="~/js/sf-shift-form.js"></script>
+@* sf-shift-form.js is intentionally NOT loaded here.
+   See Index.cshtml @section Scripts — it lives there so HTMX swaps don't kill it. *@

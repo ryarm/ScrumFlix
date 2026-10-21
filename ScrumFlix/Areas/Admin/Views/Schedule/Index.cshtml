@@ -4,12 +4,22 @@
  *              Accessible to Admin (RoleId 1) and Manager (RoleId 2) via RoleGuard(2).
  *              Uses HTMX for partial refreshes and SignalR for live cross-client updates.
  *              All links stay within the Admin area — no customer portal crossover.
+ *
+ * FIX: HTMX was missing from @section Scripts — all hx-post forms were falling back
+ *      to plain HTML action= submission, causing the controller's PartialView responses
+ *      to render as bare HTML pages. HTMX is now loaded first in the Scripts section.
+ *
+ * FIX: sf-shift-form.js moved here from inside _ShiftForm.cshtml partial — HTMX does
+ *      not re-execute external <script src> tags in swapped content.
+ *
+ * FIX: Gantt selector hx-get values converted from hardcoded strings to Url.Action().
  *@
 @model ScrumFlix.Areas.Admin.ViewModels.ScheduleIndexViewModel
 @using ScrumFlix.Areas.Admin.ViewModels
 @{
     ViewData["Title"] = "Schedule Management";
 
+    var ganttUrl       = Url.Action("ScheduleVisual", "Schedule", new { area = "Admin" });
 }
 
 <div class="sf-page-header">
@@ -89,7 +99,7 @@
                 <label for="gantt-location" class="form-label sf-label">Location</label>
                 <select id="gantt-location" name="locationId"
                         class="form-select sf-input"
-                        hx-get="/Admin/Schedule/ScheduleVisual"
+                        hx-get="@ganttUrl"
                         hx-include="[name='locationId'],[name='year'],[name='month']"
                         hx-target="#gantt-container"
                         hx-trigger="change">
@@ -110,7 +120,7 @@
                 <label for="gantt-month" class="form-label sf-label">Month</label>
                 <select id="gantt-month" name="month"
                         class="form-select sf-input"
-                        hx-get="/Admin/Schedule/ScheduleVisual"
+                        hx-get="@ganttUrl"
                         hx-include="[name='locationId'],[name='year'],[name='month']"
                         hx-target="#gantt-container"
                         hx-trigger="change">
@@ -170,8 +180,21 @@
 
 </div>
 
-@* ── SignalR live-refresh client ─────────────────────────────────────────── *@
+@* ── SignalR live-refresh client + HTMX ─────────────────────────────────── *@
 @section Scripts {
-<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
-<script src="~/js/sf-schedule.js"></script>
+    @* HTMX — MUST be first. Without this, all hx-post forms fall back to plain
+       HTML action= submission; the controller PartialView responses then render
+       as bare HTML fragments ("a different page").
+       Version must match the Htmx NuGet package installed in the project.
+       TODO: move to _AdminLayout globally to prevent this per-page omission recurring. *@
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.9.12/dist/htmx.min.js"></script>
+
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+
+    @* sf-shift-form.js — moved here from _ShiftForm.cshtml partial.
+       HTMX does not re-execute external <script src> tags in swapped content,
+       so the script was silently dying every time the edit form was loaded via HTMX. *@
+    <script src="~/js/sf-shift-form.js" asp-append-version="true"></script>
+
+    <script src="~/js/sf-schedule.js" asp-append-version="true"></script>
 }

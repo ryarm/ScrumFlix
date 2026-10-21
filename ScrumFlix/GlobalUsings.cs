@@ -31,6 +31,7 @@ global using Microsoft.Extensions.Logging;
 
 // ── ScrumFlix application namespaces ─────────────────────────────────────────
 global using ScrumFlix.Areas.Admin.ViewModels;
+global using ScrumFlix.Areas.Employee.ViewModels;
 global using ScrumFlix.Controllers;
 global using ScrumFlix.Data;
 global using ScrumFlix.Domain;

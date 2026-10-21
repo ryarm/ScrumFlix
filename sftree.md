@@ -1,0 +1,483 @@
+Folder PATH listing for volume Windows
+Volume serial number is 087D-57E0
+C:.
+³   .gitattributes
+³   .gitignore
+³   PHASE_4_3_CHANGES.md
+³   ScrumFlix.slnx
+³   sftree.md
+³   
+ÃÄÄÄ.github
+³   ³   copilot-instructions.md
+³   ³   
+³   ÀÄÄÄworkflows
+³           db-deploy.yml
+³           dotnet-ci.yml
+³           
+ÃÄÄÄScrumFlix
+³   ³   appsettings.Development.json
+³   ³   appsettings.json
+³   ³   dotnet-tools.json
+³   ³   GlobalUsings.cs
+³   ³   libman.json
+³   ³   Program.cs
+³   ³   ScrumFlix.csproj
+³   ³   ScrumFlix.csproj.user
+³   ³   ScrumFlix.IntegrationTests.csproj
+³   ³   ScrumFlix.Tests.csproj
+³   ³   sixlabors.lic
+³   ³   web.config
+³   ³   web.Production.config
+³   ³   
+³   ÃÄÄÄAreas
+³   ³   ÃÄÄÄAdmin
+³   ³   ³   ÃÄÄÄControllers
+³   ³   ³   ³       AdminBackupController.cs
+³   ³   ³   ³       AdminHomeController.cs
+³   ³   ³   ³       AdminManageController.cs
+³   ³   ³   ³       ConcessionsController.cs
+³   ³   ³   ³       MoviesController.cs
+³   ³   ³   ³       ScheduleController.cs
+³   ³   ³   ³       
+³   ³   ³   ÃÄÄÄViewModels
+³   ³   ³   ³       AdminDashboardViewModel.cs
+³   ³   ³   ³       AdminManageViewModels.cs
+³   ³   ³   ³       AdminMoviesViewModels.cs
+³   ³   ³   ³       AssignmentFormViewModel.cs
+³   ³   ³   ³       AssignmentRowViewModel.cs
+³   ³   ³   ³       BackupResultPanelViewModel.cs
+³   ³   ³   ³       BackupViewModel.cs
+³   ³   ³   ³       GanttBarViewModel.cs
+³   ³   ³   ³       GanttDayViewModel.cs
+³   ³   ³   ³       GanttViewModel.cs
+³   ³   ³   ³       ScheduleIndexViewModel.cs
+³   ³   ³   ³       ShiftFormViewModel.cs
+³   ³   ³   ³       ShiftRowViewModel.cs
+³   ³   ³   ³       TmdbSyncPageViewModel.cs
+³   ³   ³   ³       TmdbSyncViewModel.cs
+³   ³   ³   ³       
+³   ³   ³   ÀÄÄÄViews
+³   ³   ³       ³   _ViewImports.cshtml
+³   ³   ³       ³   _ViewStart.cshtml
+³   ³   ³       ³   
+³   ³   ³       ÃÄÄÄAdminBackup
+³   ³   ³       ³       Backup.cshtml
+³   ³   ³       ³       _BackupResultPanelPartial.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÃÄÄÄAdminHome
+³   ³   ³       ³       AdminDashboard.cshtml
+³   ³   ³       ³       TmdbSyncPage.cshtml
+³   ³   ³       ³       _TmdbSyncStatsPartial.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÃÄÄÄAdminManage
+³   ³   ³       ³       ConcessionCreate.cshtml
+³   ³   ³       ³       ConcessionEdit.cshtml
+³   ³   ³       ³       ConcessionRestock.cshtml
+³   ³   ³       ³       Concessions.cshtml
+³   ³   ³       ³       Exports.cshtml
+³   ³   ³       ³       LocationCreate.cshtml
+³   ³   ³       ³       LocationEdit.cshtml
+³   ³   ³       ³       Locations.cshtml
+³   ³   ³       ³       ScreenCreate.cshtml
+³   ³   ³       ³       ScreenEdit.cshtml
+³   ³   ³       ³       Screens.cshtml
+³   ³   ³       ³       ShowtimeCreate.cshtml
+³   ³   ³       ³       ShowtimeEdit.cshtml
+³   ³   ³       ³       Showtimes.cshtml
+³   ³   ³       ³       UserCreate.cshtml
+³   ³   ³       ³       UserEdit.cshtml
+³   ³   ³       ³       Users.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÃÄÄÄConcessions
+³   ³   ³       ³       ConcessionCreate.cshtml
+³   ³   ³       ³       ConcessionEdit.cshtml
+³   ³   ³       ³       ConcessionRestock.cshtml
+³   ³   ³       ³       Concessions.cshtml
+³   ³   ³       ³       ConcessionsCatalog.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÃÄÄÄMovies
+³   ³   ³       ³       MovieCatalog.cshtml
+³   ³   ³       ³       MovieCreate.cshtml
+³   ³   ³       ³       MovieEdit.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÃÄÄÄSchedule
+³   ³   ³       ³       Index.cshtml
+³   ³   ³       ³       Schedule_Index.cshtml
+³   ³   ³       ³       _AssignmentForm.cshtml
+³   ³   ³       ³       _AssignmentsGrid.cshtml
+³   ³   ³       ³       _ScheduleVisual.cshtml
+³   ³   ³       ³       _ShiftForm.cshtml
+³   ³   ³       ³       _ShiftsGrid.cshtml
+³   ³   ³       ³       
+³   ³   ³       ÀÄÄÄShared
+³   ³   ³               _AdminLayout.cshtml
+³   ³   ³               _AdminSidebar.cshtml
+³   ³   ³               
+³   ³   ÀÄÄÄEmployee
+³   ³       ÃÄÄÄControllers
+³   ³       ³       EmployeeHomeController.cs
+³   ³       ³       
+³   ³       ÃÄÄÄViewModels
+³   ³       ³       EmployeeDashboardViewModel.cs
+³   ³       ³       
+³   ³       ÀÄÄÄViews
+³   ³           ³   _ViewImports.cshtml
+³   ³           ³   _ViewStart.cshtml
+³   ³           ³   
+³   ³           ÃÄÄÄEmployeeHome
+³   ³           ³       Index.cshtml
+³   ³           ³       
+³   ³           ÀÄÄÄShared
+³   ³                   _EmployeeLayout.cshtml
+³   ³                   _EmployeeSidebar.cshtml
+³   ³                   
+³   ÃÄÄÄbin
+³   ³   ÀÄÄÄDebug
+³   ³       ÀÄÄÄnet10.0
+³   ÃÄÄÄControllers
+³   ³       AccountController.cs
+³   ³       CartController.cs
+³   ³       ConcessionsController.cs
+³   ³       ConsumerControllerBase.cs
+³   ³       HomeController.cs
+³   ³       MoviesController.cs
+³   ³       ShowtimesController.cs
+³   ³       StaffControllerBase.cs
+³   ³       TmdbImageController.cs
+³   ³       
+³   ÃÄÄÄData
+³   ³       AppDbContext.cs
+³   ³       CartCountFilter.cs
+³   ³       CartService.cs
+³   ³       RoleAuthorizationFilter.cs
+³   ³       SampleDataSeederFull.cs
+³   ³       
+³   ÃÄÄÄDomain
+³   ³       AppLog.cs
+³   ³       AssignmentArea.cs
+³   ³       AuditLog.cs
+³   ³       ConcessionItem.cs
+³   ³       ConcessionSale.cs
+³   ³       ConcessionSaleItem.cs
+³   ³       Employee.cs
+³   ³       Genre.cs
+³   ³       Location.cs
+³   ³       Movie.cs
+³   ³       MovieGenre.cs
+³   ³       MovieTmdbMetadata.cs
+³   ³       PayPeriod.cs
+³   ³       Payroll.cs
+³   ³       PayStub.cs
+³   ³       Role.cs
+³   ³       ScheduleAssignment.cs
+³   ³       Seat.cs
+³   ³       SeatReservation.cs
+³   ³       Shift.cs
+³   ³       Showtime.cs
+³   ³       ShowtimeSeat.cs
+³   ³       TheaterScreen.cs
+³   ³       Ticket.cs
+³   ³       TimeEntry.cs
+³   ³       Timesheet.cs
+³   ³       User.cs
+³   ³       
+³   ÃÄÄÄFilters
+³   ³       BookingDiagnosticsFilter.cs
+³   ³       
+³   ÃÄÄÄHub
+³   ³       ProgressHub.cs
+³   ³       ScheduleHub.cs
+³   ³       TmdbProgressHub.cs
+³   ³       
+³   ÃÄÄÄInfrastructure
+³   ³       CorrelationIdMiddleware.cs
+³   ³       LoggingConfiguration.cs
+³   ³       SecurityHeadersConfiguration.cs
+³   ³       TimeZoneHelper.cs
+³   ³       TmdbConfiguration.cs
+³   ³       
+³   ÃÄÄÄlogs
+³   ³       .gitkeep
+³   ³       
+³   ÃÄÄÄModels
+³   ³       CartItem.cs
+³   ³       
+³   ÃÄÄÄobj
+³   ³   ³   project.assets.json
+³   ³   ³   ScrumFlix.csproj.nuget.dgspec.json
+³   ³   ³   ScrumFlix.csproj.nuget.g.props
+³   ³   ³   ScrumFlix.csproj.nuget.g.targets
+³   ³   ³   
+³   ³   ÀÄÄÄDebug
+³   ³       ÀÄÄÄnet10.0
+³   ³           ³   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+³   ³           ³   rpswa.dswa.cache.json
+³   ³           ³   ScrumFlix.AssemblyInfo.cs
+³   ³           ³   ScrumFlix.AssemblyInfoInputs.cache
+³   ³           ³   ScrumFlix.assets.cache
+³   ³           ³   ScrumFlix.csproj.AssemblyReference.cache
+³   ³           ³   ScrumFlix.csproj.FileListAbsolute.txt
+³   ³           ³   ScrumFlix.GeneratedMSBuildEditorConfig.editorconfig
+³   ³           ³   ScrumFlix.GlobalUsings.g.cs
+³   ³           ³   ScrumFlix.RazorAssemblyInfo.cache
+³   ³           ³   ScrumFlix.RazorAssemblyInfo.cs
+³   ³           ³   staticwebassets.removed.txt
+³   ³           ³   
+³   ³           ÃÄÄÄref
+³   ³           ÃÄÄÄrefint
+³   ³           ÀÄÄÄstaticwebassets
+³   ÃÄÄÄProperties
+³   ³   ³   launchSettings.json
+³   ³   ³   
+³   ³   ÀÄÄÄPublishProfiles
+³   ³           FTPProfile.pubxml
+³   ³           FTPProfile.pubxml.user
+³   ³           FTPSomee.pubxml
+³   ³           FTPSomee.pubxml.user
+³   ³           
+³   ÃÄÄÄServices
+³   ³   ³   AuditService.cs
+³   ³   ³   AuthService.cs
+³   ³   ³   DatabaseBackupService.cs
+³   ³   ³   EmailService.cs
+³   ³   ³   IAuditService.cs
+³   ³   ³   IAuthService.cs
+³   ³   ³   IDatabaseBackupService.cs
+³   ³   ³   IEmailService.cs
+³   ³   ³   ISystemAccountProvider.cs
+³   ³   ³   ITmdbSyncService.cs
+³   ³   ³   LoginResult.cs
+³   ³   ³   QrCodeService.cs
+³   ³   ³   SeatReservationExpiryService.cs
+³   ³   ³   SeatService.cs
+³   ³   ³   SystemAccountProvider.cs
+³   ³   ³   TmdbSyncService.cs
+³   ³   ³   
+³   ³   ÃÄÄÄBackgroundQueue
+³   ³   ³       BackgroundTaskQueue.cs
+³   ³   ³       IBackgroundTaskQueue.cs
+³   ³   ³       QueuedHostedService.cs
+³   ³   ³       
+³   ³   ÃÄÄÄBackup
+³   ³   ³   ÃÄÄÄComponents
+³   ³   ³   ³       BackupArtifacts.cs
+³   ³   ³   ³       DatabaseObjectBackupProvider.cs
+³   ³   ³   ³       ManifestBuilder.cs
+³   ³   ³   ³       SchemaBackupProvider.cs
+³   ³   ³   ³       
+³   ³   ³   ÃÄÄÄInternal
+³   ³   ³   ³       MySqlDdl.cs
+³   ³   ³   ³       MySqlIntrospector.cs
+³   ³   ³   ³       
+³   ³   ³   ÀÄÄÄModels
+³   ³   ³           BackupManifest.cs
+³   ³   ³           DatabaseBackupOptions.cs
+³   ³   ³           
+³   ³   ÃÄÄÄProgress
+³   ³   ³       IProgressReporter.cs
+³   ³   ³       IProgressReporterFactory.cs
+³   ³   ³       ProgressReporter.cs
+³   ³   ³       ProgressReporterFactory.cs
+³   ³   ³       ProgressState.cs
+³   ³   ³       
+³   ³   ÀÄÄÄTMDB
+³   ³           ITmdbImageService.cs
+³   ³           TmdbImageService.cs
+³   ³           
+³   ÃÄÄÄViewComponents
+³   ³       FooterLocationsViewComponent.cs
+³   ³       
+³   ÃÄÄÄViewModels
+³   ³       CartViewModel.cs
+³   ³       ChangePasswordViewModel.cs
+³   ³       ConcessionsCatalogViewModel.cs
+³   ³       ErrorViewModel.cs
+³   ³       HomeDashboardViewModel.cs
+³   ³       LayoutViewModel.cs
+³   ³       LocationConflictViewModel.cs
+³   ³       LoginViewModel.cs
+³   ³       MovieCatalogViewModel.cs
+³   ³       MovieDetailViewModel.cs
+³   ³       OrderConfirmationViewModel.cs
+³   ³       ShowtimeBookingViewModel.cs
+³   ³       
+³   ÃÄÄÄViews
+³   ³   ³   _ViewImports.cshtml
+³   ³   ³   _ViewStart.cshtml
+³   ³   ³   
+³   ³   ÃÄÄÄAccount
+³   ³   ³       ChangePassword.cshtml
+³   ³   ³       Login.cshtml
+³   ³   ³       
+³   ³   ÃÄÄÄCart
+³   ³   ³       CartReview.cshtml
+³   ³   ³       OrderConfirmation.cshtml
+³   ³   ³       
+³   ³   ÃÄÄÄConcessions
+³   ³   ³       ConcessionsCatalog.cshtml
+³   ³   ³       LocationConflict.cshtml
+³   ³   ³       
+³   ³   ÃÄÄÄHome
+³   ³   ³       AccessDenied.cshtml
+³   ³   ³       Error.cshtml
+³   ³   ³       Error500.cshtml
+³   ³   ³       HomeDashboard.cshtml
+³   ³   ³       
+³   ³   ÃÄÄÄMovies
+³   ³   ³       MovieCatalog.cshtml
+³   ³   ³       MovieDetail.cshtml
+³   ³   ³       _MovieDetailPartial.cshtml
+³   ³   ³       
+³   ³   ÃÄÄÄShared
+³   ³   ³   ³   _Layout.cshtml
+³   ³   ³   ³   _ValidationScriptsPartial.cshtml
+³   ³   ³   ³   
+³   ³   ³   ÀÄÄÄComponents
+³   ³   ³       ÀÄÄÄFooterLocations
+³   ³   ³               Default.cshtml
+³   ³   ³               
+³   ³   ÀÄÄÄShowtimes
+³   ³           ShowtimeBooking.cshtml
+³   ³           
+³   ÀÄÄÄwwwroot
+³       ³   android-chrome-192x192.png
+³       ³   android-chrome-512x512.png
+³       ³   apple-touch-icon.png
+³       ³   favicon-16x16.png
+³       ³   favicon-32x32.png
+³       ³   favicon.ico
+³       ³   manifest.json
+³       ³   site.webmanifest
+³       ³   
+³       ÃÄÄÄcache
+³       ³   ÀÄÄÄtmdb
+³       ÃÄÄÄcss
+³       ³       scrumflix.css
+³       ³       sf-base.css
+³       ³       sf-components.css
+³       ³       sf-layout.css
+³       ³       sf-spinner.css
+³       ³       sf-theme-light.css
+³       ³       sf-theme-red.css
+³       ³       sf-tokens.css
+³       ³       
+³       ÃÄÄÄimages
+³       ³       candy_box.png
+³       ³       fountain_drink.png
+³       ³       logo.png
+³       ³       movie_theatre_background.png
+³       ³       popcorn_drink_combo.png
+³       ³       
+³       ÀÄÄÄjs
+³           ³   account-change-password.js
+³           ³   booking.js
+³           ³   cart-review.js
+³           ³   concessions.js
+³           ³   login.js
+³           ³   refreshCartBadge.js
+³           ³   scrumflix.js
+³           ³   seatPicker.js
+³           ³   sf-admin-sidebar.js
+³           ³   sf-admin-tables.js
+³           ³   sf-backup.js
+³           ³   sf-confirm.js
+³           ³   sf-crud-spinner.js
+³           ³   sf-export.js
+³           ³   sf-featured-carousel.js
+³           ³   sf-movie-catalog.js
+³           ³   sf-movie-detail.js
+³           ³   sf-movie-genre.js
+³           ³   sf-movie-preview.js
+³           ³   sf-progress.js
+³           ³   sf-schedule.js
+³           ³   sf-shift-form.js
+³           ³   sf-spinner.js
+³           ³   sf-theme-switcher.js
+³           ³   sf-tmdb-sync.js
+³           ³   
+³           ÀÄÄÄsignalr
+³               ÀÄÄÄdist
+³                   ÀÄÄÄbrowser
+³                           signalr.js
+³                           signalr.min.js
+³                           
+ÀÄÄÄtests
+    ÃÄÄÄScrumFlix.IntegrationTests
+    ³   ³   ScheduleIntegrationTests.cs
+    ³   ³   ScrumFlix.IntegrationTests.csproj
+    ³   ³   
+    ³   ÃÄÄÄbin
+    ³   ³   ÀÄÄÄDebug
+    ³   ³       ÀÄÄÄnet10.0
+    ³   ³               .msCoverageSourceRootsMapping_ScrumFlix.IntegrationTests
+    ³   ³               
+    ³   ÀÄÄÄobj
+    ³       ³   project.assets.json
+    ³       ³   ScrumFlix.IntegrationTests.csproj.nuget.dgspec.json
+    ³       ³   ScrumFlix.IntegrationTests.csproj.nuget.g.props
+    ³       ³   ScrumFlix.IntegrationTests.csproj.nuget.g.targets
+    ³       ³   
+    ³       ÀÄÄÄDebug
+    ³           ÀÄÄÄnet10.0
+    ³               ³   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+    ³               ³   ScrumFlix.IntegrationTests.AssemblyInfo.cs
+    ³               ³   ScrumFlix.IntegrationTests.AssemblyInfoInputs.cache
+    ³               ³   ScrumFlix.IntegrationTests.assets.cache
+    ³               ³   ScrumFlix.IntegrationTests.csproj.AssemblyReference.cache
+    ³               ³   ScrumFlix.IntegrationTests.csproj.FileListAbsolute.txt
+    ³               ³   ScrumFlix.IntegrationTests.genautoregisteredextensionsinputcache.cache
+    ³               ³   ScrumFlix.IntegrationTests.GeneratedMSBuildEditorConfig.editorconfig
+    ³               ³   ScrumFlix.IntegrationTests.gentestingplatformentrypointinputcache.cache
+    ³               ³   ScrumFlix.IntegrationTests.xUnit.v3.EntryPoint.cache
+    ³               ³   SelfRegisteredExtensions.cs
+    ³               ³   XunitAutoGeneratedEntryPoint.cs
+    ³               ³   
+    ³               ÃÄÄÄref
+    ³               ÀÄÄÄrefint
+    ÀÄÄÄScrumFlix.Tests
+        ³   DatabaseBackupOptionsTests.cs
+        ³   DatabaseBackupServiceTests.cs
+        ³   ExampleTests.cs
+        ³   MySqlDdlTests.cs
+        ³   QrConcessionPayloadTests.cs
+        ³   QrTicketPayloadTests.cs
+        ³   ScrumFlix.Tests.csproj
+        ³   TimeZoneConversionTests.cs
+        ³   TimeZoneTestHelper.cs
+        ³   
+        ÃÄÄÄBackgroundQueue
+        ³       BackgroundTaskQueueTests.cs
+        ³       QueuedHostedServiceTests.cs
+        ³       
+        ÃÄÄÄbin
+        ³   ÀÄÄÄDebug
+        ³       ÀÄÄÄnet10.0
+        ³               .msCoverageSourceRootsMapping_ScrumFlix.Tests
+        ³               
+        ÃÄÄÄobj
+        ³   ³   project.assets.json
+        ³   ³   ScrumFlix.Tests.csproj.nuget.dgspec.json
+        ³   ³   ScrumFlix.Tests.csproj.nuget.g.props
+        ³   ³   ScrumFlix.Tests.csproj.nuget.g.targets
+        ³   ³   
+        ³   ÀÄÄÄDebug
+        ³       ÀÄÄÄnet10.0
+        ³           ³   .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+        ³           ³   ScrumFlix.Tests.AssemblyInfo.cs
+        ³           ³   ScrumFlix.Tests.AssemblyInfoInputs.cache
+        ³           ³   ScrumFlix.Tests.assets.cache
+        ³           ³   ScrumFlix.Tests.csproj.AssemblyReference.cache
+        ³           ³   ScrumFlix.Tests.csproj.FileListAbsolute.txt
+        ³           ³   ScrumFlix.Tests.genautoregisteredextensionsinputcache.cache
+        ³           ³   ScrumFlix.Tests.GeneratedMSBuildEditorConfig.editorconfig
+        ³           ³   ScrumFlix.Tests.gentestingplatformentrypointinputcache.cache
+        ³           ³   ScrumFlix.Tests.xUnit.v3.EntryPoint.cache
+        ³           ³   SelfRegisteredExtensions.cs
+        ³           ³   XunitAutoGeneratedEntryPoint.cs
+        ³           ³   
+        ³           ÃÄÄÄref
+        ³           ÀÄÄÄrefint
+        ÀÄÄÄServices
+            ÀÄÄÄProgress
+                    ProgressStateTests.cs
+                    

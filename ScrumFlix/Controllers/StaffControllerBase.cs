@@ -6,10 +6,10 @@
  *            helper generalized for all role levels.
  *
  *            Staff controllers that inherit this class:
- *              - Areas/Admin/Controllers/AdminHomeController  (minimumRoleId: 1)
- *              - Areas/Admin/Controllers/ScheduleController  (minimumRoleId: 2)
- *              - (future) ManagerController                  (minimumRoleId: 2)
- *              - (future) EmployeeController                 (minimumRoleId: 3)
+ *              - Areas/Admin/Controllers/AdminHomeController     (minimumRoleId: 1)
+ *              - Areas/Admin/Controllers/ScheduleController      (minimumRoleId: 2)
+ *              - Areas/Employee/Controllers/EmployeeHomeController (minimumRoleId: 3)
+ *              - (future) ManagerController                      (minimumRoleId: 2)
  *
  *            Role hierarchy:
  *              RoleId 1 = Admin     — full access to all staff areas
@@ -125,8 +125,7 @@ public abstract class StaffControllerBase : Controller
     /// <list type="bullet">
     ///   <item><description>RoleId 1 (Admin) — Admin/AdminHome/AdminDashboard</description></item>
     ///   <item><description>RoleId 2 (Manager) — Admin/Schedule/Index (highest page a Manager can access)</description></item>
-    ///   <item><description>RoleId 3 (Employee) — consumer HomeDashboard until the Employee
-    ///     area ships (Phase 4); TODO: switch to Employee/Home/Index</description></item>
+    ///   <item><description>RoleId 3 (Employee) — Employee/EmployeeHome/Index</description></item>
     ///   <item><description>null / unknown — Login</description></item>
     /// </list>
     /// Used by <see cref="RoleGuard"/> for insufficient-privilege redirects and by
@@ -136,9 +135,7 @@ public abstract class StaffControllerBase : Controller
     {
         1 => RedirectToAction("AdminDashboard", "AdminHome", new { area = "Admin" }),
         2 => RedirectToAction("Index", "Schedule", new { area = "Admin" }),
-        // TODO Phase 4: Employee area scaffold — change to
-        //   RedirectToAction("Index", "EmployeeHome", new { area = "Employee" })
-        3 => RedirectToAction("HomeDashboard", "Home", new { area = "" }),
+        3 => RedirectToAction("Index", "EmployeeHome", new { area = "Employee" }),
         _ => RedirectToAction("Login", "Account", new { area = "" })
     };
 

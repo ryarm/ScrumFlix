@@ -1,16 +1,25 @@
 @*
  * Partial: _AssignmentForm.cshtml
  * Add/edit a schedule assignment. Swapped by HTMX.
+ *
+ * FIX: Cancel button was calling hx-get="/Admin/Schedule/ShiftsGrid" and targeting
+ *      #assignments-grid — this loaded the SHIFTS grid content into the ASSIGNMENTS
+ *      container. Corrected to /Admin/Schedule/AssignmentsGrid.
+ *
+ * FIX: action and hx-post values now use Url.Action() instead of hardcoded strings.
  *@
 @model ScrumFlix.Areas.Admin.ViewModels.AssignmentFormViewModel
 
 @{
-    bool isEdit = Model.AssignmentId > 0;
-    string action = isEdit ? "/Admin/Schedule/UpdateAssignment" : "/Admin/Schedule/AddAssignment";
+    bool   isEdit    = Model.AssignmentId > 0;
+    string postUrl   = isEdit
+        ? Url.Action("UpdateAssignment", "Schedule", new { area = "Admin" })!
+        : Url.Action("AddAssignment",    "Schedule", new { area = "Admin" })!;
+    string cancelUrl = Url.Action("AssignmentsGrid", "Schedule", new { area = "Admin" })!;
 }
 
-<form method="post" action="@action"
-      hx-post="@action"
+<form method="post" action="@postUrl"
+      hx-post="@postUrl"
       hx-target="#assignments-grid"
       hx-swap="innerHTML">
     @Html.AntiForgeryToken()
@@ -85,8 +94,10 @@
         </button>
         @if (isEdit)
         {
+            @* FIX: was hx-get="/Admin/Schedule/ShiftsGrid" — loaded shift data into
+               the assignments container. Corrected to AssignmentsGrid. *@
             <button type="button" class="btn sf-btn-ghost"
-                    hx-get="/Admin/Schedule/ShiftsGrid"
+                    hx-get="@cancelUrl"
                     hx-target="#assignments-grid">
                 Cancel
             </button>

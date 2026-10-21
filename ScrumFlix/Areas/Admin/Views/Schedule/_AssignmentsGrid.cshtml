@@ -1,6 +1,18 @@
 @*
  * Partial: _AssignmentsGrid.cshtml
  * Swapped by HTMX and by SignalR AssignmentsUpdated event.
+ *
+ * FIX: Row hx-get was a hardcoded string "/Admin/Schedule/GetAssignment/@a.AssignmentId"
+ *      — converted to Url.Action() so route changes are picked up automatically.
+ *
+ * FIX: Delete form was a plain HTML POST with no HTMX attributes. Without HTMX
+ *      on the form, the controller's PartialView response rendered as a bare HTML
+ *      page. Added hx-post / hx-target / hx-swap to match every other form on
+ *      this page.
+ *
+ * FIX: onsubmit="return confirm(...)" removed — inline event handlers are a CSP
+ *      violation. Replaced with hx-confirm which HTMX handles natively without
+ *      inline JS.
  *@
 @model List<ScrumFlix.Areas.Admin.ViewModels.AssignmentRowViewModel>
 
@@ -27,7 +39,10 @@ else
             <tbody>
                 @foreach (var a in Model)
                 {
-                    <tr hx-get="/Admin/Schedule/GetAssignment/@a.AssignmentId"
+                    var editUrl   = Url.Action("GetAssignment",    "Schedule", new { area = "Admin", id = a.AssignmentId });
+                    var deleteUrl = Url.Action("DeleteAssignment",  "Schedule", new { area = "Admin" });
+
+                    <tr hx-get="@editUrl"
                         hx-target="#assignment-form-container"
                         hx-trigger="click"
                         style="cursor:pointer;"
@@ -39,11 +54,19 @@ else
                         <td>@a.StartTime.ToString("MM/dd h:mm tt") – @a.EndTime.ToString("h:mm tt")</td>
                         <td>@a.ShowtimeTitle</td>
                         <td class="text-end" onclick="event.stopPropagation()">
-                            <form method="post" action="/Admin/Schedule/DeleteAssignment"
-                                  onsubmit="return confirm('Delete this assignment?');">
+                            @* FIX: added hx-post/hx-target/hx-swap so the delete response
+                               is swapped back into #assignments-grid instead of rendering as
+                               a bare HTML page. hx-confirm replaces the CSP-violating
+                               onsubmit="return confirm(...)". *@
+                            <form method="post" action="@deleteUrl"
+                                  hx-post="@deleteUrl"
+                                  hx-target="#assignments-grid"
+                                  hx-swap="innerHTML"
+                                  hx-confirm="Delete this assignment?">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
-                                <button type="submit" class="btn btn-sm sf-btn-danger">
+                                <button type="submit" class="btn btn-sm sf-btn-danger"
+                                        aria-label="Delete assignment for @a.EmployeeName">
                                     <i class="bi bi-trash" aria-hidden="true"></i>
                                 </button>
                             </form>
