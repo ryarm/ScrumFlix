@@ -99,8 +99,8 @@
 		    Used by EmailService (transactional email: order confirmations, receipts,
 		    staff notifications) and by LoggingConfiguration (Serilog email alert sink).
 		-->
-		<PackageReference Include="MailKit" Version="4.17.0" />
-		<PackageReference Include="MimeKit" Version="4.17.0" />
+		<PackageReference Include="MailKit" Version="4.18.1" />
+		<PackageReference Include="MimeKit" Version="4.18.1" />
 
 		<!-- ── Data access — EF Core + MySQL provider ────────────────────────── -->
 		<!--
@@ -115,6 +115,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="MySqlConnector" Version="2.6.2" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 
 		<!-- ── HTTP resilience ───────────────────────────────────────────────── -->
@@ -123,7 +124,7 @@
 		    and timeout policies for HttpClient. Used by TmdbConfiguration to configure
 		    resilient HTTP calls to the TMDb API (retry on 5xx/429, exponential backoff).
 		-->
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
 
 		<!-- ── Export — Excel + CSV streaming ───────────────────────────────── -->
 		<!--
@@ -134,7 +135,7 @@
 		    on Linux (Aiven/Docker). Used by AdminManageController ExportTickets and
 		    ExportConcessions actions.
 		-->
-		<PackageReference Include="MiniExcel" Version="1.44.1" />
+		<PackageReference Include="MiniExcel" Version="1.46.0" />
 
 		<!-- ── Security headers ─────────────────────────────────────────────── -->
 		<!--
@@ -151,7 +152,7 @@
 		    Used for staff pay stub PDFs and any other document generation features.
 		    Community license covers open-source and internal-tool use.
 		-->
-		<PackageReference Include="QuestPDF" Version="2026.6.0" />
+		<PackageReference Include="QuestPDF" Version="2026.9.1" />
 
 		<!-- ── QR code generation ────────────────────────────────────────────── -->
 		<!--
@@ -164,7 +165,7 @@
 		    PngByteQRCode renderer used throughout — no System.Drawing / GDI+ dependency,
 		    safe on Linux (Aiven).
 		-->
-		<PackageReference Include="QRCoder" Version="1.8.0" />
+		<PackageReference Include="QRCoder" Version="1.8.1" />
 
 		<!-- ── Serilog — structured logging pipeline ────────────────────────── -->
 		<!--
@@ -221,10 +222,11 @@
 		    Direct dependency — kept as explicit reference.
 		    All four versions are intentionally pinned together for ABI compatibility.
 		-->
-		<PackageReference Include="SixLabors.Fonts" Version="3.0.0" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="4.0.0" />
-		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="3.0.0" />
-		<PackageReference Include="SixLabors.ImageSharp.Web" Version="4.0.0" />
+		<PackageReference Include="SixLabors.Fonts" Version="3.2.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="4.1.3" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="3.1.3" />
+		<PackageReference Include="SixLabors.ImageSharp.Web" Version="4.0.2" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
 
 		<!-- ── TMDb integration ──────────────────────────────────────────────── -->
 		<!--

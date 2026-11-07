@@ -43,7 +43,8 @@
 
 	@* ── Fonts ──────────────────────────────────────────────────────────── *@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+
 	@* Update in _Layout.cshtml (approx. line 45) *@
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap"
 		  rel="stylesheet" />
@@ -91,6 +92,9 @@
      * Note: asp-append-version adds a cache-busting query string.
      *@
 	<script src="~/js/sf-theme-switcher.js" asp-append-version="true"></script>
+	@* Alpine CSP build 3.17.4: registry first, then one deferred core initialization. *@
+	<script defer src="~/js/alpine/scrumflix-alpine.js" asp-append-version="true"></script>
+	<script defer src="~/js/alpine/alpine-csp.min.js" asp-append-version="true"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js" integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -335,7 +339,7 @@
 	</main>
 
 	@* ── FOOTER ──────────────────────────────────────────────────────────── *@
-	<footer class="sf-footer mt-auto">
+	@* <footer class="sf-footer mt-auto">
 		<div class="container-xl">
 			<div class="row gy-4 align-items-start">
 				<div class="col-12 col-lg-3">
@@ -367,6 +371,57 @@
 			<p class="sf-footer-copy text-center mb-0">
 				&copy; @DateTime.Now.Year ScrumFlix Theatres. All rights reserved.
 			</p>
+		</div>
+	</footer> *@
+
+	@* ── FOOTER ──────────────────────────────────────────────────────────── *@
+	<footer class="sf-footer mt-auto">
+		<div class="container-xl">
+			<div class="row gy-4 align-items-start">
+				<div class="col-12 col-lg-3">
+					<div class="sf-footer-brand mb-2">ScrumFlix</div>
+					<p class="sf-footer-tagline">The best seat in the house — 10 DFW locations.</p>
+				</div>
+				<div class="col-6 col-lg-2 offset-lg-1">
+					<h6 class="sf-footer-heading">Explore</h6>
+					<ul class="list-unstyled sf-footer-links">
+						<li><a asp-controller="Movies" asp-action="MovieCatalog">Movies</a></li>
+						<li><a asp-controller="Concessions" asp-action="ConcessionsCatalog">Concessions</a></li>
+						<li><a asp-controller="Cart" asp-action="CartReview">Cart</a></li>
+					</ul>
+				</div>
+				<div class="col-12 col-lg-4">
+					<h6 class="sf-footer-heading">Locations</h6>
+					@await Component.InvokeAsync("FooterLocations")
+				</div>
+				<div class="col-lg-2">
+					<h6 class="sf-footer-heading">Connect</h6>
+					<div class="sf-social-icons d-flex gap-1 mt-2">
+						<a href="#" aria-label="Twitter/X"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
+						<a href="#" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+						<a href="#" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+					</div>
+				</div>
+			</div>
+			
+			<hr class="sf-footer-divider" />
+			
+			@* ── TMDB Attribution & Copyright Row ──────────────────────────────── *@
+			<div class="row align-items-center gy-3">
+				<div class="col-12 col-md-8">
+					<p class="sf-footer-copy mb-0 text-muted" style="font-size: 0.8rem; line-height: 1.4;">
+						This product uses the TMDB API but is not endorsed, certified, or otherwise approved by TMDB.
+					</p>
+					<p class="sf-footer-copy mb-0 text-muted mt-1" style="font-size: 0.85rem;">
+						© @DateTime.Now.Year ScrumFlix Theatres. All rights reserved.
+					</p>
+				</div>
+				<div class="col-12 col-md-4 d-flex justify-content-md-end align-items-center">
+					<a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" title="The Movie Database (TMDB)">
+						<img src="~/images/tmdb-logo.svg" alt="The Movie Database (TMDB)" style="height: 28px;" />
+					</a>
+				</div>
+			</div>
 		</div>
 	</footer>
 

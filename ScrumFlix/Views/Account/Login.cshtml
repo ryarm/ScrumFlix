@@ -59,10 +59,11 @@
 
             <div class="sf-login-field">
                 <label asp-for="Password" class="sf-login-label">Password</label>
-                <div class="sf-login-input-wrap">
+                <div class="sf-login-input-wrap" x-data="passwordVisibility" data-password-label="password">
                     <i class="bi bi-lock sf-login-input-icon" aria-hidden="true"></i>
                     <input asp-for="Password"
                            type="password"
+                           x-bind:type="inputType"
                            id="passwordInput"
                            class="sf-login-input sf-login-input--padded"
                            autocomplete="current-password" />
@@ -71,8 +72,10 @@
                             class="sf-login-pw-toggle"
                             aria-label="Show password"
                             aria-pressed="false"
-                            tabindex="0">
-                        <i class="bi bi-eye" id="togglePasswordIcon" aria-hidden="true"></i>
+                            x-bind:aria-label="label"
+                            x-bind:aria-pressed="shown"
+                            x-on:click="toggle">
+                        <i class="bi" x-bind:class="iconClass" id="togglePasswordIcon" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>

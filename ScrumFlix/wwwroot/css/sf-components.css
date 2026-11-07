@@ -3297,3 +3297,19 @@
     border-color: #C0392B;
     box-shadow: 0 0 0 3px rgba(192,57,43,.12);
 }
+.sf-inline-confirm {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-inline-start: .5rem;
+    color: var(--sf-text-muted);
+}
+.sf-sort-control {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}

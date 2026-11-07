@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup Condition="'$(SixLaborsLicenseFile)' == '' and Exists('$(MSBuildThisFileDirectory)ScrumFlix/sixlabors.lic')">
+    <SixLaborsLicenseFile>$(MSBuildThisFileDirectory)ScrumFlix/sixlabors.lic</SixLaborsLicenseFile>
+  </PropertyGroup>
+</Project>

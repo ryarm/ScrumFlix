@@ -52,7 +52,7 @@ else
                         <td>@s.StartTime.ToString("MM/dd/yyyy h:mm tt")</td>
                         <td>@s.EndTime.ToString("MM/dd/yyyy h:mm tt")</td>
                         <td>@duration.ToString("0.0")h</td>
-                        <td class="text-end" onclick="event.stopPropagation()">
+                        <td class="text-end" data-sf-stop-row-click>
                             @* FIX: added hx-post/hx-target/hx-swap so the delete response
                                is swapped back into #shifts-grid instead of rendering as a
                                bare HTML page. hx-confirm replaces the CSP-violating

@@ -53,7 +53,7 @@ else
                         <td>@a.LocationName</td>
                         <td>@a.StartTime.ToString("MM/dd h:mm tt") – @a.EndTime.ToString("h:mm tt")</td>
                         <td>@a.ShowtimeTitle</td>
-                        <td class="text-end" onclick="event.stopPropagation()">
+                        <td class="text-end" data-sf-stop-row-click>
                             @* FIX: added hx-post/hx-target/hx-swap so the delete response
                                is swapped back into #assignments-grid instead of rendering as
                                a bare HTML page. hx-confirm replaces the CSP-violating

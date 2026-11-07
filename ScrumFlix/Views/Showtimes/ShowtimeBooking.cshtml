@@ -17,7 +17,7 @@
  *   quantity-only form is shown instead of the seat grid, matching the existing
  *   "box office only" degraded path.
  *
- * booking.js expects: #qtyInput, #btnMinus, #btnPlus, #lineTotal, #priceDisplay
+ * ticketQuantity uses: #qtyInput, #btnMinus, #btnPlus, #lineTotal, #priceDisplay
  * seatPicker.js expects: #seatGrid (.sf-seat-tile[data-label]), #seatNumbersInput
 *@
 @model ShowtimeBookingViewModel
@@ -218,7 +218,7 @@
                 </h2>
 
                 <form asp-controller="Showtimes" asp-action="AddTicketToCart" method="post"
-                      class="sf-form-card">
+                      class="sf-form-card" x-data="ticketQuantity">
                     @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="ShowtimeId" />
                     <input type="hidden" asp-for="SeatNumbers" id="seatNumbersInput" />
@@ -244,7 +244,7 @@
                     <div class="mb-4">
                         <label asp-for="Quantity" class="sf-label"></label>
                         <div class="sf-qty-control">
-                            <button type="button" id="btnMinus" class="sf-qty-btn"
+                            <button type="button" id="btnMinus" class="sf-qty-btn" x-on:click="decrement"
                                     aria-label="Decrease quantity"
                                     @(isSoldOut ? "disabled" : "")>−</button>
                             <input asp-for="Quantity"
@@ -255,7 +255,7 @@
                                    max="@qtyMax"
                                    readonly
                                    aria-label="Ticket quantity" />
-                            <button type="button" id="btnPlus" class="sf-qty-btn"
+                            <button type="button" id="btnPlus" class="sf-qty-btn" x-on:click="increment"
                                     aria-label="Increase quantity"
                                     @(isSoldOut ? "disabled" : "")>+</button>
                         </div>
@@ -303,6 +303,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/booking.js" asp-append-version="true"></script>
     <script src="~/js/seatPicker.js" asp-append-version="true"></script>
 }

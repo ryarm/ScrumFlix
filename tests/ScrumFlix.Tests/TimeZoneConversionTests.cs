@@ -70,12 +70,57 @@ public class TimeZoneConversionTests
     [InlineData("Eastern Standard Time",  true,  "EDT")]
     [InlineData("Mountain Standard Time", false, "MST")]
     [InlineData("Mountain Standard Time", true,  "MDT")]
+    [InlineData("Alaskan Standard Time", false, "AKST")]
+    [InlineData("Alaskan Standard Time", true,  "AKDT")]
+    [InlineData("Hawaiian Standard Time", false, "HST")]
+    [InlineData("US Mountain Standard Time", false, "MST")]
     public void BuildAbbreviation_ProducesCorrectInitials(
         string windowsId, bool isDst, string expected)
     {
         var tz   = TimeZoneHelper.Resolve(windowsId);
         var abbr = TimeZoneHelper.BuildAbbreviation(tz, isDst);
         Assert.Equal(expected, abbr);
+    }
+
+    [Theory]
+    [InlineData("Hawaiian Standard Time",    "HST",  "HST")]
+    [InlineData("Alaskan Standard Time",    "AKST", "AKDT")]
+    [InlineData("Pacific Standard Time",    "PST",  "PDT")]
+    [InlineData("US Mountain Standard Time", "MST",  "MST")]
+    [InlineData("Mountain Standard Time",   "MST",  "MDT")]
+    [InlineData("Central Standard Time",    "CST",  "CDT")]
+    [InlineData("Eastern Standard Time",    "EST",  "EDT")]
+    public void SupportedZones_FormatWithCorrectWinterAndSummerAbbreviations(
+        string windowsId, string winterAbbreviation, string summerAbbreviation)
+    {
+        var tz = TimeZoneHelper.Resolve(windowsId);
+        var winterUtc = new DateTime(2026, 1, 15, 19, 0, 0, DateTimeKind.Utc);
+        var summerUtc = new DateTime(2026, 6, 15, 19, 0, 0, DateTimeKind.Utc);
+
+        Assert.EndsWith(" " + winterAbbreviation,
+            TimeZoneHelper.FormatWithAbbreviation(winterUtc, "h:mm tt", tz));
+        Assert.EndsWith(" " + summerAbbreviation,
+            TimeZoneHelper.FormatWithAbbreviation(summerUtc, "h:mm tt", tz));
+    }
+
+    [Theory]
+    [InlineData("America/Chicago", "CST", "CDT")]
+    [InlineData("America/Phoenix", "MST", "MST")]
+    [InlineData("America/Anchorage", "AKST", "AKDT")]
+    public void IanaIds_MapToSameDisplayAbbreviationsWhenAvailable(
+        string ianaId, string winterAbbreviation, string summerAbbreviation)
+    {
+        // IANA lookup requires ICU on Windows; the supported stored IDs above
+        // remain Windows IDs and are tested without that optional capability.
+        if (!TimeZoneInfo.TryConvertIanaIdToWindowsId(ianaId, out _)) return;
+
+        var tz = TimeZoneInfo.FindSystemTimeZoneById(ianaId);
+        var winterUtc = new DateTime(2026, 1, 15, 19, 0, 0, DateTimeKind.Utc);
+        var summerUtc = new DateTime(2026, 6, 15, 19, 0, 0, DateTimeKind.Utc);
+        Assert.EndsWith(" " + winterAbbreviation,
+            TimeZoneHelper.FormatWithAbbreviation(winterUtc, "h:mm tt", tz));
+        Assert.EndsWith(" " + summerAbbreviation,
+            TimeZoneHelper.FormatWithAbbreviation(summerUtc, "h:mm tt", tz));
     }
 
     [Fact]

@@ -58,6 +58,12 @@
         errorBanner = document.getElementById('sf-backup-error-banner');
         errorText   = document.getElementById('sf-backup-error-text');
 
+        document.querySelectorAll('[data-sf-backup-select]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                setAllCheckboxes(button.dataset.sfBackupSelect === 'all');
+            });
+        });
+
         if (checkboxes.length) {
             checkboxes.forEach(function (cb) {
                 cb.addEventListener('change', updateButtonLabel);
@@ -76,8 +82,7 @@
 
     /**
      * Sets all backup checkboxes to checked=true or checked=false.
-     * Exposed globally so the inline-free "Select all / Clear all" buttons
-     * can call it via onclick without violating CSP.
+     * Bound to Select all / Clear all buttons by external listeners.
      */
     function setAllCheckboxes(checked) {
         if (!checkboxes) return;
@@ -210,9 +215,6 @@
             resetUi();
         });
     }
-
-    // Expose setAllCheckboxes globally for the onclick buttons in the view
-    window.setAllCheckboxes = setAllCheckboxes;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

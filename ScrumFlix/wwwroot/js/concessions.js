@@ -22,27 +22,18 @@
         }, 2200);
     }
 
-    // 2. Quantity Button Logic (Fixes CSP script-src-attr errors) 
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('js-qty-btn')) {
-            var container = e.target.closest('.sf-qty-control');
-            var input = container.querySelector('.sf-qty-input');
-            var val = parseInt(input.value) || 1;
-
-            if (e.target.classList.contains('js-qty-minus')) {
-                input.value = Math.max(1, val - 1);
-            } else if (e.target.classList.contains('js-qty-plus')) {
-                input.value = Math.min(20, val + 1);
-            }
-        }
-    });
-
-    // 3. AJAX Add-to-Cart Logic [cite: 46, 47]
+    // AJAX Add-to-Cart stays in application JS. Alpine owns only the stepper.
     document.addEventListener('submit', async function (e) {
         var form = e.target.closest('form.js-add-concession');
         if (!form) return;
 
         e.preventDefault();
+        // Clamp even when a manually edited number has not blurred yet.
+        var qtyInput = form.querySelector('input[name="quantity"]');
+        if (qtyInput) {
+            var parsed = Number.parseInt(qtyInput.value, 10);
+            qtyInput.value = String(Math.max(1, Math.min(20, Number.isFinite(parsed) ? parsed : 1)));
+        }
         var submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 

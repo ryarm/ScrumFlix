@@ -8,7 +8,7 @@
  * which does not include 'unsafe-inline'.
  *
  * Usage in a view:
- *   <th onclick="sortTable('movies-table', 0)">Title</th>
+ *   <th data-sort-table="conc-table" data-sort-column="0" tabindex="0">Item</th>
  *   <script src="~/js/sf-admin-tables.js"></script>
  *
  * The table element must have an id and a <tbody>.
@@ -58,7 +58,24 @@
         rows.forEach(function (r) { tbody.appendChild(r); });
     }
 
-    // Expose globally so onclick="sortTable(...)" in view markup still works
+    // Sort controls work with both pointer and keyboard, without inline JS.
+    function activateSort(target) {
+        var column = Number.parseInt(target.dataset.sortColumn, 10);
+        if (Number.isFinite(column)) sortTable(target.dataset.sortTable, column);
+    }
+    document.addEventListener('click', function (event) {
+        var control = event.target.closest('[data-sort-table][data-sort-column]');
+        if (control) activateSort(control);
+    });
+    document.addEventListener('keydown', function (event) {
+        var control = event.target.closest('[data-sort-table][data-sort-column]');
+        if (control && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            activateSort(control);
+        }
+    });
+
+    // Retain the existing global API for any other table consumer.
     global.sortTable = sortTable;
 
 }(window));

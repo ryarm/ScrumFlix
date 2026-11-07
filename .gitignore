@@ -3,6 +3,7 @@
 # User Secrets (NEVER commit)
 **/secrets.json
 **/usersecrets/
+**/sixlabors.lic
 
 # Build artifacts
 [Bb]in/

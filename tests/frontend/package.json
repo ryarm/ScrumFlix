@@ -1,0 +1,7 @@
+{
+  "name": "scrumflix-alpine-smoke",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "test": "node alpine-smoke.js" },
+  "devDependencies": { "jsdom": "26.1.0" }
+}

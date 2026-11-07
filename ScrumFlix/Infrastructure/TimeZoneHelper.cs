@@ -127,7 +127,8 @@ public static class TimeZoneHelper
     /// Formats a UTC <see cref="DateTime"/> in the given timezone using
     /// <paramref name="format"/>, appending the correct DST/standard abbreviation
     /// (e.g. "2:00 PM CDT", "7:00 PM PST").
-    /// The abbreviation is derived from the timezone rules, not hardcoded.
+    /// DST selection comes from the timezone rules; the labels for ScrumFlix's
+    /// supported US regions are explicit so OS language cannot change them.
     /// </summary>
     public static string FormatWithAbbreviation(DateTime utc, string format, TimeZoneInfo tz)
     {
@@ -147,18 +148,41 @@ public static class TimeZoneHelper
     // ── Abbreviation builder ──────────────────────────────────────────────────
 
     /// <summary>
-    /// Derives a short timezone abbreviation from a <see cref="TimeZoneInfo"/>.
-    /// Uses the standard or daylight display name to extract initials
-    /// (e.g. "Central Standard Time" → "CST", "Central Daylight Time" → "CDT",
-    ///       "Pacific Standard Time" → "PST", "Pacific Daylight Time" → "PDT").
-    /// Falls back to the UTC offset string if the name cannot produce a
-    /// 2–4 character result.
+    /// Returns stable labels for the seven US timezone IDs offered by ScrumFlix.
+    /// If given an IANA ID, normalizes it to a Windows ID when ICU supports
+    /// that conversion. For other timezones, derives initials from the OS name.
+    /// The fallback is intended only for IDs outside the configured US list.
     /// </summary>
     public static string BuildAbbreviation(TimeZoneInfo tz, bool isDst)
     {
+        // The OS supplies localized StandardName/DaylightName values. Key the
+        // labels to stable IDs instead; "Alaska Standard Time" would otherwise
+        // turn into AST instead of AKST. Phoenix and Hawaii do not observe DST
+        // for current dates, so both branches deliberately use MST/HST.
+        var id = tz.Id;
+        if (TimeZoneInfo.TryConvertIanaIdToWindowsId(id, out var windowsId)
+            && !string.IsNullOrWhiteSpace(windowsId))
+            id = windowsId;
+
+        var supported = id switch
+        {
+            "Hawaiian Standard Time"    => "HST",
+            "Alaskan Standard Time"    => isDst ? "AKDT" : "AKST",
+            "Pacific Standard Time"    => isDst ? "PDT"  : "PST",
+            "US Mountain Standard Time" => "MST",
+            "Mountain Standard Time"   => isDst ? "MDT"  : "MST",
+            "Central Standard Time"    => isDst ? "CDT"  : "CST",
+            "Eastern Standard Time"    => isDst ? "EDT"  : "EST",
+            "UTC" or "Etc/UTC"          => "UTC",
+            _                           => null
+        };
+        if (supported is not null) return supported;
+
+        // Retain a best-effort fallback for other configured timezone IDs.
+        // "Time" is part of CST/CDT-style abbreviations and must not be skipped.
         var name  = isDst ? tz.DaylightName : tz.StandardName;
         var skip  = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { "time", "and", "of", "the" };
+                    { "and", "of", "the" };
         var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var abbr  = string.Concat(parts
             .Where(p => !skip.Contains(p))

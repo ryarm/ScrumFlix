@@ -1,33 +1,16 @@
 /* File: /wwwroot/js/login.js
  * Handles:
- *   1. Password visibility toggle
- *   2. Validation error banner — reads ASP.NET summary, shows branded error box.
+ *   1. Validation error banner — reads ASP.NET summary, shows branded error box.
  *      The hidden #sf-login-summary div is populated by ASP.NET on failed POST;
  *      JS reads its <li> items and surfaces them in the visible #sf-login-errors
  *      banner. This avoids the CSS-only approach that showed an empty box on GET.
- *   3. Input error state — adds .sf-login-input--error to fields that failed
+ *   2. Input error state — adds .sf-login-input--error to fields that failed
  *      server-side validation, without relying on Bootstrap :invalid or jQuery
  *      Unobtrusive's default class which rendered native browser warning icons.
  */
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── 1. Password toggle ─────────────────────────────────────────────────
-    var pwInput   = document.getElementById('passwordInput');
-    var pwToggle  = document.getElementById('togglePassword');
-    var pwIcon    = document.getElementById('togglePasswordIcon');
-
-    if (pwInput && pwToggle && pwIcon) {
-        pwToggle.addEventListener('click', function () {
-            var isHidden = pwInput.type === 'password';
-            pwInput.type = isHidden ? 'text' : 'password';
-            pwIcon.classList.toggle('bi-eye',       !isHidden);
-            pwIcon.classList.toggle('bi-eye-slash',  isHidden);
-            pwToggle.setAttribute('aria-pressed', String(isHidden));
-            pwToggle.setAttribute('aria-label',   isHidden ? 'Hide password' : 'Show password');
-        });
-    }
-
-    // ── 2. Validation error banner ─────────────────────────────────────────
+    // ── 1. Validation error banner ─────────────────────────────────────────
     var summary   = document.getElementById('sf-login-summary');
     var banner    = document.getElementById('sf-login-errors');
     var errorText = document.getElementById('sf-login-error-text');
@@ -48,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ── 3. Per-field error highlighting ────────────────────────────────────
+    // ── 2. Per-field error highlighting ────────────────────────────────────
     // jQuery Unobtrusive adds .input-validation-error; we map that to our own
     // class so we control the visual — no browser warning icons, no Bootstrap
     // :invalid box-shadow bleeding through.

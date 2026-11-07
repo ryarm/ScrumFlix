@@ -6,8 +6,7 @@
  * filter bar (title search, genre, rating, runtime range, poster, trailer),
  * and pagination — all parameters preserved across sort and page navigation.
  *
- * Delete confirm uses sf-confirm-form + data-confirm (CSP-compliant).
- * sf-confirm.js is loaded globally by _AdminLayout.
+ * Delete confirmation uses the shared Alpine component.
  *@
 @model ScrumFlix.Areas.Admin.ViewModels.AdminMovieCatalogViewModel
 @{
@@ -262,14 +261,19 @@
 										</a>
 										<form asp-area="Admin" asp-controller="Movies" asp-action="MovieDelete"
 											  method="post" style="display:inline"
-											  class="sf-confirm-form"
-											  data-confirm="Delete '@m.Title'? This cannot be undone.">
+											  x-data="confirmation" x-on:submit="handleSubmit" x-on:keydown.escape="cancel"
+											  data-confirm-prompt="Delete '@m.Title'? This cannot be undone.">
 											@Html.AntiForgeryToken()
 											<input type="hidden" name="id" value="@m.MovieId" />
-											<button type="submit" class="btn btn-sm sf-btn-danger" title="Delete">
+											<button type="button" class="btn btn-sm sf-btn-danger" title="Delete" x-on:click="open">
 												<i class="bi bi-trash" aria-hidden="true"></i>
 											</button>
-										</form>
+											<span x-cloak x-show="confirming" class="sf-inline-confirm" role="group" aria-label="Delete confirmation">
+											    <span x-text="prompt"></span>
+											    <button type="button" class="btn btn-danger btn-sm" data-confirm-yes x-on:click="confirm">Yes, delete</button>
+											    <button type="button" class="btn sf-btn-ghost btn-sm" x-on:click="cancel">Cancel</button>
+											</span>
+							</form>
 									</td>
 								</tr>
 							}
@@ -317,7 +321,7 @@
 	</div>
 </section>
 
-@* sf-confirm.js loaded globally by _AdminLayout — no per-page script needed *@
+@* Alpine confirmation is loaded by _AdminLayout. *@
 
 @section Scripts {
     @* sf-movie-preview.js wires the eye-button → Bootstrap modal fetch *@

@@ -185,7 +185,7 @@
     @* HTMX — MUST be first. Without this, all hx-post forms fall back to plain
        HTML action= submission; the controller PartialView responses then render
        as bare HTML fragments ("a different page").
-       Version must match the Htmx NuGet package installed in the project.
+       Browser HTMX is 1.9.12; server-side Htmx helpers are 1.12.0.
        TODO: move to _AdminLayout globally to prevent this per-page omission recurring. *@
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.9.12/dist/htmx.min.js"></script>
 

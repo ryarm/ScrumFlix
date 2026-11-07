@@ -20,6 +20,24 @@
 (function () {
     'use strict';
 
+    // Stop nested delete clicks at their cell, before the parent row's hx-get.
+    // Rebind only new cells after HTMX swaps; existing cells are marked once.
+    function bindActionCells(root) {
+        root.querySelectorAll('[data-sf-stop-row-click]').forEach(function (cell) {
+            if (cell.dataset.sfRowClickBound) return;
+            cell.dataset.sfRowClickBound = 'true';
+            cell.addEventListener('click', function (event) { event.stopPropagation(); });
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { bindActionCells(document); });
+    } else {
+        bindActionCells(document);
+    }
+    document.addEventListener('htmx:afterSwap', function (event) {
+        bindActionCells(event.detail.target);
+    });
+
     const connection = new signalR.HubConnectionBuilder()
         .withUrl('/scheduleHub')
         .withAutomaticReconnect()

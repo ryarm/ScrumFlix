@@ -101,6 +101,9 @@
 
     @* FOUC prevention + theme picker binding — loaded ONCE, in <head>, as in _Layout *@
     <script src="~/js/sf-theme-switcher.js" asp-append-version="true"></script>
+    @* Alpine CSP build 3.17.4: registry first, then one deferred core initialization. *@
+    <script defer src="~/js/alpine/scrumflix-alpine.js" asp-append-version="true"></script>
+    <script defer src="~/js/alpine/alpine-csp.min.js" asp-append-version="true"></script>
 
     @* Per-page <head> injections (e.g. sf-spinner.css on TmdbSyncPage) *@
     @await RenderSectionAsync("Head", required: false)
@@ -222,9 +225,6 @@
     @* sf-spinner controller — globally available so any admin page can call sfSpinner.*
        CSS is loaded above in <head>. No need to load per-page. *@
     <script src="~/js/sf-spinner.js" asp-append-version="true"></script>
-
-    @* CSP-safe delete confirmation — wires any form.sf-confirm-form + data-confirm globally *@
-    <script src="~/js/sf-confirm.js" asp-append-version="true"></script>
 
 </body>
 </html>

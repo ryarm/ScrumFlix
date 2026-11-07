@@ -80,10 +80,10 @@
             <table class="table sf-admin-table" id="conc-table" aria-label="Concessions staff management">
                 <thead>
                     <tr>
-                        <th onclick="sortTable('conc-table', 0)" style="cursor:pointer">Item <i class="bi bi-arrow-down-up ms-1 text-muted" style="font-size:.7rem"></i></th>
+                        <th scope="col"><button type="button" class="sf-sort-control" data-sort-table="conc-table" data-sort-column="0" aria-label="Sort by item">Item <i class="bi bi-arrow-down-up ms-1 text-muted" style="font-size:.7rem"></i></button></th>
                         <th>Location</th>
-                        <th class="text-end" onclick="sortTable('conc-table', 2)" style="cursor:pointer">Price</th>
-                        <th class="text-end" onclick="sortTable('conc-table', 3)" style="cursor:pointer">Stock</th>
+                        <th scope="col" class="text-end"><button type="button" class="sf-sort-control" data-sort-table="conc-table" data-sort-column="2" aria-label="Sort by price">Price</button></th>
+                        <th scope="col" class="text-end"><button type="button" class="sf-sort-control" data-sort-table="conc-table" data-sort-column="3" aria-label="Sort by stock">Stock</button></th>
                         <th class="text-end">Min</th>
                         <th>Status</th>
                         <th class="text-end">Actions</th>

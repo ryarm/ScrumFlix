@@ -212,8 +212,8 @@
     @* HTMX — loaded globally in the Employee layout (unlike Admin which does per-page).
        Phase 5 Time Tracking uses HTMX on every employee-facing page; loading it here
        avoids the per-page pattern that caused Phase 4.3 latent issues.
-       Version must match the Htmx NuGet package version installed in the project.
-       Cross-check with: grep -r "htmx" Areas/Admin/Views to confirm the CDN path. *@
+       Browser HTMX is 1.9.12; server Htmx helper packages are 1.12.0.
+       These packages serve different layers and are tested together. *@
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.9.12/dist/htmx.min.js"></script>
 
     @* Sidebar collapse/toggle — loaded ONCE here, NOT inside _EmployeeSidebar.cshtml *@
@@ -228,8 +228,6 @@
     @* Spinner controller — globally available; CSS loaded above in <head> *@
     <script src="~/js/sf-spinner.js" asp-append-version="true"></script>
 
-    @* CSP-safe delete confirmation *@
-    <script src="~/js/sf-confirm.js" asp-append-version="true"></script>
 
 </body>
 </html>

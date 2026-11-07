@@ -9,8 +9,7 @@
  *   - Submit button: added missing base 'btn' class.
  *   - Cancel link: added missing 'btn' class.
  *   - Added novalidate to the edit form.
- *   - Delete form: replaced onsubmit="return confirm(...)" with data-confirm
- *     + sf-confirm-form class + external JS listener (CSP compliance).
+ *   - Delete form uses the Alpine confirmation component with existing POST fields.
  *   - Genre multiselect label: added missing 'for' attribute (was unlinked).
  *   - Added aria-hidden="true" to all decorative icons.
  *   - Added back-link to MovieCatalog in the page header.
@@ -141,16 +140,21 @@
 
                     <hr class="sf-divider mt-4" />
 
-                    @* Delete form — onsubmit replaced with data-confirm + external JS (CSP) *@
+                    @* Delete form keeps its route, ID, and anti-forgery token; Alpine supplies confirmation. *@
                     <form asp-area="Admin" asp-controller="Movies" asp-action="MovieDelete"
                           method="post"
-                          data-confirm="Permanently delete '@Model.Title'? This cannot be undone."
-                          class="sf-confirm-form">
+                          data-confirm-prompt="Permanently delete '@Model.Title'? This cannot be undone."
+                          x-data="confirmation" x-on:submit="handleSubmit" x-on:keydown.escape="cancel">
                         @Html.AntiForgeryToken()
                         <input name="id" type="hidden" value="@Model.MovieId" />
-                        <button type="submit" class="btn sf-btn-danger w-100">
+                        <button type="button" class="btn sf-btn-danger w-100" x-on:click="open">
                             <i class="bi bi-trash me-2" aria-hidden="true"></i>Delete Movie
                         </button>
+                        <span x-cloak x-show="confirming" class="sf-inline-confirm" role="group" aria-label="Delete confirmation">
+                            <span x-text="prompt"></span>
+                            <button type="button" class="btn btn-danger btn-sm" data-confirm-yes x-on:click="confirm">Yes, delete</button>
+                            <button type="button" class="btn sf-btn-ghost btn-sm" x-on:click="cancel">Cancel</button>
+                        </span>
                     </form>
                 </div>
             </div>
@@ -160,6 +164,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    @* Genre sync + delete-confirm handler — both in sf-movie-genre.js (CSP-compliant) *@
+    @* Genre synchronization remains in this external script. *@
     <script src="~/js/sf-movie-genre.js" asp-append-version="true"></script>
 }

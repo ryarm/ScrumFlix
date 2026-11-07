@@ -124,29 +124,15 @@
 									}
 
 									<form asp-controller="Concessions" asp-action="AddConcessionToCart"
-										  method="post" class="js-add-concession">
+										  method="post" class="js-add-concession" x-data="concessionQuantity">
 										@Html.AntiForgeryToken()
 										<input type="hidden" name="concessionItemId" value="@item.ConcessionItemId" />
 
 										<div class="sf-qty-control sf-qty-sm mb-3">
-											@* <button type="button" class="sf-qty-btn"
-                                                onclick="this.nextElementSibling.value = Math.max(1, parseInt(this.nextElementSibling.value)-1)"
-                                                aria-label="Decrease quantity"
-                                                @(outOfStock ? "disabled" : "")>
-                                            −
-                                        </button>
-                                        <input type="number" name="quantity" value="1" min="1" max="20"
-                                               class="sf-qty-input" aria-label="Quantity"
-                                               @(outOfStock ? "disabled" : "") />
-                                        <button type="button" class="sf-qty-btn"
-                                                onclick="this.previousElementSibling.value = Math.min(20, parseInt(this.previousElementSibling.value)+1)"
-                                                aria-label="Increase quantity"
-                                                @(outOfStock ? "disabled" : "")>
-                                            +
-                                        </button> *@
-											<button type="button" class="sf-qty-btn js-qty-btn js-qty-minus" aria-label="Decrease quantity" @(outOfStock ? "disabled" : "")>−</button>
-											<input type="number" name="quantity" value="1" min="1" max="20" class="sf-qty-input" aria-label="Quantity" @(outOfStock ? "disabled" : "") />
-											<button type="button" class="sf-qty-btn js-qty-btn js-qty-plus" aria-label="Increase quantity" @(outOfStock ? "disabled" : "")>+</button>
+											
+											<button type="button" class="sf-qty-btn" x-on:click="decrement" aria-label="Decrease quantity" @(outOfStock ? "disabled" : "")>−</button>
+											<input type="number" name="quantity" value="1" min="1" max="20" class="sf-qty-input" x-on:change="changed" aria-label="Quantity" @(outOfStock ? "disabled" : "") />
+											<button type="button" class="sf-qty-btn" x-on:click="increment" aria-label="Increase quantity" @(outOfStock ? "disabled" : "")>+</button>
 										</div>
 
 										<button type="submit"

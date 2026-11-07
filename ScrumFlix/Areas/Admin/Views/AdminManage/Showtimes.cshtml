@@ -214,14 +214,19 @@
                                         {
                                             <form asp-area="Admin" asp-controller="AdminManage"
                                                   asp-action="ShowtimeDelete" method="post"
-                                                  data-confirm="Delete this showtime? This cannot be undone."
-                                                  class="sf-confirm-form">
+                                                  data-confirm-prompt="Delete this showtime? This cannot be undone."
+                                                  x-data="confirmation" x-on:submit="handleSubmit" x-on:keydown.escape="cancel">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@st.ShowtimeId" />
-                                                <button type="submit" class="btn btn-sm sf-btn-danger"
+                                                <button type="button" class="btn btn-sm sf-btn-danger" x-on:click="open"
                                                         title="Delete showtime">
                                                     <i class="bi bi-trash" aria-hidden="true"></i>
                                                 </button>
+                                                <span x-cloak x-show="confirming" class="sf-inline-confirm" role="group" aria-label="Delete confirmation">
+                                                    <span x-text="prompt"></span>
+                                                    <button type="button" class="btn btn-danger btn-sm" data-confirm-yes x-on:click="confirm">Yes, delete</button>
+                                                    <button type="button" class="btn sf-btn-ghost btn-sm" x-on:click="cancel">Cancel</button>
+                                                </span>
                                             </form>
                                         }
                                     </div>
@@ -272,4 +277,4 @@
     </div>
 </section>
 
-@* sf-confirm.js is loaded globally by _AdminLayout — no per-page script needed *@
+@* Alpine confirmation is loaded by _AdminLayout. *@

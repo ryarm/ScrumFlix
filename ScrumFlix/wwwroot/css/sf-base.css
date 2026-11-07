@@ -167,3 +167,4 @@ textarea {
         scroll-behavior: auto !important;
     }
 }
+[x-cloak] { display: none !important; }

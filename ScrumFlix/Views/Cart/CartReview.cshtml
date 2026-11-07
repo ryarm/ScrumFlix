@@ -74,20 +74,20 @@
 							<div class="sf-cart-item-controls">
 								<!-- Quantity -->
 								<form asp-controller="Cart" asp-action="UpdateQuantity" method="post"
-									  class="d-flex align-items-center gap-1">
+									  class="d-flex align-items-center gap-1" x-data="cartQuantity">
 									@Html.AntiForgeryToken()
 									<input type="hidden" name="cartItemId" value="@item.CartItemId" />
 									<div class="sf-qty-control sf-qty-sm">
 										<button type="button" class="sf-qty-btn"
-												data-qty-action="-1"
+												x-on:click="decrement"
 												aria-label="Decrease quantity">
 											−
 										</button>
 										<input type="number" name="quantity" value="@item.Quantity"
 											   min="0" max="20" class="sf-qty-input"
-											   data-cart-qty-input aria-label="Quantity" />
+											   x-on:change="changed" aria-label="Quantity" />
 										<button type="button" class="sf-qty-btn"
-												data-qty-action="1"
+												x-on:click="increment"
 												aria-label="Increase quantity">
 											+
 										</button>
@@ -112,11 +112,17 @@
 					<!-- Clear Cart -->
 					<div class="mt-4 text-end">
 						<form asp-controller="Cart" asp-action="ClearCart" method="post"
-							  data-clear-cart-form>
+							  x-data="confirmation" data-confirm-prompt="Clear your entire cart?"
+							  x-on:submit="handleSubmit" x-on:keydown.escape="cancel">
 							@Html.AntiForgeryToken()
-							<button type="submit" class="btn sf-btn-ghost btn-sm">
+							<button type="button" class="btn sf-btn-ghost btn-sm" x-on:click="open">
 								<i class="bi bi-trash me-1"></i>Clear Cart
 							</button>
+							<span x-cloak x-show="confirming" class="sf-inline-confirm" role="group" aria-label="Clear cart confirmation">
+								<span x-text="prompt"></span>
+								<button type="button" class="btn btn-danger btn-sm" data-confirm-yes x-on:click="confirm">Yes, clear cart</button>
+								<button type="button" class="btn sf-btn-ghost btn-sm" x-on:click="cancel">Cancel</button>
+							</span>
 						</form>
 					</div>
 				</div>
@@ -193,8 +199,3 @@
 
 	</div>
 </section>
-
-@section Scripts {
-	<script src="~/js/cart-review.js"
-	        asp-append-version="true"></script>
-}
