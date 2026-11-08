@@ -99,8 +99,8 @@
 		    Used by EmailService (transactional email: order confirmations, receipts,
 		    staff notifications) and by LoggingConfiguration (Serilog email alert sink).
 		-->
-		<PackageReference Include="MailKit" Version="4.18.1" />
-		<PackageReference Include="MimeKit" Version="4.18.1" />
+		<PackageReference Include="MailKit" Version="4.18.2" />
+		<PackageReference Include="MimeKit" Version="4.18.2" />
 
 		<!-- ── Data access — EF Core + MySQL provider ────────────────────────── -->
 		<!--
@@ -226,7 +226,7 @@
 		<PackageReference Include="SixLabors.ImageSharp" Version="4.1.3" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="3.1.3" />
 		<PackageReference Include="SixLabors.ImageSharp.Web" Version="4.0.2" />
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
 
 		<!-- ── TMDb integration ──────────────────────────────────────────────── -->
 		<!--
@@ -234,7 +234,7 @@
 		    Used by TmdbSyncService to fetch movie metadata, genre lists, and poster
 		    paths for the Admin TMDb Sync Dashboard.
 		-->
-		<PackageReference Include="TMDbLib" Version="3.0.0" />
+		<PackageReference Include="TMDbLib" Version="4.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
