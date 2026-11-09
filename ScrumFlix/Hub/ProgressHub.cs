@@ -8,15 +8,8 @@
  *   - One group per operation id. Clients call JoinOperation(operationId)
  *     after connecting to subscribe to that operation's "ProgressUpdate"
  *     events (see ProgressReporter.EventName).
- *   - Session guard: ScrumFlix uses session-based auth, NOT ASP.NET Core
- *     Identity, so a bare [Authorize] attribute is insufficient (it has no
- *     session-cookie-backed authentication handler to evaluate). Instead,
- *     OnConnectedAsync reads HttpContext.Session directly — mirroring
- *     StaffControllerBase.RoleGuard(1) — and aborts the connection if the
- *     session RoleId is missing or > 1 (i.e. not Admin). This is the same
- *     pattern TmdbProgressHub's doc comments describe but actually enforce
- *     it, since neither TmdbProgressHub nor ScheduleHub currently perform a
- *     real session check.
+ *   - AdminStaff authorization uses the session-backed authentication scheme.
+ *     The existing OnConnectedAsync session check remains a second guard.
  *   - ClientCancel(operationId) lets the client request cancellation of a
  *     running operation via IProgressReporterFactory.Cancel — wired to the
  *     Cancel button in sf-progress.js.
@@ -35,6 +28,7 @@
  */
 
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ScrumFlix.Services;
 using ScrumFlix.Services.Progress;
@@ -44,8 +38,9 @@ namespace ScrumFlix.Hubs;
 /// <summary>
 /// Generic SignalR hub for the Phase 4.0 shared progress framework. Admin-only
 /// (RoleId == 1), enforced via the session-cookie role check in
-/// <see cref="OnConnectedAsync"/> rather than <c>[Authorize]</c>.
+/// <see cref="OnConnectedAsync"/> and the AdminStaff authorization policy.
 /// </summary>
+[Authorize(Policy = "AdminStaff")]
 public class ProgressHub : Hub
 {
     private readonly ILogger<ProgressHub>       _logger;

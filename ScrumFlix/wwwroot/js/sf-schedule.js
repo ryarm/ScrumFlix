@@ -36,30 +36,102 @@
     }
     document.addEventListener('htmx:afterSwap', function (event) {
         bindActionCells(event.detail.target);
+        filterAssignmentShifts();
+        if (event.detail.target?.id === 'assignments-grid' &&
+            event.detail.requestConfig?.elt?.id === 'assignment-form') {
+            const selected = document.getElementById('af-location')?.value;
+            const filter = document.getElementById('assignment-location-filter');
+            const fallback = document.getElementById('schedule-location-fallback');
+            if (selected && filter) filter.value = selected;
+            if (selected && fallback) fallback.value = selected;
+        }
+        joinSelectedLocation().catch(err => console.error('Schedule location connection error:', err));
     });
+
+    function filterAssignmentShifts() {
+        const location = document.getElementById('af-location')?.value;
+        const shift = document.getElementById('af-shift');
+        if (!shift) return;
+        for (const option of shift.options) {
+            if (!option.value) continue;
+            option.disabled = !location || option.dataset.location !== location;
+        }
+        if (shift.selectedOptions[0]?.disabled) shift.value = '';
+    }
+    document.addEventListener('change', function (event) {
+        if (event.target?.id === 'af-location') filterAssignmentShifts();
+    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', filterAssignmentShifts);
+    } else {
+        filterAssignmentShifts();
+    }
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl('/scheduleHub')
         .withAutomaticReconnect()
         .build();
 
+    let joinedLocation = null;
+
+    async function joinSelectedLocation() {
+        if (connection.state !== signalR.HubConnectionState.Connected) return;
+        const selected = Number(document.getElementById('gantt-location')?.value ||
+            document.getElementById('shift-filter-location')?.value ||
+            document.getElementById('schedule-location-fallback')?.value);
+        if (!Number.isSafeInteger(selected) || selected <= 0) return;
+        if (joinedLocation === selected) return;
+        if (joinedLocation !== null) {
+            await connection.invoke('LeaveLocationGroup', joinedLocation);
+        }
+        joinedLocation = null;
+        await connection.invoke('JoinLocationGroup', selected);
+        joinedLocation = selected;
+    }
+
+    document.getElementById('gantt-location')?.addEventListener('change', function () {
+        joinSelectedLocation().catch(err => console.error('Schedule location connection error:', err));
+    });
+    connection.onreconnecting(function () { joinedLocation = null; });
+    connection.onreconnected(function () {
+        joinSelectedLocation().catch(err => console.error('Schedule location connection error:', err));
+    });
+
+    function refreshTimeline() {
+        const locationId = document.getElementById('gantt-location')?.value;
+        const period = document.getElementById('gantt-month')?.value;
+        if (locationId && period) {
+            const query = new URLSearchParams({ locationId, period });
+            const weekStart = document.getElementById('gantt-week-start')?.value;
+            if (weekStart) query.set('weekStart', weekStart);
+            htmx.ajax('GET', '/Admin/Schedule/ScheduleVisual?' + query, {
+                target: '#gantt-container', swap: 'innerHTML'
+            });
+        }
+    }
+
     connection.on('ShiftsUpdated', function () {
-        htmx.ajax('GET', '/Admin/Schedule/ShiftsGrid', {
-            target: '#shifts-grid',
-            swap:   'innerHTML'
-        });
+        const filters = document.getElementById('shift-filter-form');
+        if (filters) {
+            htmx.ajax('GET', '/Admin/Schedule/ShiftsGrid?' + new URLSearchParams(new FormData(filters)), {
+                target: '#shifts-grid', swap: 'innerHTML'
+            });
+        }
+        refreshTimeline();
     });
 
     connection.on('AssignmentsUpdated', function () {
+        refreshTimeline();
+        if (!document.getElementById('assignments-grid')) return;
         const locEl = document.getElementById('gantt-location');
-        const locId = locEl ? locEl.value : 0;
+        const locId = locEl ? locEl.value : document.getElementById('schedule-location-fallback')?.value;
         htmx.ajax('GET', '/Admin/Schedule/AssignmentsGrid?locationId=' + locId, {
             target: '#assignments-grid',
             swap:   'innerHTML'
         });
     });
 
-    connection.start().catch(function (err) {
+    connection.start().then(joinSelectedLocation).catch(function (err) {
         console.error('SignalR connection error:', err);
     });
 }());

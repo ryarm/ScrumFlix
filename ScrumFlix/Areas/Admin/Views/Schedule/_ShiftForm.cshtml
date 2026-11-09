@@ -22,7 +22,8 @@
 }
 
 <form id="shift-form" method="post" action="@postUrl"
-      hx-post="@postUrl" hx-target="#shifts-grid" hx-swap="innerHTML">
+      hx-post="@postUrl" hx-target="#shifts-grid" hx-swap="innerHTML"
+      hx-include="#shift-filter-form">
     @Html.AntiForgeryToken()
     @if (isEdit)
     {

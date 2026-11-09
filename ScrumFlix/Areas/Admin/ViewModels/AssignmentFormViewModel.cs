@@ -12,11 +12,15 @@ public class AssignmentFormViewModel
     public int AssignmentAreaId { get; set; }
 
     public int UserId { get; set; }
+    [Display(Name = "Work Location")]
+    [Range(1, int.MaxValue, ErrorMessage = "Select a work location.")]
+    public int LocationId { get; set; }
     public int ShiftId { get; set; }
     public int? ShowtimeId { get; set; }
 
     public List<SelectListItem> Areas { get; set; } = [];
     public List<SelectListItem> Employees { get; set; } = [];
+    public List<SelectListItem> Locations { get; set; } = [];
 
     /// <summary>Shift options. Phase 3 fix — the form previously reused the
     /// Employees list as a placeholder for the shift dropdown.</summary>

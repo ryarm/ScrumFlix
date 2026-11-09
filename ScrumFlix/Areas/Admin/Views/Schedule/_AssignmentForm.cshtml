@@ -18,7 +18,7 @@
     string cancelUrl = Url.Action("AssignmentsGrid", "Schedule", new { area = "Admin" })!;
 }
 
-<form method="post" action="@postUrl"
+<form id="assignment-form" method="post" action="@postUrl"
       hx-post="@postUrl"
       hx-target="#assignments-grid"
       hx-swap="innerHTML">
@@ -55,6 +55,18 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label sf-label" for="af-location">Work Location</label>
+        <select id="af-location" name="LocationId" class="form-select sf-input" required>
+            <option value="">— Select Location —</option>
+            @foreach (var loc in Model.Locations)
+            {
+                <option value="@loc.Value" selected="@loc.Selected">@loc.Text</option>
+            }
+        </select>
+        <div class="form-text">This is where the shift takes place; it does not change the employee's home location.</div>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label sf-label" for="af-emp">Employee</label>
         <select id="af-emp" name="UserId" class="form-select sf-input" required>
             <option value="">— Select Employee —</option>
@@ -63,6 +75,7 @@
                 <option value="@e.Value" selected="@e.Selected">@e.Text</option>
             }
         </select>
+        <div class="form-text">Employees can cover shifts at other open theaters.</div>
     </div>
 
     <div class="mb-3">
@@ -71,7 +84,7 @@
             <option value="">— Select Shift —</option>
             @foreach (var s in Model.Shifts)
             {
-                <option value="@s.Value" selected="@s.Selected">@s.Text</option>
+                <option value="@s.Value" data-location="@(s.Group?.Name)" selected="@s.Selected">@s.Text</option>
             }
         </select>
         @* Phase 3 fix: now bound to Model.Shifts (was the Employees placeholder) *@

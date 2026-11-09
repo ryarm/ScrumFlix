@@ -31,6 +31,7 @@
  *                UseSerilogRequestLogging               ← Phase 1E (new, after static files)
  *                UseRouting
  *                UseSession
+ *                UseAuthentication
  *                UseAuthorization
  *                MapControllerRoute
  *
@@ -72,6 +73,7 @@
  *                UseSerilogRequestLogging               ← Phase 1E (after static files)
  *                UseRouting
  *                UseSession
+ *                UseAuthentication
  *                UseAuthorization
  *                MapControllerRoute
  *
@@ -276,6 +278,19 @@ builder.Services.ConfigureTmdb(builder.Configuration);
 
 builder.Services.AddScoped<ITmdbImageService, TmdbImageService>();
 
+// The staff login stores credentials in ASP.NET Core Session. Give [Authorize] on
+// SignalR hubs a principal and a 401/403 challenge without changing login cookies.
+builder.Services.AddAuthentication(SessionAuthenticationHandler.SchemeName)
+    .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions,
+        SessionAuthenticationHandler>(SessionAuthenticationHandler.SchemeName, _ => { });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ScheduleManagers", policy =>
+        policy.RequireAuthenticatedUser().RequireRole("Admin", "Manager"));
+    options.AddPolicy("AdminStaff", policy =>
+        policy.RequireAuthenticatedUser().RequireRole("Admin"));
+});
+
 // ── Global filters ─────────────────────────────────────────────────────────
 // RoleAuthorizationFilter: enforces [RequireRole] attributes across all controllers.
 // Uses session RoleId — must run AFTER UseSession() is in the middleware pipeline.
@@ -414,9 +429,10 @@ app.UseImageSharp();
 
 app.UseRouting();
 
-// Session must be activated before UseAuthorization so the role authorization
-// filter (Phase 2) can read the authenticated user from session.
+// Session must be activated before the session-backed authentication scheme.
+// MVC role filters and hub authorization both consume the staff session.
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 

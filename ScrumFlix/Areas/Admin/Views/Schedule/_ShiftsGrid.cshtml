@@ -14,9 +14,61 @@
  *      violation. Replaced with hx-confirm which HTMX handles natively without
  *      inline JS.
  *@
-@model List<ScrumFlix.Areas.Admin.ViewModels.ShiftRowViewModel>
+@model ScrumFlix.Areas.Admin.ViewModels.ShiftGridViewModel
+@{
+    var gridUrl = Url.Action("ShiftsGrid", "Schedule", new { area = "Admin" });
+    var previous = Model.Page - 1;
+    var next = Model.Page + 1;
+    var prevArgs = new { area = "Admin", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId,
+        filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = previous };
+    var nextArgs = new { area = "Admin", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId,
+        filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = next };
+}
 
-@if (!Model.Any())
+<form id="shift-filter-form" method="get" action="@Url.Action("Index", "Schedule", new { area = "Admin" })"
+      hx-get="@gridUrl" hx-target="#shifts-grid" hx-swap="innerHTML"
+      class="d-flex flex-wrap gap-2 align-items-end mb-3">
+    <input type="hidden" name="tab" value="shifts" />
+    <input type="hidden" name="filterPage" value="@Model.Page" />
+    <div><label for="shift-filter-location" class="form-label">Location</label>
+        <select id="shift-filter-location" name="filterLocationId" class="form-select">
+            @foreach (var loc in Model.Locations)
+            {
+                <option value="@loc.Value" selected="@loc.Selected">@loc.Text</option>
+            }
+        </select></div>
+    <div><label for="shift-filter-role" class="form-label">Role</label>
+        <select id="shift-filter-role" name="filterRoleId" class="form-select">
+            <option value="0" selected="@(Model.RoleId is null or 0)">All roles</option>
+            @foreach (var role in Model.Roles)
+            {
+                <option value="@role.Value" selected="@role.Selected">@role.Text</option>
+            }
+        </select></div>
+    <div><label for="shift-filter-date" class="form-label">Start date</label>
+        <input id="shift-filter-date" name="filterDate" type="date" class="form-control"
+               value="@(Model.Date?.ToString("yyyy-MM-dd"))" /></div>
+    <div><label for="shift-filter-sort" class="form-label">Sort</label>
+        <select id="shift-filter-sort" name="filterSort" class="form-select">
+            <option value="start" selected="@(Model.Sort == "start")">Start: earliest</option>
+            <option value="start_desc" selected="@(Model.Sort == "start_desc")">Start: latest</option>
+            <option value="location" selected="@(Model.Sort == "location")">Location, then start</option>
+            <option value="role" selected="@(Model.Sort == "role")">Role, then start</option>
+        </select></div>
+    <button type="submit" class="btn sf-btn-ghost">Apply</button>
+</form>
+<p class="sf-text-muted" role="status">@Model.TotalCount shifts · page @Model.Page of @Model.TotalPages</p>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="sf-flash-banner sf-flash-banner--danger" role="alert">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(state => state.Errors))
+        {
+            <p class="mb-0">@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+@if (!Model.Rows.Any())
 {
     <p class="sf-text-muted mt-3">No shifts defined yet. Add one using the form.</p>
 }
@@ -36,7 +88,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var s in Model)
+                @foreach (var s in Model.Rows)
                 {
                     var duration   = (s.EndTime - s.StartTime).TotalHours;
                     var editUrl    = Url.Action("GetShift",    "Schedule", new { area = "Admin", id = s.ShiftId });
@@ -59,6 +111,7 @@ else
                                onsubmit="return confirm(...)". *@
                             <form method="post" action="@deleteUrl"
                                   hx-post="@deleteUrl"
+                                  hx-include="#shift-filter-form"
                                   hx-target="#shifts-grid"
                                   hx-swap="innerHTML"
                                   hx-confirm="Delete this shift? This cannot be undone.">
@@ -76,4 +129,17 @@ else
         </table>
     </div>
     </div>
+
+    <nav class="d-flex gap-2 justify-content-between mt-3" aria-label="Shift pages">
+        @if (Model.Page > 1)
+        {
+            <a class="btn sf-btn-ghost btn-sm" href="@Url.Action("Index", "Schedule", new { area = "Admin", tab = "shifts", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId, filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = previous })"
+               hx-get="@Url.Action("ShiftsGrid", "Schedule", prevArgs)" hx-target="#shifts-grid">Previous</a>
+        }
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a class="btn sf-btn-ghost btn-sm ms-auto" href="@Url.Action("Index", "Schedule", new { area = "Admin", tab = "shifts", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId, filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = next })"
+               hx-get="@Url.Action("ShiftsGrid", "Schedule", nextArgs)" hx-target="#shifts-grid">Next</a>
+        }
+    </nav>
 }

@@ -5,11 +5,8 @@
  *            Admin clients on the TmdbSyncPage.
  *
  * Architecture:
- *   - Only Admin users (RoleId == 1) can connect — guarded by [Authorize].
- *     ScrumFlix uses session-based auth, not ASP.NET Core Identity, so the
- *     [Authorize] attribute alone is insufficient. The hub inherits the session
- *     guard pattern used by StaffControllerBase: if the session role is missing
- *     or not Admin, OnConnectedAsync aborts the connection.
+ *   - Only Admin users (RoleId == 1) can connect. The AdminStaff policy uses
+ *     the session-backed authentication scheme in Program.cs.
  *
  *   - A single group "tmdb-sync" is used rather than per-user groups because
  *     only one Admin sync can run at a time and all connected Admin clients
@@ -30,6 +27,7 @@
  * Phase: 6 — Real-time TMDb sync progress
  */
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using ScrumFlix.Services;
 
@@ -40,6 +38,7 @@ namespace ScrumFlix.Hubs;
 /// Emits TmdbSyncProgress events as each movie is synced so the
 /// sf-spinner component can display real, accurate percentages.
 /// </summary>
+[Authorize(Policy = "AdminStaff")]
 public class TmdbProgressHub : Hub
 {
     private readonly ILogger<TmdbProgressHub> _logger;

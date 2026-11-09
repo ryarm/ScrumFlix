@@ -4,12 +4,28 @@
  * and by SignalR ShiftsUpdated events on other clients.
  *@
 @model ScrumFlix.Areas.Admin.ViewModels.GanttViewModel
+@{
+    var prevWeek = Model.WeekStart.AddDays(-7);
+    var nextWeek = Model.WeekStart.AddDays(7);
+    var prevUrl = Url.Action("Index", "Schedule", new { area = "Admin", tab = "timeline",
+        locationId = Model.LocationId, year = prevWeek.Year, month = prevWeek.Month,
+        weekStart = prevWeek.ToString("yyyy-MM-dd") });
+    var nextUrl = Url.Action("Index", "Schedule", new { area = "Admin", tab = "timeline",
+        locationId = Model.LocationId, year = nextWeek.Year, month = nextWeek.Month,
+        weekStart = nextWeek.ToString("yyyy-MM-dd") });
+}
+<div class="d-flex justify-content-between align-items-center gap-3 mb-3" aria-label="Schedule week">
+    <input type="hidden" id="gantt-week-start" value="@Model.WeekStart.ToString("yyyy-MM-dd")" />
+    <a class="btn sf-btn-ghost btn-sm" href="@prevUrl">Previous week</a>
+    <strong>@Model.WeekStart.ToString("MMM d") – @Model.WeekStart.AddDays(6).ToString("MMM d, yyyy")</strong>
+    <a class="btn sf-btn-ghost btn-sm" href="@nextUrl">Next week</a>
+</div>
 
 @if (Model.IsEmpty)
 {
     <div class="sf-flash-banner sf-flash-banner--info d-flex align-items-center gap-2" role="status">
         <i class="bi bi-info-circle-fill flex-shrink-0" aria-hidden="true"></i>
-        <span>No shifts found for the selected location and month.</span>
+        <span>No shifts found for this location and week.</span>
     </div>
 }
 else
@@ -23,7 +39,7 @@ else
                 @for (int h = Model.StartHour; h <= Model.EndHour; h++)
                 {
                     <span style="position:absolute; left:@((h - Model.StartHour) * Model.HourWidthPx)px; font-size:0.7rem; color:var(--sf-text-muted); user-select:none;">
-                        @(h % 12 == 0 ? 12 : h % 12)@(h < 12 ? "am" : "pm")
+                        @((h % 12) == 0 ? 12 : h % 12)@(h % 24 < 12 ? "am" : "pm")
                     </span>
                 }
             </div>
@@ -31,22 +47,22 @@ else
             @* Day rows *@
             @foreach (var day in Model.Days)
             {
-                <div style="position:relative; height:36px; border-bottom:1px solid var(--sf-border-muted); display:flex; align-items:center;">
+                <div style="position:relative; height:@(day.RowHeightPx)px; border-bottom:1px solid var(--sf-border-muted);">
                     @* Date label *@
-                    <div style="position:absolute; left:0; width:@(Model.TimelineLeftPx - 8)px; font-size:0.8rem; color:var(--sf-text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <div style="position:absolute; left:0; top:8px; width:@(Model.TimelineLeftPx - 8)px; font-size:0.8rem; color:var(--sf-text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                         @day.Date.ToString("ddd MM/dd")
                     </div>
 
                     @* Shift bars *@
                     @foreach (var bar in day.Bars)
                     {
-                        <div style="position:absolute; left:@(bar.LeftPx)px; width:@(bar.WidthPx)px;
+                        <div style="position:absolute; left:@(bar.LeftPx)px; top:@(bar.TopPx)px; width:@(bar.WidthPx)px;
                                     height:26px; border-radius:4px; background-color:@bar.RoleColor;
                                     display:flex; align-items:center; padding:0 6px;
                                     font-size:0.7rem; color:#222; overflow:hidden; white-space:nowrap;
                                     cursor:default;"
-                             title="@bar.RoleName — @bar.Label (ShiftId @bar.ShiftId)">
-                            @bar.RoleName: @bar.Label
+                             title="@bar.RoleName — @bar.Label — @bar.AssignmentSummary (ShiftId @bar.ShiftId)">
+                            @bar.RoleName: @bar.AssignmentSummary — @bar.Label
                         </div>
                     }
                 </div>

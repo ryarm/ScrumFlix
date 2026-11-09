@@ -24,14 +24,16 @@ namespace ScrumFlix.Hubs;
 ///   JoinLocationGroup(locationId)   — subscribe to a location's broadcast group
 ///   LeaveLocationGroup(locationId)  — unsubscribe (called on location combo change)
 /// </summary>
-[Authorize]
+[Authorize(Policy = "ScheduleManagers")]
 public class ScheduleHub : Hub
 {
     private readonly ILogger<ScheduleHub> _logger;
+    private readonly AppDbContext _db;
 
-    public ScheduleHub(ILogger<ScheduleHub> logger)
+    public ScheduleHub(ILogger<ScheduleHub> logger, AppDbContext db)
     {
         _logger = logger;
+        _db = db;
     }
 
     // ── Group management ────────────────────────────────────────────────────
@@ -43,6 +45,15 @@ public class ScheduleHub : Hub
     /// <param name="locationId">The LocationId the client is currently viewing.</param>
     public async Task JoinLocationGroup(int locationId)
     {
+        // Controller access allows managers and admins at valid theaters.
+        // Never trust a caller-supplied group name or location ID.
+        if (locationId <= 0 ||
+            (Context.User?.IsInRole("Admin") != true &&
+             Context.User?.IsInRole("Manager") != true) ||
+            !await _db.Locations.AsNoTracking()
+                .AnyAsync(l => l.LocationId == locationId))
+            throw new HubException("This location is unavailable.");
+
         var groupName = LocationGroup(locationId);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
