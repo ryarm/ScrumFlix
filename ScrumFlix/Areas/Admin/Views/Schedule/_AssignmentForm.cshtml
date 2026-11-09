@@ -21,7 +21,8 @@
 <form id="assignment-form" method="post" action="@postUrl"
       hx-post="@postUrl"
       hx-target="#assignments-grid"
-      hx-swap="innerHTML">
+      hx-swap="innerHTML"
+      hx-include="#assignment-filter-form">
     @Html.AntiForgeryToken()
     @if (isEdit)
     {
@@ -111,6 +112,7 @@
                the assignments container. Corrected to AssignmentsGrid. *@
             <button type="button" class="btn sf-btn-ghost"
                     hx-get="@cancelUrl"
+                    hx-include="#assignment-filter-form"
                     hx-target="#assignments-grid">
                 Cancel
             </button>

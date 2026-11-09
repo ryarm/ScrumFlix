@@ -4,9 +4,9 @@
  *              Net-new for Phase 2 (TMDB integration).
  *
  *              One-to-one with Movie (UQ_MovieTmdbMetadata_MovieId). Stores enrichment
- *              data pulled from the TMDb API by TmdbSyncService. The service must
- *              UPSERT by TMDbMovieId (UQ_MovieTmdbMetadata_TMDbMovieId) so repeated
- *              syncs are idempotent.
+ *              data pulled from the TMDb API by TmdbSyncService. The service
+ *              updates by MovieId and refreshes by the stored TMDbMovieId;
+ *              both columns have unique constraints.
  *
  *              PosterPath and BackdropPath store the TMDb path segment (e.g., "/abc123.jpg").
  *              Prepend the TMDb image base URL ("https://image.tmdb.org/t/p/w500") at
@@ -51,7 +51,7 @@ public class MovieTmdbMetadata
     /// <summary>
     /// The TMDb movie identifier used to fetch and refresh this metadata.
     /// Must be unique across all records (UQ_MovieTmdbMetadata_TMDbMovieId).
-    /// TmdbSyncService upserts by this value.
+    /// TmdbSyncService uses this value for subsequent detail fetches.
     /// </summary>
     [Column("TMDbMovieId")]
     [Display(Name = "TMDb Movie ID")]

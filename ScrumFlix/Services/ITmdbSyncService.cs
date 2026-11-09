@@ -6,15 +6,16 @@
  *          TmdbSyncService is the sole writer to the following tables:
  *            Genres            — seeded from TMDb genre list; upserted by TMDbGenreId
  *            MovieGenres       — genre associations per movie; replaced on each sync
- *            MovieTmdbMetadata — one-to-one enrichment per movie; upserted by TMDbMovieId
+ *            MovieTmdbMetadata — one-to-one enrichment per movie; updated by MovieId,
+ *                                refreshed using its stored TMDbMovieId
  *
  *          All public operations are intentionally coarse-grained:
  *            SyncAllMoviesAsync   — full catalog sync (scheduled nightly or on-demand)
  *            SyncMovieAsync(id)   — single movie sync (triggered from Admin UI)
  *            SyncGenresAsync      — refresh genre master list from TMDb
  *
- *          Callers NEVER write to the above three tables directly.
- *          Use TmdbSyncService exclusively.
+ *          Application callers use TmdbSyncService for these tables. A reviewed
+ *          one-time database correction may change an incorrect stored TMDb ID.
  *
  * Phase: 2 (new)
  * Author: ScrumFlix Rebuild Team

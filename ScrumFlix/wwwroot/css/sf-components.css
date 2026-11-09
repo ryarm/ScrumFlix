@@ -1400,7 +1400,7 @@
     margin-top: .3rem;
 }
 
-    .sf-validation::before {
+    .sf-validation:not(:empty)::before {
         content: "\26A0"; /* ⚠ */
         font-size: .75rem;
     }
@@ -2131,6 +2131,8 @@
     border-right: none;
 }
 
+.sf-admin-sidebar[aria-hidden="true"] { visibility: hidden; }
+
 /* ── Nav links inside sidebar ─────────────────────────────────────────── */
 .sf-admin-sidebar .sf-admin-nav-link {
     display: flex;
@@ -2201,9 +2203,29 @@
 #sf-admin-sidebar.sf-sidebar-collapsed + .sf-sidebar-toggle-tab {
     left: 0;
 }
-/* JS sets left dynamically; ensure smooth animation */
+
+.sf-sidebar-backdrop[hidden] { display: none; }
+
+/* On narrow screens the menu overlays content rather than shrinking it. */
 @media (max-width: 991px) {
-    :root { --sf-sidebar-w: 200px; }
+    :root { --sf-sidebar-w: min(80vw, 280px); }
+    .sf-admin-sidebar {
+        position: fixed;
+        left: 0;
+        z-index: 400;
+        box-shadow: 0 8px 24px rgba(0,0,0,.24);
+    }
+    .sf-admin-sidebar.sf-sidebar-collapsed { box-shadow: none; }
+    .sf-sidebar-toggle-tab { z-index: 401; }
+    .sf-sidebar-backdrop {
+        position: fixed;
+        top: var(--sf-admin-topbar-h);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 350;
+        background: rgba(0,0,0,.35);
+    }
 }
 
 /* ── Main content area ───────────────────────────────────────────────── */

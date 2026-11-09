@@ -60,6 +60,7 @@
             @foreach (var tab in new[] { (Id: "timeline", Name: "Timeline"), (Id: "shifts", Name: "Shifts"), (Id: "assignments", Name: "Assignments") })
             {
                 <a class="nav-link @(Model.ActiveTab == tab.Id ? "active" : "")"
+                   data-schedule-tab="@tab.Id"
                    aria-current="@(Model.ActiveTab == tab.Id ? "page" : null)"
                    asp-area="Admin" asp-controller="Schedule" asp-action="Index"
                    asp-route-tab="@tab.Id" asp-route-locationId="@Model.SelectedLocationId"
@@ -68,6 +69,11 @@
         </div>
     </nav>
     <input type="hidden" id="schedule-location-fallback" value="@Model.SelectedLocationId" />
+    <div id="schedule-endpoints" hidden
+         data-hub-url="@Url.Content("~/scheduleHub")"
+         data-shifts-url="@Url.Action("ShiftsGrid", "Schedule", new { area = "Admin" })"
+         data-assignments-url="@Url.Action("AssignmentsGrid", "Schedule", new { area = "Admin" })"
+         data-timeline-url="@ganttUrl"></div>
 
     @* ═══════════════════════════════════════════════════════════════════
          SECTION 1 — SHIFTS
@@ -178,19 +184,6 @@
             <span class="sf-gold-bar" aria-hidden="true"></span>Schedule Assignments
         </h2>
 
-        <form method="get" asp-area="Admin" asp-controller="Schedule" asp-action="Index"
-              class="d-flex flex-wrap align-items-end gap-2 mb-3">
-            <input type="hidden" name="tab" value="assignments" />
-            <label for="assignment-location-filter" class="form-label sf-label mb-0">Show assignments at</label>
-            <select id="assignment-location-filter" name="locationId" class="form-select sf-input" style="max-width:240px;">
-                @foreach (var loc in Model.LocationList)
-                {
-                    <option value="@loc.Value" selected="@loc.Selected">@loc.Text</option>
-                }
-            </select>
-            <button type="submit" class="btn sf-btn-ghost">Show location</button>
-        </form>
-
         <div class="row g-4">
             @* Assignment Add Form *@
             <div class="col-12 col-lg-4">
@@ -205,7 +198,7 @@
             @* Assignments Table *@
             <div class="col-12 col-lg-8">
                 <div id="assignments-grid">
-                    @await Html.PartialAsync("_AssignmentsGrid", Model.Assignments)
+                    @await Html.PartialAsync("_AssignmentsGrid", Model.AssignmentGrid)
                 </div>
             </div>
         </div>

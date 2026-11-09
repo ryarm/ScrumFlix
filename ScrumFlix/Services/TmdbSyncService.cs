@@ -28,8 +28,9 @@
  * SYNC STRATEGY:
  *   1. SyncGenresAsync   — upsert the TMDb genre master list into Genres.
  *   2. SyncAllMoviesAsync — for each Movie in Movies table:
- *      a. Search TMDb by title using SearchMovieAsync.
- *      b. Take the best match (first result with matching title, or first result).
+ *      a. Refresh an existing match by its stored TMDbMovieId.
+ *      b. For an unmatched movie, search by title and require one exact match.
+ *         Ambiguous titles need a reviewed TMDb ID before syncing.
  *      c. Fetch full movie detail with Videos flag to get trailer keys.
  *      d. Upsert MovieTmdbMetadata (insert or update by MovieId).
  *      e. Replace MovieGenres for this movie from the TMDb genre_ids list.
@@ -294,7 +295,7 @@ public sealed class TmdbSyncService : ITmdbSyncService
 
     /// <summary>
     /// Performs the full TMDb sync for a single movie:
-    ///   1. Search TMDb by title to find the best-match TMDbMovieId.
+    ///   1. Reuse an existing TMDb ID, or find one unambiguous exact-title match.
     ///   2. Fetch full movie detail (with Videos for trailer key).
     ///   3. Upsert MovieTmdbMetadata row.
     ///   4. Replace MovieGenres for this movie.
@@ -302,35 +303,52 @@ public sealed class TmdbSyncService : ITmdbSyncService
     /// </summary>
     private async Task<bool> SyncMovieCoreAsync(Domain.Movie movie, CancellationToken cancellationToken)
     {
+        var client = _tmdb;
+        if (client is null)
+        {
+            _logger.LogWarning("TmdbSyncService: cannot sync MovieId={MovieId} without a TMDb client.", movie.MovieId);
+            return false;
+        }
+
         try
         {
             _logger.LogDebug("TmdbSyncService: syncing '{Title}' (MovieId={MovieId}).",
                 movie.Title, movie.MovieId);
 
-            // ── Step 1: Search TMDb by title ──────────────────────────────────
-            var searchResults = await _tmdb!.SearchMovieAsync(
-                query: movie.Title,
-                cancellationToken: cancellationToken);
-
-            if (searchResults?.Results == null || searchResults.Results.Count == 0)
+            // ── Step 1: Keep the stored ID stable across subsequent syncs. ────
+            // ReleaseDate and OriginalTitle are fetched enrichment, not a reliable
+            // source of truth for identifying the movie. Searching on every refresh
+            // can silently switch between different films with the same title.
+            var tmdbId = movie.TmdbMetadata?.TMDbMovieId ?? 0;
+            if (tmdbId <= 0)
             {
-                _logger.LogWarning(
-                    "TmdbSyncService: no TMDb results for '{Title}' (MovieId={MovieId}) — skipping.",
-                    movie.Title, movie.MovieId);
-                return false;
-            }
+                var searchResults = await client.SearchMovieAsync(
+                    query: movie.Title,
+                    cancellationToken: cancellationToken);
 
-            // Best match: exact title match first, else first result
-            var bestMatch = searchResults.Results
-                .FirstOrDefault(r => string.Equals(r.Title, movie.Title,
-                                    StringComparison.OrdinalIgnoreCase))
-                ?? searchResults.Results[0];
+                var exactMatches = searchResults?.Results?
+                    .Where(r => string.Equals(r.Title, movie.Title,
+                                 StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (exactMatches is null || exactMatches.Count != 1)
+                {
+                    _logger.LogWarning(
+                        "TmdbSyncService: '{Title}' (MovieId={MovieId}) has {MatchCount} exact TMDb " +
+                        "matches on the first page. Review the release year and assign a TMDb ID " +
+                        "before syncing this movie.",
+                        movie.Title, movie.MovieId, exactMatches?.Count ?? 0);
+                    return false;
+                }
+
+                tmdbId = exactMatches[0].Id;
+            }
 
             // ── Step 2: Fetch full detail with Videos ─────────────────────────
             // MovieMethods.Videos fetches the video list (trailers, teasers, etc.)
             // in a single API call — no second round-trip needed.
-            var detail = await _tmdb.GetMovieAsync(
-                movieId:      bestMatch.Id,
+            var detail = await client.GetMovieAsync(
+                movieId:      tmdbId,
                 extraMethods: MovieMethods.Videos,
                 cancellationToken: cancellationToken);
 
@@ -339,7 +357,7 @@ public sealed class TmdbSyncService : ITmdbSyncService
                 _logger.LogWarning(
                     "TmdbSyncService: GetMovieAsync returned null for TMDbMovieId={TMDbId} " +
                     "(Movie: '{Title}', MovieId={MovieId}).",
-                    bestMatch.Id, movie.Title, movie.MovieId);
+                    tmdbId, movie.Title, movie.MovieId);
                 return false;
             }
 

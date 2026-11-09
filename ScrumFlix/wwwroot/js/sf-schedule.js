@@ -36,17 +36,43 @@
     }
     document.addEventListener('htmx:afterSwap', function (event) {
         bindActionCells(event.detail.target);
-        filterAssignmentShifts();
         if (event.detail.target?.id === 'assignments-grid' &&
-            event.detail.requestConfig?.elt?.id === 'assignment-form') {
-            const selected = document.getElementById('af-location')?.value;
-            const filter = document.getElementById('assignment-location-filter');
+            event.detail.requestConfig?.elt?.id === 'assignment-filter-form' &&
+            !document.querySelector('#assignment-form [name="AssignmentId"]')) {
+            const selected = document.getElementById('assignment-filter-location')?.value;
+            const workLocation = document.getElementById('af-location');
+            if (selected && workLocation) workLocation.value = selected;
+        }
+        filterAssignmentShifts();
+        if (event.detail.target?.id === 'assignments-grid' || event.detail.target?.id === 'shifts-grid') {
+            const selected = document.getElementById('assignment-filter-location')?.value ||
+                document.getElementById('shift-filter-location')?.value;
             const fallback = document.getElementById('schedule-location-fallback');
-            if (selected && filter) filter.value = selected;
             if (selected && fallback) fallback.value = selected;
+            if (selected) {
+                document.querySelectorAll('[data-schedule-tab]').forEach(function (link) {
+                    const url = new URL(link.href);
+                    url.searchParams.set('locationId', selected);
+                    link.href = url.toString();
+                });
+            }
         }
         joinSelectedLocation().catch(err => console.error('Schedule location connection error:', err));
     });
+
+    // A new filter or page size begins at page 1; paging links and CRUD retain
+    // their current page because they do not submit these filter forms.
+    document.addEventListener('submit', function (event) {
+        if (event.target?.id === 'shift-filter-form') {
+            event.target.querySelector('[name="filterPage"]').value = '1';
+        } else if (event.target?.id === 'assignment-filter-form') {
+            event.target.querySelector('[name="assignmentPage"]').value = '1';
+        } else {
+            return;
+        }
+        event.target.setAttribute('hx-push-url', event.target.action + '?' +
+            new URLSearchParams(new FormData(event.target)));
+    }, true);
 
     function filterAssignmentShifts() {
         const location = document.getElementById('af-location')?.value;
@@ -67,8 +93,10 @@
         filterAssignmentShifts();
     }
 
+    const endpoints = document.getElementById('schedule-endpoints')?.dataset;
+    if (!endpoints) return;
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl('/scheduleHub')
+        .withUrl(endpoints.hubUrl)
         .withAutomaticReconnect()
         .build();
 
@@ -77,6 +105,7 @@
     async function joinSelectedLocation() {
         if (connection.state !== signalR.HubConnectionState.Connected) return;
         const selected = Number(document.getElementById('gantt-location')?.value ||
+            document.getElementById('assignment-filter-location')?.value ||
             document.getElementById('shift-filter-location')?.value ||
             document.getElementById('schedule-location-fallback')?.value);
         if (!Number.isSafeInteger(selected) || selected <= 0) return;
@@ -104,7 +133,7 @@
             const query = new URLSearchParams({ locationId, period });
             const weekStart = document.getElementById('gantt-week-start')?.value;
             if (weekStart) query.set('weekStart', weekStart);
-            htmx.ajax('GET', '/Admin/Schedule/ScheduleVisual?' + query, {
+            htmx.ajax('GET', endpoints.timelineUrl + '?' + query, {
                 target: '#gantt-container', swap: 'innerHTML'
             });
         }
@@ -113,7 +142,7 @@
     connection.on('ShiftsUpdated', function () {
         const filters = document.getElementById('shift-filter-form');
         if (filters) {
-            htmx.ajax('GET', '/Admin/Schedule/ShiftsGrid?' + new URLSearchParams(new FormData(filters)), {
+            htmx.ajax('GET', endpoints.shiftsUrl + '?' + new URLSearchParams(new FormData(filters)), {
                 target: '#shifts-grid', swap: 'innerHTML'
             });
         }
@@ -123,9 +152,9 @@
     connection.on('AssignmentsUpdated', function () {
         refreshTimeline();
         if (!document.getElementById('assignments-grid')) return;
-        const locEl = document.getElementById('gantt-location');
-        const locId = locEl ? locEl.value : document.getElementById('schedule-location-fallback')?.value;
-        htmx.ajax('GET', '/Admin/Schedule/AssignmentsGrid?locationId=' + locId, {
+        const filters = document.getElementById('assignment-filter-form');
+        if (!filters) return;
+        htmx.ajax('GET', endpoints.assignmentsUrl + '?' + new URLSearchParams(new FormData(filters)), {
             target: '#assignments-grid',
             swap:   'innerHTML'
         });

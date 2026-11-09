@@ -1,68 +1,105 @@
-@*
- * Partial: _AssignmentsGrid.cshtml
- * Swapped by HTMX and by SignalR AssignmentsUpdated event.
- *
- * FIX: Row hx-get was a hardcoded string "/Admin/Schedule/GetAssignment/@a.AssignmentId"
- *      — converted to Url.Action() so route changes are picked up automatically.
- *
- * FIX: Delete form was a plain HTML POST with no HTMX attributes. Without HTMX
- *      on the form, the controller's PartialView response rendered as a bare HTML
- *      page. Added hx-post / hx-target / hx-swap to match every other form on
- *      this page.
- *
- * FIX: onsubmit="return confirm(...)" removed — inline event handlers are a CSP
- *      violation. Replaced with hx-confirm which HTMX handles natively without
- *      inline JS.
- *@
-@model List<ScrumFlix.Areas.Admin.ViewModels.AssignmentRowViewModel>
+@model ScrumFlix.Areas.Admin.ViewModels.AssignmentGridViewModel
+@{
+    var gridUrl = Url.Action("AssignmentsGrid", "Schedule", new { area = "Admin" });
+    var indexUrl = Url.Action("Index", "Schedule", new { area = "Admin" });
+    string PageUrl(string action, string sort, int page) => Url.Action(action, "Schedule", new
+    {
+        area = "Admin", tab = "assignments", locationId = Model.LocationId,
+        assignmentLocationId = Model.LocationId, assignmentSearch = Model.Search,
+        assignmentSort = sort, assignmentPage = page, assignmentPageSize = Model.PageSize
+    })!;
+    string NextSort(string column) => Model.Sort == column ? column + "_desc" : column;
+    string SortState(string column) => Model.Sort == column ? "ascending" :
+        Model.Sort == column + "_desc" ? "descending" : "none";
+    int firstNumber = Math.Max(1, Model.Page - 2);
+    int lastNumber = Math.Min(Model.TotalPages, Model.Page + 2);
+}
 
-@if (!Model.Any())
+<form id="assignment-filter-form" method="get" action="@indexUrl"
+      hx-get="@gridUrl" hx-target="#assignments-grid" hx-swap="innerHTML"
+      class="d-flex flex-wrap gap-2 align-items-end mb-3">
+    <input type="hidden" name="tab" value="assignments" />
+    <input type="hidden" name="assignmentPage" value="@Model.Page" />
+    <input type="hidden" name="assignmentSort" value="@Model.Sort" />
+    <div><label for="assignment-filter-location" class="form-label">Work location</label>
+        <select id="assignment-filter-location" name="assignmentLocationId" class="form-select">
+            @foreach (var loc in Model.Locations)
+            {
+                <option value="@loc.Value" selected="@loc.Selected">@loc.Text</option>
+            }
+        </select></div>
+    <div><label for="assignment-filter-search" class="form-label">Search employee or area</label>
+        <input id="assignment-filter-search" name="assignmentSearch" type="search"
+               maxlength="100" class="form-control" value="@Model.Search" /></div>
+    <div><label for="assignment-filter-page-size" class="form-label">Rows per page</label>
+        <select id="assignment-filter-page-size" name="assignmentPageSize" class="form-select">
+            @foreach (var size in new[] { 5, 10, 25, 50, 100 })
+            {
+                <option value="@size" selected="@(Model.PageSize == size)">@size</option>
+            }
+        </select></div>
+    <button type="submit" class="btn sf-btn-ghost">Apply</button>
+</form>
+<p class="sf-text-muted" role="status">Showing @Model.FirstRow–@Model.LastRow of @Model.TotalCount assignments · page @Model.Page of @Model.TotalPages</p>
+@if (!Model.Rows.Any())
 {
-    <p class="sf-text-muted mt-3">No assignments yet. Add one using the form.</p>
+    <p class="sf-text-muted mt-3">No assignments match these filters.</p>
 }
 else
 {
     <div class="sf-admin-table-wrap">
     <div class="table-responsive">
         <table class="table sf-admin-table" aria-label="Schedule Assignments">
-            <thead>
-                <tr>
-                    <th scope="col">Assignment</th>
-                    <th scope="col">Employee</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">Shift</th>
-                    <th scope="col">Showtime</th>
-                    <th scope="col" class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var a in Model)
+            <caption class="visually-hidden">Schedule assignments; select a column heading to change the sort order.</caption>
+            <thead><tr>
+                @foreach (var col in new[] { (Key: "area", Label: "Assignment"),
+                    (Key: "employee", Label: "Employee"), (Key: "role", Label: "Role") })
                 {
-                    var editUrl   = Url.Action("GetAssignment",    "Schedule", new { area = "Admin", id = a.AssignmentId });
-                    var deleteUrl = Url.Action("DeleteAssignment",  "Schedule", new { area = "Admin" });
-
-                    <tr hx-get="@editUrl"
-                        hx-target="#assignment-form-container"
-                        hx-trigger="click"
-                        style="cursor:pointer;"
-                        title="Click to edit">
-                        <td>@a.AreaName</td>
-                        <td>@a.EmployeeName</td>
-                        <td>@a.RoleName</td>
+                    var nextSort = NextSort(col.Key);
+                    var state = SortState(col.Key);
+                    <th scope="col" aria-sort="@state">
+                        <a class="text-reset text-decoration-none" href="@PageUrl("Index", nextSort, 1)"
+                           hx-get="@PageUrl("AssignmentsGrid", nextSort, 1)" hx-target="#assignments-grid"
+                           hx-push-url="@PageUrl("Index", nextSort, 1)"
+                           title="Sort by @col.Label @(state == "ascending" ? "descending" : "ascending")">
+                            @col.Label
+                            @if (state != "none") { <span aria-hidden="true">@(state == "ascending" ? "↑" : "↓")</span> }
+                        </a>
+                    </th>
+                }
+                <th scope="col">Location</th>
+                @foreach (var col in new[] { (Key: "start", Label: "Shift start"),
+                    (Key: "showtime", Label: "Showtime") })
+                {
+                    var nextSort = NextSort(col.Key);
+                    var state = SortState(col.Key);
+                    <th scope="col" aria-sort="@state">
+                        <a class="text-reset text-decoration-none" href="@PageUrl("Index", nextSort, 1)"
+                           hx-get="@PageUrl("AssignmentsGrid", nextSort, 1)" hx-target="#assignments-grid"
+                           hx-push-url="@PageUrl("Index", nextSort, 1)"
+                           title="Sort by @col.Label @(state == "ascending" ? "descending" : "ascending")">
+                            @col.Label
+                            @if (state != "none") { <span aria-hidden="true">@(state == "ascending" ? "↑" : "↓")</span> }
+                        </a>
+                    </th>
+                }
+                <th scope="col" class="text-end">Actions</th>
+            </tr></thead>
+            <tbody>
+                @foreach (var a in Model.Rows)
+                {
+                    var editUrl = Url.Action("GetAssignment", "Schedule", new { area = "Admin", id = a.AssignmentId });
+                    var deleteUrl = Url.Action("DeleteAssignment", "Schedule", new { area = "Admin" });
+                    <tr hx-get="@editUrl" hx-target="#assignment-form-container" hx-trigger="click"
+                        style="cursor:pointer;" title="Click to edit">
+                        <td>@a.AreaName</td><td>@a.EmployeeName</td><td>@a.RoleName</td>
                         <td>@a.LocationName</td>
                         <td>@a.StartTime.ToString("MM/dd h:mm tt") – @a.EndTime.ToString("h:mm tt")</td>
                         <td>@a.ShowtimeTitle</td>
                         <td class="text-end" data-sf-stop-row-click>
-                            @* FIX: added hx-post/hx-target/hx-swap so the delete response
-                               is swapped back into #assignments-grid instead of rendering as
-                               a bare HTML page. hx-confirm replaces the CSP-violating
-                               onsubmit="return confirm(...)". *@
-                            <form method="post" action="@deleteUrl"
-                                  hx-post="@deleteUrl"
-                                  hx-target="#assignments-grid"
-                                  hx-swap="innerHTML"
-                                  hx-confirm="Delete this assignment?">
+                            <form method="post" action="@deleteUrl" hx-post="@deleteUrl"
+                                  hx-include="#assignment-filter-form" hx-target="#assignments-grid"
+                                  hx-swap="innerHTML" hx-confirm="Delete this assignment?">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="assignmentId" value="@a.AssignmentId" />
                                 <button type="submit" class="btn btn-sm sf-btn-danger"
@@ -78,3 +115,35 @@ else
     </div>
     </div>
 }
+<nav class="d-flex flex-wrap align-items-center gap-2 mt-3" aria-label="Assignment pages">
+    @if (Model.Page > 1)
+    {
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, 1)"
+           hx-get="@PageUrl("AssignmentsGrid", Model.Sort, 1)" hx-target="#assignments-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, 1)">First</a>
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.Page - 1)"
+           hx-get="@PageUrl("AssignmentsGrid", Model.Sort, Model.Page - 1)" hx-target="#assignments-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.Page - 1)">Previous</a>
+    }
+    @if (firstNumber > 1) { <span aria-hidden="true">…</span> }
+    @for (int number = firstNumber; number <= lastNumber; number++)
+    {
+        var pageNumber = number;
+        <a class="btn btn-sm @(pageNumber == Model.Page ? "sf-btn-primary" : "sf-btn-ghost")"
+           href="@PageUrl("Index", Model.Sort, pageNumber)"
+           hx-get="@PageUrl("AssignmentsGrid", Model.Sort, pageNumber)" hx-target="#assignments-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, pageNumber)"
+           aria-current="@(pageNumber == Model.Page ? "page" : null)"
+           aria-label="Go to assignment page @pageNumber">@pageNumber</a>
+    }
+    @if (lastNumber < Model.TotalPages) { <span aria-hidden="true">…</span> }
+    @if (Model.Page < Model.TotalPages)
+    {
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.Page + 1)"
+           hx-get="@PageUrl("AssignmentsGrid", Model.Sort, Model.Page + 1)" hx-target="#assignments-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.Page + 1)">Next</a>
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.TotalPages)"
+           hx-get="@PageUrl("AssignmentsGrid", Model.Sort, Model.TotalPages)" hx-target="#assignments-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.TotalPages)">Last</a>
+    }
+</nav>

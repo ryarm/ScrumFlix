@@ -1,35 +1,27 @@
-@*
- * Partial: _ShiftsGrid.cshtml
- * Swapped by HTMX and by SignalR ShiftsUpdated event.
- *
- * FIX: Row hx-get was a hardcoded string "/Admin/Schedule/GetShift/@s.ShiftId"
- *      — converted to Url.Action() so route changes are picked up automatically.
- *
- * FIX: Delete form was a plain HTML POST with no HTMX attributes. Without HTMX
- *      on the form, the controller's PartialView response rendered as a bare HTML
- *      page. Added hx-post / hx-target / hx-swap to match every other form on
- *      this page.
- *
- * FIX: onsubmit="return confirm(...)" removed — inline event handlers are a CSP
- *      violation. Replaced with hx-confirm which HTMX handles natively without
- *      inline JS.
- *@
 @model ScrumFlix.Areas.Admin.ViewModels.ShiftGridViewModel
 @{
     var gridUrl = Url.Action("ShiftsGrid", "Schedule", new { area = "Admin" });
-    var previous = Model.Page - 1;
-    var next = Model.Page + 1;
-    var prevArgs = new { area = "Admin", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId,
-        filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = previous };
-    var nextArgs = new { area = "Admin", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId,
-        filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = next };
+    var indexUrl = Url.Action("Index", "Schedule", new { area = "Admin" });
+    string PageUrl(string action, string sort, int page) => Url.Action(action, "Schedule", new
+    {
+        area = "Admin", tab = "shifts", locationId = Model.LocationId,
+        filterLocationId = Model.LocationId, filterRoleId = Model.RoleId,
+        filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSearch = Model.Search,
+        filterSort = sort, filterPage = page, filterPageSize = Model.PageSize
+    })!;
+    string NextSort(string column) => Model.Sort == column ? column + "_desc" : column;
+    string SortState(string column) => Model.Sort == column ? "ascending" :
+        Model.Sort == column + "_desc" ? "descending" : "none";
+    int firstNumber = Math.Max(1, Model.Page - 2);
+    int lastNumber = Math.Min(Model.TotalPages, Model.Page + 2);
 }
 
-<form id="shift-filter-form" method="get" action="@Url.Action("Index", "Schedule", new { area = "Admin" })"
+<form id="shift-filter-form" method="get" action="@indexUrl"
       hx-get="@gridUrl" hx-target="#shifts-grid" hx-swap="innerHTML"
       class="d-flex flex-wrap gap-2 align-items-end mb-3">
     <input type="hidden" name="tab" value="shifts" />
     <input type="hidden" name="filterPage" value="@Model.Page" />
+    <input type="hidden" name="filterSort" value="@Model.Sort" />
     <div><label for="shift-filter-location" class="form-label">Location</label>
         <select id="shift-filter-location" name="filterLocationId" class="form-select">
             @foreach (var loc in Model.Locations)
@@ -48,16 +40,19 @@
     <div><label for="shift-filter-date" class="form-label">Start date</label>
         <input id="shift-filter-date" name="filterDate" type="date" class="form-control"
                value="@(Model.Date?.ToString("yyyy-MM-dd"))" /></div>
-    <div><label for="shift-filter-sort" class="form-label">Sort</label>
-        <select id="shift-filter-sort" name="filterSort" class="form-select">
-            <option value="start" selected="@(Model.Sort == "start")">Start: earliest</option>
-            <option value="start_desc" selected="@(Model.Sort == "start_desc")">Start: latest</option>
-            <option value="location" selected="@(Model.Sort == "location")">Location, then start</option>
-            <option value="role" selected="@(Model.Sort == "role")">Role, then start</option>
+    <div><label for="shift-filter-search" class="form-label">Search location or role</label>
+        <input id="shift-filter-search" name="filterSearch" type="search" class="form-control"
+               maxlength="100" value="@Model.Search" /></div>
+    <div><label for="shift-filter-page-size" class="form-label">Rows per page</label>
+        <select id="shift-filter-page-size" name="filterPageSize" class="form-select">
+            @foreach (var size in new[] { 5, 10, 25, 50, 100 })
+            {
+                <option value="@size" selected="@(Model.PageSize == size)">@size</option>
+            }
         </select></div>
     <button type="submit" class="btn sf-btn-ghost">Apply</button>
 </form>
-<p class="sf-text-muted" role="status">@Model.TotalCount shifts · page @Model.Page of @Model.TotalPages</p>
+<p class="sf-text-muted" role="status">Showing @Model.FirstRow–@Model.LastRow of @Model.TotalCount shifts · page @Model.Page of @Model.TotalPages</p>
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="sf-flash-banner sf-flash-banner--danger" role="alert">
@@ -70,50 +65,48 @@
 
 @if (!Model.Rows.Any())
 {
-    <p class="sf-text-muted mt-3">No shifts defined yet. Add one using the form.</p>
+    <p class="sf-text-muted mt-3">No shifts match these filters.</p>
 }
 else
 {
     <div class="sf-admin-table-wrap">
     <div class="table-responsive">
         <table class="table sf-admin-table" aria-label="Shifts">
-            <thead>
-                <tr>
-                    <th scope="col">Location</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
-                    <th scope="col">Duration</th>
-                    <th scope="col" class="text-end">Actions</th>
-                </tr>
-            </thead>
+            <caption class="visually-hidden">Shifts; select a column heading to change the sort order.</caption>
+            <thead><tr>
+                @foreach (var col in new[] { (Key: "location", Label: "Location"), (Key: "role", Label: "Role"),
+                    (Key: "start", Label: "Start"), (Key: "end", Label: "End") })
+                {
+                    var nextSort = NextSort(col.Key);
+                    var state = SortState(col.Key);
+                    <th scope="col" aria-sort="@state">
+                        <a class="text-reset text-decoration-none" href="@PageUrl("Index", nextSort, 1)"
+                           hx-get="@PageUrl("ShiftsGrid", nextSort, 1)" hx-target="#shifts-grid"
+                           hx-push-url="@PageUrl("Index", nextSort, 1)"
+                           title="Sort by @col.Label @(state == "ascending" ? "descending" : "ascending")">
+                            @col.Label
+                            @if (state != "none") { <span aria-hidden="true">@(state == "ascending" ? "↑" : "↓")</span> }
+                        </a>
+                    </th>
+                }
+                <th scope="col">Duration (hours)</th>
+                <th scope="col" class="text-end">Actions</th>
+            </tr></thead>
             <tbody>
                 @foreach (var s in Model.Rows)
                 {
-                    var duration   = (s.EndTime - s.StartTime).TotalHours;
-                    var editUrl    = Url.Action("GetShift",    "Schedule", new { area = "Admin", id = s.ShiftId });
-                    var deleteUrl  = Url.Action("DeleteShift", "Schedule", new { area = "Admin" });
-
-                    <tr hx-get="@editUrl"
-                        hx-target="#shift-form-container"
-                        hx-trigger="click"
-                        style="cursor:pointer;"
-                        title="Click to edit">
-                        <td>@s.LocationName</td>
-                        <td>@s.RoleName</td>
+                    var duration = (s.EndTime - s.StartTime).TotalHours;
+                    var editUrl = Url.Action("GetShift", "Schedule", new { area = "Admin", id = s.ShiftId });
+                    var deleteUrl = Url.Action("DeleteShift", "Schedule", new { area = "Admin" });
+                    <tr hx-get="@editUrl" hx-target="#shift-form-container" hx-trigger="click"
+                        style="cursor:pointer;" title="Click to edit">
+                        <td>@s.LocationName</td><td>@s.RoleName</td>
                         <td>@s.StartTime.ToString("MM/dd/yyyy h:mm tt")</td>
                         <td>@s.EndTime.ToString("MM/dd/yyyy h:mm tt")</td>
                         <td>@duration.ToString("0.0")h</td>
                         <td class="text-end" data-sf-stop-row-click>
-                            @* FIX: added hx-post/hx-target/hx-swap so the delete response
-                               is swapped back into #shifts-grid instead of rendering as a
-                               bare HTML page. hx-confirm replaces the CSP-violating
-                               onsubmit="return confirm(...)". *@
-                            <form method="post" action="@deleteUrl"
-                                  hx-post="@deleteUrl"
-                                  hx-include="#shift-filter-form"
-                                  hx-target="#shifts-grid"
-                                  hx-swap="innerHTML"
+                            <form method="post" action="@deleteUrl" hx-post="@deleteUrl"
+                                  hx-include="#shift-filter-form" hx-target="#shifts-grid" hx-swap="innerHTML"
                                   hx-confirm="Delete this shift? This cannot be undone.">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="shiftId" value="@s.ShiftId" />
@@ -129,17 +122,36 @@ else
         </table>
     </div>
     </div>
-
-    <nav class="d-flex gap-2 justify-content-between mt-3" aria-label="Shift pages">
-        @if (Model.Page > 1)
-        {
-            <a class="btn sf-btn-ghost btn-sm" href="@Url.Action("Index", "Schedule", new { area = "Admin", tab = "shifts", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId, filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = previous })"
-               hx-get="@Url.Action("ShiftsGrid", "Schedule", prevArgs)" hx-target="#shifts-grid">Previous</a>
-        }
-        @if (Model.Page < Model.TotalPages)
-        {
-            <a class="btn sf-btn-ghost btn-sm ms-auto" href="@Url.Action("Index", "Schedule", new { area = "Admin", tab = "shifts", filterLocationId = Model.LocationId, filterRoleId = Model.RoleId, filterDate = Model.Date?.ToString("yyyy-MM-dd"), filterSort = Model.Sort, filterPage = next })"
-               hx-get="@Url.Action("ShiftsGrid", "Schedule", nextArgs)" hx-target="#shifts-grid">Next</a>
-        }
-    </nav>
 }
+<nav class="d-flex flex-wrap align-items-center gap-2 mt-3" aria-label="Shift pages">
+    @if (Model.Page > 1)
+    {
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, 1)"
+           hx-get="@PageUrl("ShiftsGrid", Model.Sort, 1)" hx-target="#shifts-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, 1)">First</a>
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.Page - 1)"
+           hx-get="@PageUrl("ShiftsGrid", Model.Sort, Model.Page - 1)" hx-target="#shifts-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.Page - 1)">Previous</a>
+    }
+    @if (firstNumber > 1) { <span aria-hidden="true">…</span> }
+    @for (int number = firstNumber; number <= lastNumber; number++)
+    {
+        var pageNumber = number;
+        <a class="btn btn-sm @(pageNumber == Model.Page ? "sf-btn-primary" : "sf-btn-ghost")"
+           href="@PageUrl("Index", Model.Sort, pageNumber)"
+           hx-get="@PageUrl("ShiftsGrid", Model.Sort, pageNumber)" hx-target="#shifts-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, pageNumber)"
+           aria-current="@(pageNumber == Model.Page ? "page" : null)"
+           aria-label="Go to shift page @pageNumber">@pageNumber</a>
+    }
+    @if (lastNumber < Model.TotalPages) { <span aria-hidden="true">…</span> }
+    @if (Model.Page < Model.TotalPages)
+    {
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.Page + 1)"
+           hx-get="@PageUrl("ShiftsGrid", Model.Sort, Model.Page + 1)" hx-target="#shifts-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.Page + 1)">Next</a>
+        <a class="btn sf-btn-ghost btn-sm" href="@PageUrl("Index", Model.Sort, Model.TotalPages)"
+           hx-get="@PageUrl("ShiftsGrid", Model.Sort, Model.TotalPages)" hx-target="#shifts-grid"
+           hx-push-url="@PageUrl("Index", Model.Sort, Model.TotalPages)">Last</a>
+    }
+</nav>

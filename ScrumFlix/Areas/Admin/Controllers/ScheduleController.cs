@@ -218,8 +218,11 @@ public class ScheduleController : StaffControllerBase
     /// Full-page load. Subsequent interactions use partials via HTMX.
     /// </summary>
     [HttpGet]
-    public IActionResult Index(int? locationId, int? year, int? month, DateTime? weekStart, string? tab,
-        int? filterLocationId, int? filterRoleId, DateTime? filterDate, string? filterSort, int filterPage = 1)
+    public async Task<IActionResult> Index(int? locationId, int? year, int? month, DateTime? weekStart, string? tab,
+        int? filterLocationId, int? filterRoleId, DateTime? filterDate, string? filterSearch,
+        string? filterSort, int filterPage = 1, int filterPageSize = 10,
+        int? assignmentLocationId = null, string? assignmentSearch = null,
+        string? assignmentSort = null, int assignmentPage = 1, int assignmentPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         // Default to first active location if none provided
@@ -237,8 +240,9 @@ public class ScheduleController : StaffControllerBase
             return BadRequest();
 
         var activeTab = tab is "shifts" or "assignments" ? tab : "timeline";
-        var vm = BuildIndexViewModel(locationId, year.Value, month.Value, weekStart, activeTab,
-            filterLocationId ?? locationId, filterRoleId, filterDate, filterSort, filterPage);
+        var vm = await BuildIndexViewModelAsync(locationId, year.Value, month.Value, weekStart, activeTab,
+            filterLocationId ?? locationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize,
+            assignmentLocationId ?? locationId, assignmentSearch, assignmentSort, assignmentPage, assignmentPageSize);
         return View(vm);
     }
 
@@ -250,12 +254,12 @@ public class ScheduleController : StaffControllerBase
     /// client-side SignalR listener after a remote "ShiftsUpdated" event.
     /// </summary>
     [HttpGet]
-    public IActionResult ShiftsGrid(int? filterLocationId, int? filterRoleId,
-        DateTime? filterDate, string? filterSort, int filterPage = 1)
+    public async Task<IActionResult> ShiftsGrid(int? filterLocationId, int? filterRoleId,
+        DateTime? filterDate, string? filterSearch, string? filterSort, int filterPage = 1, int filterPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
-        return PartialView("_ShiftsGrid", GetShiftGrid(
-            filterLocationId, filterRoleId, filterDate, filterSort, filterPage));
+        return PartialView("_ShiftsGrid", await GetShiftGridAsync(
+            filterLocationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize));
     }
 
     /// <summary>
@@ -291,7 +295,7 @@ public class ScheduleController : StaffControllerBase
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddShift(ShiftFormViewModel form, int? filterLocationId, int? filterRoleId,
-        DateTime? filterDate, string? filterSort, int filterPage = 1)
+        DateTime? filterDate, string? filterSearch, string? filterSort, int filterPage = 1, int filterPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         if (!ModelState.IsValid)
@@ -330,7 +334,7 @@ public class ScheduleController : StaffControllerBase
 
         await BroadcastShiftsUpdated(shift.LocationId);
 
-        return PartialView("_ShiftsGrid", GetShiftGrid(filterLocationId, filterRoleId, filterDate, filterSort, filterPage));
+        return PartialView("_ShiftsGrid", await GetShiftGridAsync(filterLocationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize));
     }
 
     /// <summary>
@@ -340,7 +344,7 @@ public class ScheduleController : StaffControllerBase
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateShift(ShiftFormViewModel form, int? filterLocationId, int? filterRoleId,
-        DateTime? filterDate, string? filterSort, int filterPage = 1)
+        DateTime? filterDate, string? filterSearch, string? filterSort, int filterPage = 1, int filterPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         if (!ModelState.IsValid)
@@ -383,7 +387,7 @@ public class ScheduleController : StaffControllerBase
         if (oldLocationId != shift.LocationId)
             await BroadcastShiftsUpdated(oldLocationId);
 
-        return PartialView("_ShiftsGrid", GetShiftGrid(filterLocationId, filterRoleId, filterDate, filterSort, filterPage));
+        return PartialView("_ShiftsGrid", await GetShiftGridAsync(filterLocationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize));
     }
 
     /// <summary>
@@ -394,7 +398,7 @@ public class ScheduleController : StaffControllerBase
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteShift(int shiftId, int? filterLocationId, int? filterRoleId,
-        DateTime? filterDate, string? filterSort, int filterPage = 1)
+        DateTime? filterDate, string? filterSearch, string? filterSort, int filterPage = 1, int filterPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         var shift = await _db.Shifts.FirstOrDefaultAsync(s => s.ShiftId == shiftId);
@@ -407,7 +411,7 @@ public class ScheduleController : StaffControllerBase
         {
             ModelState.AddModelError("",
                 "This shift has schedule assignments. Delete those assignments before deleting the shift.");
-            return PartialView("_ShiftsGrid", GetShiftGrid(filterLocationId, filterRoleId, filterDate, filterSort, filterPage));
+            return PartialView("_ShiftsGrid", await GetShiftGridAsync(filterLocationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize));
         }
 
         Audit("DELETE_SHIFT", "Shifts", shift.ShiftId,
@@ -423,7 +427,7 @@ public class ScheduleController : StaffControllerBase
 
         await BroadcastShiftsUpdated(locationId);
 
-        return PartialView("_ShiftsGrid", GetShiftGrid(filterLocationId, filterRoleId, filterDate, filterSort, filterPage));
+        return PartialView("_ShiftsGrid", await GetShiftGridAsync(filterLocationId, filterRoleId, filterDate, filterSearch, filterSort, filterPage, filterPageSize));
     }
 
     // ── Visual schedule (Gantt) ─────────────────────────────────────────────
@@ -457,11 +461,12 @@ public class ScheduleController : StaffControllerBase
     /// Returns the assignments table partial.
     /// </summary>
     [HttpGet]
-    public IActionResult AssignmentsGrid(int? locationId)
+    public async Task<IActionResult> AssignmentsGrid(int? assignmentLocationId, string? assignmentSearch,
+        string? assignmentSort, int assignmentPage = 1, int assignmentPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
-        var rows = GetAssignmentRows(locationId);
-        return PartialView("_AssignmentsGrid", rows);
+        return PartialView("_AssignmentsGrid", await GetAssignmentGridAsync(
+            assignmentLocationId, assignmentSearch, assignmentSort, assignmentPage, assignmentPageSize));
     }
 
     /// <summary>
@@ -506,7 +511,8 @@ public class ScheduleController : StaffControllerBase
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddAssignment(AssignmentFormViewModel form)
+    public async Task<IActionResult> AddAssignment(AssignmentFormViewModel form, int? assignmentLocationId,
+        string? assignmentSearch, string? assignmentSort, int assignmentPage = 1, int assignmentPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         if (!ModelState.IsValid)
@@ -545,7 +551,8 @@ public class ScheduleController : StaffControllerBase
 
         await BroadcastAssignmentsUpdated(shift!.LocationId);
 
-        return PartialView("_AssignmentsGrid", GetAssignmentRows(shift.LocationId));
+        return PartialView("_AssignmentsGrid", await GetAssignmentGridAsync(
+            assignmentLocationId ?? shift.LocationId, assignmentSearch, assignmentSort, assignmentPage, assignmentPageSize));
     }
 
     /// <summary>
@@ -555,7 +562,8 @@ public class ScheduleController : StaffControllerBase
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateAssignment(AssignmentFormViewModel form)
+    public async Task<IActionResult> UpdateAssignment(AssignmentFormViewModel form, int? assignmentLocationId,
+        string? assignmentSearch, string? assignmentSort, int assignmentPage = 1, int assignmentPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         if (!ModelState.IsValid)
@@ -599,7 +607,8 @@ public class ScheduleController : StaffControllerBase
         if (oldLocationId != shift.LocationId)
             await BroadcastAssignmentsUpdated(oldLocationId);
 
-        return PartialView("_AssignmentsGrid", GetAssignmentRows(shift.LocationId));
+        return PartialView("_AssignmentsGrid", await GetAssignmentGridAsync(
+            assignmentLocationId ?? shift.LocationId, assignmentSearch, assignmentSort, assignmentPage, assignmentPageSize));
     }
 
     /// <summary>
@@ -608,7 +617,8 @@ public class ScheduleController : StaffControllerBase
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteAssignment(int assignmentId)
+    public async Task<IActionResult> DeleteAssignment(int assignmentId, int? assignmentLocationId,
+        string? assignmentSearch, string? assignmentSort, int assignmentPage = 1, int assignmentPageSize = 10)
     {
         if (RoleGuard(2) is { } redirect) return redirect;
         var assignment = await _db.ScheduleAssignments
@@ -633,22 +643,28 @@ public class ScheduleController : StaffControllerBase
 
         await BroadcastAssignmentsUpdated(locationId);
 
-        return PartialView("_AssignmentsGrid", GetAssignmentRows(locationId));
+        return PartialView("_AssignmentsGrid", await GetAssignmentGridAsync(
+            assignmentLocationId ?? locationId, assignmentSearch, assignmentSort, assignmentPage, assignmentPageSize));
     }
 
     // ── Private query helpers ────────────────────────────────────────────────
 
-    private ShiftGridViewModel GetShiftGrid(int? locationId, int? roleId,
-        DateTime? date, string? sort, int page)
+    private async Task<ShiftGridViewModel> GetShiftGridAsync(int? locationId, int? roleId,
+        DateTime? date, string? search, string? sort, int page, int pageSize)
     {
-        const int pageSize = 25;
+        pageSize = pageSize is 5 or 10 or 25 or 50 or 100 ? pageSize : 10;
+        search = search?.Trim();
+        if (search?.Length > 100) search = search[..100];
         if (locationId is null or <= 0)
-            locationId = _db.Locations.AsNoTracking()
+            locationId = await _db.Locations.AsNoTracking()
                 .Where(l => l.IsActive).OrderBy(l => l.LocationName)
-                .Select(l => (int?)l.LocationId).FirstOrDefault();
+                .Select(l => (int?)l.LocationId).FirstOrDefaultAsync();
         var query = _db.Shifts.AsNoTracking().AsQueryable();
         if (locationId > 0) query = query.Where(s => s.LocationId == locationId);
         if (roleId > 0) query = query.Where(s => s.RoleId == roleId);
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(s => s.Location!.LocationName.Contains(search) ||
+                                     (s.Role!.RoleName ?? "").Contains(search));
         if (date.HasValue)
         {
             var start = date.Value.Date;
@@ -661,18 +677,23 @@ public class ScheduleController : StaffControllerBase
             }
         }
 
-        var order = sort is "location" or "role" or "start_desc" ? sort : "start";
+        var order = sort is "location" or "location_desc" or "role" or "role_desc" or
+            "start_desc" or "end" or "end_desc" ? sort : "start";
         var ordered = order switch
         {
             "location" => query.OrderBy(s => s.Location!.LocationName).ThenBy(s => s.StartTime),
+            "location_desc" => query.OrderByDescending(s => s.Location!.LocationName).ThenBy(s => s.StartTime),
             "role" => query.OrderBy(s => s.Role!.RoleName).ThenBy(s => s.StartTime),
+            "role_desc" => query.OrderByDescending(s => s.Role!.RoleName).ThenBy(s => s.StartTime),
             "start_desc" => query.OrderByDescending(s => s.StartTime),
+            "end" => query.OrderBy(s => s.EndTime),
+            "end_desc" => query.OrderByDescending(s => s.EndTime),
             _ => query.OrderBy(s => s.StartTime)
         };
-        var total = query.Count();
+        var total = await query.CountAsync();
         var lastPage = Math.Max(1, (total + pageSize - 1) / pageSize);
         page = Math.Clamp(page, 1, lastPage);
-        var rows = ordered.ThenBy(s => s.ShiftId)
+        var rows = await ordered.ThenBy(s => s.ShiftId)
             .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(s => new ShiftRowViewModel
             {
@@ -681,26 +702,59 @@ public class ScheduleController : StaffControllerBase
                 RoleName = s.Role!.RoleName ?? "",
                 StartTime = s.StartTime,
                 EndTime = s.EndTime
-            }).ToList();
+            }).ToListAsync();
 
         return new ShiftGridViewModel
         {
             Rows = rows, TotalCount = total, Page = page, PageSize = pageSize,
-            LocationId = locationId, RoleId = roleId, Date = date, Sort = order,
+            LocationId = locationId, RoleId = roleId, Date = date, Search = search, Sort = order,
             Locations = GetActiveLocationSelectList(locationId),
             Roles = GetRoleSelectList(roleId)
         };
     }
 
-    private List<AssignmentRowViewModel> GetAssignmentRows(int? locationId) =>
-        _db.ScheduleAssignments
-            .Include(a => a.AssignmentArea)
-            .Include(a => a.User).ThenInclude(u => u!.Employee)
-            .Include(a => a.Shift).ThenInclude(s => s!.Role)
-            .Include(a => a.Shift).ThenInclude(s => s!.Location)
-            .Include(a => a.Showtime).ThenInclude(s => s!.Movie)
-            .Where(a => locationId == null || a.Shift!.LocationId == locationId)
-            .OrderBy(a => a.Shift!.StartTime)
+    private async Task<AssignmentGridViewModel> GetAssignmentGridAsync(int? locationId,
+        string? search, string? sort, int page, int pageSize)
+    {
+        pageSize = pageSize is 5 or 10 or 25 or 50 or 100 ? pageSize : 10;
+        search = search?.Trim();
+        if (search?.Length > 100) search = search[..100];
+        if (locationId is null or <= 0)
+            locationId = await _db.Locations.AsNoTracking()
+                .Where(l => l.IsActive).OrderBy(l => l.LocationName)
+                .Select(l => (int?)l.LocationId).FirstOrDefaultAsync();
+
+        var query = _db.ScheduleAssignments.AsNoTracking().AsQueryable();
+        if (locationId > 0) query = query.Where(a => a.Shift!.LocationId == locationId);
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(a => a.AssignmentArea!.AreaName.Contains(search) ||
+                a.User!.Employee!.FirstName.Contains(search) ||
+                a.User.Employee.LastName.Contains(search) ||
+                (a.User.Employee.FirstName + " " + a.User.Employee.LastName).Contains(search));
+
+        var order = sort is "area" or "area_desc" or "employee" or "employee_desc" or
+            "role" or "role_desc" or "start_desc" or "showtime" or "showtime_desc"
+            ? sort : "start";
+        var ordered = order switch
+        {
+            "area" => query.OrderBy(a => a.AssignmentArea!.AreaName),
+            "area_desc" => query.OrderByDescending(a => a.AssignmentArea!.AreaName),
+            "employee" => query.OrderBy(a => a.User!.Employee!.LastName)
+                .ThenBy(a => a.User!.Employee!.FirstName),
+            "employee_desc" => query.OrderByDescending(a => a.User!.Employee!.LastName)
+                .ThenByDescending(a => a.User!.Employee!.FirstName),
+            "role" => query.OrderBy(a => a.Shift!.Role!.RoleName),
+            "role_desc" => query.OrderByDescending(a => a.Shift!.Role!.RoleName),
+            "start_desc" => query.OrderByDescending(a => a.Shift!.StartTime),
+            "showtime" => query.OrderBy(a => a.Showtime!.Movie!.Title),
+            "showtime_desc" => query.OrderByDescending(a => a.Showtime!.Movie!.Title),
+            _ => query.OrderBy(a => a.Shift!.StartTime)
+        };
+        var total = await query.CountAsync();
+        var lastPage = Math.Max(1, (total + pageSize - 1) / pageSize);
+        page = Math.Clamp(page, 1, lastPage);
+        var rows = await ordered.ThenBy(a => a.AssignmentId)
+            .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(a => new AssignmentRowViewModel
             {
                 AssignmentId = a.AssignmentId,
@@ -712,7 +766,15 @@ public class ScheduleController : StaffControllerBase
                 EndTime = a.Shift.EndTime,
                 ShowtimeTitle = a.Showtime != null ? (a.Showtime.Movie!.Title ?? "None") : "None"
             })
-            .ToList();
+            .ToListAsync();
+
+        return new AssignmentGridViewModel
+        {
+            Rows = rows, LocationId = locationId, Search = search, Sort = order,
+            TotalCount = total, Page = page, PageSize = pageSize,
+            Locations = GetActiveLocationSelectList(locationId)
+        };
+    }
 
     private GanttViewModel BuildGanttViewModel(int locationId, int year, int month, DateTime? weekStart = null)
     {
@@ -807,18 +869,27 @@ public class ScheduleController : StaffControllerBase
         };
     }
 
-    private ScheduleIndexViewModel BuildIndexViewModel(int? locationId, int year, int month, DateTime? weekStart, string activeTab,
-        int? filterLocationId, int? filterRoleId, DateTime? filterDate, string? filterSort, int filterPage)
+    private async Task<ScheduleIndexViewModel> BuildIndexViewModelAsync(int? locationId, int year, int month,
+        DateTime? weekStart, string activeTab, int? filterLocationId, int? filterRoleId, DateTime? filterDate,
+        string? filterSearch, string? filterSort, int filterPage, int filterPageSize,
+        int? assignmentLocationId, string? assignmentSearch, string? assignmentSort,
+        int assignmentPage, int assignmentPageSize)
     {
         return new ScheduleIndexViewModel
         {
             ActiveTab = activeTab,
-            SelectedLocationId = locationId,
+            SelectedLocationId = activeTab switch
+            {
+                "assignments" => assignmentLocationId,
+                "shifts" => filterLocationId,
+                _ => locationId
+            },
             SelectedYear = year,
             SelectedMonth = month,
             // Shifts section
             ShiftGrid = activeTab == "shifts"
-                ? GetShiftGrid(filterLocationId, filterRoleId, filterDate, filterSort, filterPage)
+                ? await GetShiftGridAsync(filterLocationId, filterRoleId, filterDate,
+                    filterSearch, filterSort, filterPage, filterPageSize)
                 : new ShiftGridViewModel(),
             ShiftForm = activeTab == "shifts" ? new ShiftFormViewModel
             {
@@ -834,11 +905,14 @@ public class ScheduleController : StaffControllerBase
                 ? GetActiveLocationSelectList(locationId) : [],
 
             // Assignments section
-            Assignments = activeTab == "assignments" ? GetAssignmentRows(locationId) : [],
+            AssignmentGrid = activeTab == "assignments"
+                ? await GetAssignmentGridAsync(assignmentLocationId, assignmentSearch,
+                    assignmentSort, assignmentPage, assignmentPageSize)
+                : new AssignmentGridViewModel(),
             AssignmentForm = activeTab == "assignments" ? new AssignmentFormViewModel
             {
-                LocationId = locationId ?? 0,
-                Locations = GetActiveLocationSelectList(locationId),
+                LocationId = assignmentLocationId ?? 0,
+                Locations = GetActiveLocationSelectList(assignmentLocationId),
                 Areas = GetAssignmentAreaSelectList(),
                 Employees = GetEmployeeSelectList(),
                 Shifts = GetShiftSelectList(),

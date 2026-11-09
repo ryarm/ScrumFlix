@@ -1,37 +1,59 @@
-/**
- * File:    /wwwroot/js/sf-admin-sidebar.js
- * Purpose: Admin sidebar collapse/expand toggle with localStorage persistence.
- *
- * Replaces the inline <script> block formerly in _AdminSidebar.cshtml.
- * Moved to an external file to comply with the CSP script-src directive,
- * which does not include 'unsafe-inline'.
- *
- * Behaviour:
- *   - On load: restores the saved open/collapsed state from localStorage.
- *   - Default state: open on viewports >= 992px (lg), collapsed on mobile.
- *   - On click: toggles the 'sf-sidebar-collapsed' class on the <aside>,
- *     updates aria-expanded on the toggle button, and saves the new state.
- */
+/** Admin navigation for desktop and narrow screens. Loaded once by _AdminLayout. */
 (function () {
     'use strict';
 
-    const STORAGE_KEY = 'sf-sidebar-open';
+    const storageKey = 'sf-sidebar-open';
     const sidebar = document.getElementById('sf-admin-sidebar');
-    const toggle  = document.getElementById('sf-sidebar-toggle');
+    const toggle = document.getElementById('sf-sidebar-toggle');
+    const backdrop = document.getElementById('sf-sidebar-backdrop');
+    if (!sidebar || !toggle || !backdrop) return;
 
-    if (!sidebar || !toggle) return;
+    const mobile = window.matchMedia('(max-width: 991px)');
+    let desktopOpen = true;
+    try {
+        const saved = localStorage.getItem(storageKey);
+        desktopOpen = saved === null || saved === '1';
+    } catch (_) {
+        // Navigation still works if browser storage is unavailable.
+    }
 
-    // Restore last saved state; default to open on large screens, closed on mobile
-    const saved       = localStorage.getItem(STORAGE_KEY);
-    const defaultOpen = window.innerWidth >= 992;
-    const isOpen      = saved !== null ? saved === '1' : defaultOpen;
+    sidebar.setAttribute('tabindex', '-1');
 
-    if (!isOpen) sidebar.classList.add('sf-sidebar-collapsed');
-    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    function setOpen(open) {
+        sidebar.classList.toggle('sf-sidebar-collapsed', !open);
+        sidebar.inert = !open;
+        sidebar.setAttribute('aria-hidden', String(!open));
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Close staff navigation' : 'Open staff navigation');
+        backdrop.hidden = !mobile.matches || !open;
+    }
+
+    setOpen(mobile.matches ? false : desktopOpen);
 
     toggle.addEventListener('click', function () {
-        const nowOpen = sidebar.classList.toggle('sf-sidebar-collapsed') === false;
-        toggle.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
-        localStorage.setItem(STORAGE_KEY, nowOpen ? '1' : '0');
+        const open = sidebar.classList.contains('sf-sidebar-collapsed');
+        setOpen(open);
+        if (mobile.matches && open) {
+            sidebar.focus();
+        } else if (!mobile.matches) {
+            desktopOpen = open;
+            try { localStorage.setItem(storageKey, open ? '1' : '0'); } catch (_) { /* optional */ }
+        }
+    });
+
+    backdrop.addEventListener('click', function () {
+        setOpen(false);
+        toggle.focus();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && mobile.matches && !backdrop.hidden) {
+            setOpen(false);
+            toggle.focus();
+        }
+    });
+
+    mobile.addEventListener('change', function () {
+        setOpen(mobile.matches ? false : desktopOpen);
     });
 }());
