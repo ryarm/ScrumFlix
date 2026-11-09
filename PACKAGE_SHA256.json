@@ -1,0 +1,1412 @@
+{
+  "schema": "scrumflix-package-sha256-v1",
+  "root": "ScrumFlix_AlpineJS_Integration_BuildReview_2026-11-08",
+  "source_zip_sha256": "a755e99952cbe6c85436cced9377dc2fde6cb0a17e80ede164b341db77a116b1",
+  "files": [
+    {
+      "path": ".config/dotnet-tools.json",
+      "size_bytes": 183,
+      "sha256": "88eb84628adb397d25f988c4787504b17d978ad6cdcbe26a4deb20adbf1bf28c"
+    },
+    {
+      "path": ".gitattributes",
+      "size_bytes": 2581,
+      "sha256": "462475ee5301e77d2a54a64757d95c3f21fc3a79e92e6ec94bdfcc8b36e48964"
+    },
+    {
+      "path": ".gitignore",
+      "size_bytes": 448,
+      "sha256": "459cbb5f4bdc9cf4f62d55c3a9e9f2ef932e384a70d200ad87d3551086a34e6d"
+    },
+    {
+      "path": "ALPINE_INTEGRATION_RELEASE_NOTES.md",
+      "size_bytes": 6021,
+      "sha256": "dfaf562936e13e564c16963981e39105e9afb85c741ee2b61506535ada22e551"
+    },
+    {
+      "path": "Directory.Build.props",
+      "size_bytes": 267,
+      "sha256": "227e39ae3019ecdbbb07e622e6cdc61aa2ca7209cc9e5fdef0e9c47de75d7641"
+    },
+    {
+      "path": "MERGE_REPORT_2026-11-08.md",
+      "size_bytes": 4505,
+      "sha256": "d9550fb0a2cf7872bfb68e249d703a4557d5b4fe6b9e568f297a4c56c8f03023"
+    },
+    {
+      "path": "MODERN_BUILD_AUDIT_2026-11-08.md",
+      "size_bytes": 5277,
+      "sha256": "6f66d8462328d056edb42701e5ee9702f2a63110b32b690d4c560b7e8e4010f0"
+    },
+    {
+      "path": "PHASE_4_3_CHANGES.md",
+      "size_bytes": 7166,
+      "sha256": "a1cb264d2e534ea51528806679e0ffbf724fb020c30e8e3a79f3c4bbc046a152"
+    },
+    {
+      "path": "PRODUCTION_STABILIZATION.md",
+      "size_bytes": 6158,
+      "sha256": "69372df94ba1b27c73164b07321b2731dae34bda596a81f4a86d3bdda8dc5290"
+    },
+    {
+      "path": "SMOKE_TEST.md",
+      "size_bytes": 10635,
+      "sha256": "d12d3c2446f32fd82b12ed8dc5d41c7977f8e079289c07945047586cd6825dbc"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/AdminBackupController.cs",
+      "size_bytes": 18454,
+      "sha256": "2d309cfa16accf1d82239d363ab042202e2a4a950c42acd7b538067a37b056c9"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/AdminHomeController.cs",
+      "size_bytes": 28555,
+      "sha256": "636e92d3a7be81f4961ea591ab4c178c0fe87e412f985a08a75caf40cd5c8668"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/AdminManageController.cs",
+      "size_bytes": 47409,
+      "sha256": "2e3cd721ebdc7906b781b4c2d9702e662c604b6ba16c18ffcf2be98a292dde9c"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/ConcessionsController.cs",
+      "size_bytes": 1722,
+      "sha256": "bc558a9bfdce88e08012a3706284a6412884c29af2a7c64215ef632c7f5c830b"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/MoviesController.cs",
+      "size_bytes": 22212,
+      "sha256": "f9f1a7530d42a30daec657e0195071ebaedd0ad5d13d252f6cc8186709af80b0"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Controllers/ScheduleController.cs",
+      "size_bytes": 32178,
+      "sha256": "beffa4bfbc8e4174c6179833342c7cf27110617fd49dec1e7aabb0126770a4e6"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/AdminDashboardViewModel.cs",
+      "size_bytes": 5349,
+      "sha256": "24e4a9cdb609446f676c70f3064557a9311d181cbef3a93e48616918c1cbcaec"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/AdminManageViewModels.cs",
+      "size_bytes": 12903,
+      "sha256": "8308783133f61d87aa13ff65368056c203215b0ecbccbb8e03b69d944dbf9f4b"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/AdminMoviesViewModels.cs",
+      "size_bytes": 3336,
+      "sha256": "1e511b7294ef22a5ab5f160e2dac89c9bfbdd9a6f4ae29b7593835f4cf7a5f59"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/AssignmentFormViewModel.cs",
+      "size_bytes": 987,
+      "sha256": "d06d92183d9d25cefedd8a987b4fcb5dc0a11420f489a191a10ac8a2a6cbca15"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/AssignmentRowViewModel.cs",
+      "size_bytes": 592,
+      "sha256": "269f991a5b1af2f148f2bb3ad35f30a89920d1a79e1ca18cd483f79b3f1241e1"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/BackupResultPanelViewModel.cs",
+      "size_bytes": 1083,
+      "sha256": "b929e1c21d7b6befb4342db389e0847e3de54791aab3172479f914a025501f58"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/BackupViewModel.cs",
+      "size_bytes": 3339,
+      "sha256": "c14909b2365f09f62658ecd3998123a2050bc6f02b3839277ae0f23d2f4d9f1e"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/GanttBarViewModel.cs",
+      "size_bytes": 352,
+      "sha256": "4ce36154760f6905b679469a1eddb45078412238c2deda3f081ce5df5b07f9cb"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/GanttDayViewModel.cs",
+      "size_bytes": 402,
+      "sha256": "8685ac6db6d3008ec6e83723cf51c8672917988bf45c029df202a569767db193"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/GanttViewModel.cs",
+      "size_bytes": 681,
+      "sha256": "e2a2329e4d30361dc33a7fb7dc24ce499efaab1f779afd46c0f8b89ff733f24f"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/ScheduleIndexViewModel.cs",
+      "size_bytes": 794,
+      "sha256": "f3d8cd79d9e932c4c3569e5c55208a02465b27f1a4deed67fd467aeca88eb01f"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/ShiftFormViewModel.cs",
+      "size_bytes": 1214,
+      "sha256": "50cdba3ea8b7a076afe650a39f4c21bb8e9852b7f6345570cec74d7a286f6a80"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/ShiftRowViewModel.cs",
+      "size_bytes": 531,
+      "sha256": "b147aebdb2b56a1d45ec9e07411fc5658027be4b5c8da2073bc04f139459a0aa"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/TmdbSyncPageViewModel.cs",
+      "size_bytes": 6960,
+      "sha256": "04a945703f60a915c72b731cc7b4f888b3afcd9d9976291f9d0d20701709f877"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/ViewModels/TmdbSyncViewModel.cs",
+      "size_bytes": 1953,
+      "sha256": "d8699f95ae1b080d4d44555942be3a4b3aa999ed736f6f80cc7dc6b2d4e8dd04"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminBackup/Backup.cshtml",
+      "size_bytes": 12706,
+      "sha256": "9e7cb0c7c569b9d6eaccb2bc5abc718aa56fdec1b0954465c10efb6797b96c40"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminBackup/_BackupResultPanelPartial.cshtml",
+      "size_bytes": 2433,
+      "sha256": "8e1773f03678a43ed3cbc7dcaf473b472791409714d4f54640a97f460e158303"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminHome/AdminDashboard.cshtml",
+      "size_bytes": 12360,
+      "sha256": "82c21d37bd3a2826e856a7328cf117f79239f0e38f0eea2b4b5d3394559d3897"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminHome/TmdbSyncPage.cshtml",
+      "size_bytes": 23766,
+      "sha256": "7ae53cd7c913d4a83da68e1409ce3b53bc5afd994128f99df4ffa85cb6e1aff3"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminHome/_TmdbSyncStatsPartial.cshtml",
+      "size_bytes": 3763,
+      "sha256": "e1536e3ea239ef1f6774e44cc0dee6645178c5eae38d3ed71091d129d38c7cd6"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ConcessionCreate.cshtml",
+      "size_bytes": 4249,
+      "sha256": "c4e9d6f8d10afc3a26eb0efc04c4fa70459bf3fa40884d5cc0a0d4d350845223"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ConcessionEdit.cshtml",
+      "size_bytes": 4123,
+      "sha256": "2baee394c3d8b6eec9610419adc3628169af83c98e33894caf9eab97cfd2ea92"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ConcessionRestock.cshtml",
+      "size_bytes": 3129,
+      "sha256": "886b3593c702b1d16a4edc77b4bb9db3a7c124ba3e90774c2eb36df316d687c2"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Concessions.cshtml",
+      "size_bytes": 6580,
+      "sha256": "ee7df87346eb8bd67e28191adc1355199efd7abc020d723c7c0c5e2726eaa62b"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Exports.cshtml",
+      "size_bytes": 10727,
+      "sha256": "e18e83e3f10f741e7c1ba1f6542461ab8f69f156f6c65b0e03cd836e8f3e1d9e"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/LocationCreate.cshtml",
+      "size_bytes": 4780,
+      "sha256": "55c40476aba275fd20cd6760e22a82a5748177db5d42a59a906936dc54491c22"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/LocationEdit.cshtml",
+      "size_bytes": 4184,
+      "sha256": "8423b46bf06aa523aa5b6e23e0261a4c768ccb7e6fe381645d68f909f1e1f51f"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Locations.cshtml",
+      "size_bytes": 5972,
+      "sha256": "9ce7bbd9b1d4121843b16fd5e1b8a547a179198f50209dd8dc95b1c5ef3f9aef"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ScreenCreate.cshtml",
+      "size_bytes": 4104,
+      "sha256": "dea7ff2344f55c1ecabff4c20a5972c139b1caf4473eb36f27143cf9f5b6e2b2"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ScreenEdit.cshtml",
+      "size_bytes": 4368,
+      "sha256": "ce8f29b5e87f9c3e00f91b7d018c92b663ab83202cda5ad4b3746ac4ad05a885"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Screens.cshtml",
+      "size_bytes": 9786,
+      "sha256": "d94357662e119ccebe731f6e050bb86202ca1aefa9e8b1a43a60514e8eadb11e"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ShowtimeCreate.cshtml",
+      "size_bytes": 6304,
+      "sha256": "6f22fe7a26dd7e7e63140c9d268963c21ac350d95e4e26c9d66816f2ee59699c"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/ShowtimeEdit.cshtml",
+      "size_bytes": 5878,
+      "sha256": "684db86bed96c103a4603fadfdb120d6df6ad27aba540e7b73f81e35d3868bd9"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Showtimes.cshtml",
+      "size_bytes": 15379,
+      "sha256": "3a4e92741e404f78d5f0c428426b838734c2c0430ba7ee422e44041e3feef406"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/UserCreate.cshtml",
+      "size_bytes": 4986,
+      "sha256": "d79f26f8e860fd9b040f444c43220b713e6201c7f843f087e1cf6378489a3fb6"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/UserEdit.cshtml",
+      "size_bytes": 5755,
+      "sha256": "be611d43ba95dc46c82a69bab50fd6b8701756e158cea1cc27b67cad6ff86744"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/AdminManage/Users.cshtml",
+      "size_bytes": 11929,
+      "sha256": "0172bcde4397ddb3f6a008f8adb2c3b0e38b381c12815295a12a35030b2620e4"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Concessions/ConcessionCreate.cshtml",
+      "size_bytes": 5174,
+      "sha256": "9c35251d03ece8126c7b39a0888901911338db6dd97bc5108701547129df59d5"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Concessions/ConcessionEdit.cshtml",
+      "size_bytes": 5311,
+      "sha256": "0f5fe4fe596382517288cfd038c0e007e3bbed165a00d1e17acef382e60ebc6e"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Concessions/ConcessionRestock.cshtml",
+      "size_bytes": 4529,
+      "sha256": "14b6af93bd460aaebbb5d1d92eda865f807c7299c632dc7a105723aaea0ecade"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Concessions/Concessions.cshtml",
+      "size_bytes": 9441,
+      "sha256": "88d039d577ad192c6fb53c2d5dbf42b51dfa24753cccbe7104327a7834698ec3"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Concessions/ConcessionsCatalog.cshtml",
+      "size_bytes": 6770,
+      "sha256": "a9b395f73711066b71bdf1a44cc55e86d3a365203d0fc941b23af1ec3ba7f9c0"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Movies/MovieCatalog.cshtml",
+      "size_bytes": 13416,
+      "sha256": "442219e9adec635d867edd90d2709b957d0f7996a47c4ebf1a56e49f2b815c05"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Movies/MovieCreate.cshtml",
+      "size_bytes": 8216,
+      "sha256": "c61e57dac7126d6d15acb47cc135597abdd64a03731e4206f5f0f87e0065cabc"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Movies/MovieEdit.cshtml",
+      "size_bytes": 9440,
+      "sha256": "d2f9586ef4c36a1dec8ecffbbf3f79562403d9cdc7554181d6a7670593e82e8d"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/Index.cshtml",
+      "size_bytes": 9462,
+      "sha256": "2fb778d55bd3fde5104d607f1860c09be0ab7ed1f884b6e1877827fffd3980b8"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/Schedule_Index.cshtml",
+      "size_bytes": 8396,
+      "sha256": "40eda820184663488fdee72989dcaf38fb7fc2a0e42dfbe1c92843b4754bde3c"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/_AssignmentForm.cshtml",
+      "size_bytes": 3966,
+      "sha256": "8b5797b191040510bfc13cc659d9c0a6f9c50cbcd50c65d08737a40cd4be72a5"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/_AssignmentsGrid.cshtml",
+      "size_bytes": 3760,
+      "sha256": "064bb4523d9bb8e9c8b0705cad17ace0ba6d075baedd8c7be39b27ffee593367"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/_ScheduleVisual.cshtml",
+      "size_bytes": 3380,
+      "sha256": "9c5953dd64829f84c7e4b2810a9cf712b5f66a3e3a6304d8091b384368f57173"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/_ShiftForm.cshtml",
+      "size_bytes": 4322,
+      "sha256": "d47fd649e32f35298ad6a2a516d7b454b74f2bc2a8cef2c67dd8633ad8d36cc4"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Schedule/_ShiftsGrid.cshtml",
+      "size_bytes": 3691,
+      "sha256": "0bc9d3c65abd0f43a4ed9f3f4c133d59aa0f7d3a82d52fcbd7c8be2b8869b7dd"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Shared/_AdminLayout.cshtml",
+      "size_bytes": 12461,
+      "sha256": "e1861da7da34b2719e8d631b1ac44b4684539e9b6d8a1926edd984d1b44c923b"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/Shared/_AdminSidebar.cshtml",
+      "size_bytes": 5688,
+      "sha256": "7d1bba1a1e06cfe72a2637b555c9d3863529fbe498d122e3d7d761bc8a844f8d"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/_ViewImports.cshtml",
+      "size_bytes": 245,
+      "sha256": "593bfe112c9a06da22ef16650bd76d1c13de3a2691f9a12b8b7450d53bb37826"
+    },
+    {
+      "path": "ScrumFlix/Areas/Admin/Views/_ViewStart.cshtml",
+      "size_bytes": 68,
+      "sha256": "7f95dedc78058228bcca9c83f213e967a1ef2b0fb52729ebadf03756bd65345f"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Controllers/EmployeeHomeController.cs",
+      "size_bytes": 6062,
+      "sha256": "e2cee5240b52f3b30c0167c4f4c25365e6b53ea670d23397aefdb54cbbd153b3"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/ViewModels/EmployeeDashboardViewModel.cs",
+      "size_bytes": 3945,
+      "sha256": "234366d4e8afe39e9ad115d9924e1985782f2e9c16e12fdedf36fa374eb40986"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Views/EmployeeHome/Index.cshtml",
+      "size_bytes": 13385,
+      "sha256": "a3a832046b66adb6b749a3931bf1a6d917129794bbd91c9056d4561e15ee654c"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Views/Shared/_EmployeeLayout.cshtml",
+      "size_bytes": 12245,
+      "sha256": "f2f60ac9cdb2b4fcad50033e1657d732189208ae3f53dc038d38c64c26e58f78"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Views/Shared/_EmployeeSidebar.cshtml",
+      "size_bytes": 5860,
+      "sha256": "db93f1d346dc7ba8d4cced2ea6dd4952c8bc63b0aa38f9343a7707c81e00905b"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Views/_ViewImports.cshtml",
+      "size_bytes": 248,
+      "sha256": "02844ba966b0b0350feee09d3c3fa4401c191acd1f43cc4bcac2c92326fa3d35"
+    },
+    {
+      "path": "ScrumFlix/Areas/Employee/Views/_ViewStart.cshtml",
+      "size_bytes": 74,
+      "sha256": "0db3551ff83fbb32ebc36deb50d640c732e47cdd89fa5bb314b2908d53a3aecc"
+    },
+    {
+      "path": "ScrumFlix/Controllers/AccountController.cs",
+      "size_bytes": 12840,
+      "sha256": "9e107e5e65d9ae127a2b6891e928bf8c47e72c38faeb58aa11cc4098811bde13"
+    },
+    {
+      "path": "ScrumFlix/Controllers/CartController.cs",
+      "size_bytes": 33145,
+      "sha256": "7fc76902e306f734aa90db04964f35cccb368dc216edac9cc5cc3fed69fdc810"
+    },
+    {
+      "path": "ScrumFlix/Controllers/ConcessionsController.cs",
+      "size_bytes": 11752,
+      "sha256": "28ad2c2543e3b4815f28ac66dffaf0e49d6eb8427236528c2e171127a6b677d6"
+    },
+    {
+      "path": "ScrumFlix/Controllers/ConsumerControllerBase.cs",
+      "size_bytes": 7295,
+      "sha256": "3764115ec7ba36ed828c1eb8c52a0602d549a98185fa8b3e3eff705bf1665005"
+    },
+    {
+      "path": "ScrumFlix/Controllers/HomeController.cs",
+      "size_bytes": 9091,
+      "sha256": "dfde0fdfa09d055912ec54982ad4a11b61482689748b3f677da6295a5892c3b7"
+    },
+    {
+      "path": "ScrumFlix/Controllers/MoviesController.cs",
+      "size_bytes": 13214,
+      "sha256": "db55e4acbf90a453b07390def56b00ac8a52ab0bd8d302377bdd93855ae58932"
+    },
+    {
+      "path": "ScrumFlix/Controllers/ShowtimesController.cs",
+      "size_bytes": 18290,
+      "sha256": "fb303a695834a162590b6290b2ece498f84042af1313906652ee987defb55e3d"
+    },
+    {
+      "path": "ScrumFlix/Controllers/StaffControllerBase.cs",
+      "size_bytes": 8610,
+      "sha256": "79a09d0adb31d8ae1fc76b3ba3eac7f0523ccfdd50cd9d5b5e17974f21cfabf3"
+    },
+    {
+      "path": "ScrumFlix/Controllers/TmdbImageController.cs",
+      "size_bytes": 3050,
+      "sha256": "8650e9bbc9cbe5996f9f607e2fb849b0be24ab96a83041973192eddf3eddac04"
+    },
+    {
+      "path": "ScrumFlix/Data/AppDbContext.cs",
+      "size_bytes": 31525,
+      "sha256": "b0ae178d7e8148bd38e52d2c5f87b7e6ea0e2f8696c0321390fcf832b90d2eb9"
+    },
+    {
+      "path": "ScrumFlix/Data/CartCountFilter.cs",
+      "size_bytes": 1495,
+      "sha256": "1510cc58db885a700cc260f5afaaad9bc273cbfd84437eb1ad9de3fbc0ef67b9"
+    },
+    {
+      "path": "ScrumFlix/Data/CartService.cs",
+      "size_bytes": 9021,
+      "sha256": "f822837839eee1ce2c4c60479d7e693c17c2431ed4abe37e584da77b1e1189f1"
+    },
+    {
+      "path": "ScrumFlix/Data/RoleAuthorizationFilter.cs",
+      "size_bytes": 5866,
+      "sha256": "4b4528af37f732f5032d444bd91dcc8f5fb302890a3bacf50f71c83d187fc8ea"
+    },
+    {
+      "path": "ScrumFlix/Data/SampleDataSeederFull.cs",
+      "size_bytes": 52450,
+      "sha256": "5867f90518f15b9c7fc4457d88d0c6fe1c26177df7ae988a0cbe531aefe2dbfb"
+    },
+    {
+      "path": "ScrumFlix/Domain/AppLog.cs",
+      "size_bytes": 4033,
+      "sha256": "98b5f1ecbae3e9eb95ffef17156236c03dfed59d00df0c01813ce725047c8417"
+    },
+    {
+      "path": "ScrumFlix/Domain/AssignmentArea.cs",
+      "size_bytes": 2311,
+      "sha256": "faddd7ffa01cb4a41d6cd99ad1fa9c19c3f7b034c4eb6e482eb4b05e79332bc2"
+    },
+    {
+      "path": "ScrumFlix/Domain/AuditLog.cs",
+      "size_bytes": 3620,
+      "sha256": "575d2c33a6d784f266cc7031d466ad5fbda501b849565e1a7e701db65cceb04d"
+    },
+    {
+      "path": "ScrumFlix/Domain/ConcessionItem.cs",
+      "size_bytes": 3999,
+      "sha256": "09302c092dc427be8e9be2c8c9f3266b5866c8b402314a884c5d66abd9b23147"
+    },
+    {
+      "path": "ScrumFlix/Domain/ConcessionSale.cs",
+      "size_bytes": 3376,
+      "sha256": "57a4996e2d17b778b225d3ccf43a2f7bbee96b3024abc05a8bde1aeb98f4bcce"
+    },
+    {
+      "path": "ScrumFlix/Domain/ConcessionSaleItem.cs",
+      "size_bytes": 2751,
+      "sha256": "3ac6636befcb82f6f3c3d5c3aaed483b91bceea4c3577f2a31a3a1a2d2835fee"
+    },
+    {
+      "path": "ScrumFlix/Domain/Employee.cs",
+      "size_bytes": 4230,
+      "sha256": "7aaa52a58518c22cf3e27bbd8d57c1b11944ca535cd6ee29348ffb81cea36066"
+    },
+    {
+      "path": "ScrumFlix/Domain/Genre.cs",
+      "size_bytes": 3330,
+      "sha256": "d66667567753940bc100bcbf37aea904d7c4940ebb7e53cbc77e2f6ed102ef26"
+    },
+    {
+      "path": "ScrumFlix/Domain/Location.cs",
+      "size_bytes": 2787,
+      "sha256": "94e24b20d21db86330b3327c7b8e5a7ec13f3b5876424327ef9c4332086a98e4"
+    },
+    {
+      "path": "ScrumFlix/Domain/Movie.cs",
+      "size_bytes": 3319,
+      "sha256": "5e99c30b44ce954b4a373b6e34d841df957f52eff0b09e15c33faba918f67bec"
+    },
+    {
+      "path": "ScrumFlix/Domain/MovieGenre.cs",
+      "size_bytes": 2582,
+      "sha256": "fd71adfb6983e906a16d4eeee80aec3ff0a7168a8aba8d5388652ebb9a6edc22"
+    },
+    {
+      "path": "ScrumFlix/Domain/MovieTmdbMetadata.cs",
+      "size_bytes": 8889,
+      "sha256": "5c37b0cee8f2c49b6987c7ac5887332212f95ff43241202a6940b99630f1f1c2"
+    },
+    {
+      "path": "ScrumFlix/Domain/PayPeriod.cs",
+      "size_bytes": 3175,
+      "sha256": "a4131f70c6fa071fbed7065dade78a8108260ef1b6b9b33fdd68da5826238c4a"
+    },
+    {
+      "path": "ScrumFlix/Domain/PayStub.cs",
+      "size_bytes": 1728,
+      "sha256": "c5384fcb76e47a2e6530a75959f9d78b644d34f3e2edb6a493fa3829346801cd"
+    },
+    {
+      "path": "ScrumFlix/Domain/Payroll.cs",
+      "size_bytes": 2909,
+      "sha256": "8f8fdc43d192af77f6548e4915648ba95ee434e26f24ec5fae762d7eea900326"
+    },
+    {
+      "path": "ScrumFlix/Domain/Role.cs",
+      "size_bytes": 1361,
+      "sha256": "6db6c237057b3512e04d6ceabc9e4d423fdd688ac87808f0a75d866fae82a12f"
+    },
+    {
+      "path": "ScrumFlix/Domain/ScheduleAssignment.cs",
+      "size_bytes": 3304,
+      "sha256": "e44b937ba973f993ca0641c442f6bb8072555b7a6952b8844d89623f19f68ee6"
+    },
+    {
+      "path": "ScrumFlix/Domain/Seat.cs",
+      "size_bytes": 4108,
+      "sha256": "83791ef79f53f1b7b780972a6eba88c9e6036d38e5275288c1bb0ca16ed352bb"
+    },
+    {
+      "path": "ScrumFlix/Domain/SeatReservation.cs",
+      "size_bytes": 5538,
+      "sha256": "b8e9d0b49591b07186e47bb629ac55d185e58ee26c024bd5350b7fa2b444643a"
+    },
+    {
+      "path": "ScrumFlix/Domain/Shift.cs",
+      "size_bytes": 2930,
+      "sha256": "6bcd622b56f137db10cada2ed633818f6eca24d44a99b7d0466e09c64e07e87f"
+    },
+    {
+      "path": "ScrumFlix/Domain/Showtime.cs",
+      "size_bytes": 4117,
+      "sha256": "f473e792eb9aabb75771b48e08dc8db139ea6fce8ece9d48b028b78f2f0c2d84"
+    },
+    {
+      "path": "ScrumFlix/Domain/ShowtimeSeat.cs",
+      "size_bytes": 4800,
+      "sha256": "d1b66a81f75a3e1435140bd22ab9695960c8210db2f5c115ea6779df19c7b69d"
+    },
+    {
+      "path": "ScrumFlix/Domain/TheaterScreen.cs",
+      "size_bytes": 2269,
+      "sha256": "3a4f4eb88e259d5acf38f11bbb4c60657adcfa8b685871ce300a112d36b0caec"
+    },
+    {
+      "path": "ScrumFlix/Domain/Ticket.cs",
+      "size_bytes": 3179,
+      "sha256": "7b8d8190209c160130aa8ad9e07a29a829f70ac750658662d44c231a0284d9a5"
+    },
+    {
+      "path": "ScrumFlix/Domain/TimeEntry.cs",
+      "size_bytes": 3300,
+      "sha256": "751395ee5ab8e0d15111f20284fca838efdac0fb726c44864ff253106bb73016"
+    },
+    {
+      "path": "ScrumFlix/Domain/Timesheet.cs",
+      "size_bytes": 3704,
+      "sha256": "01d02cb276b8959f7b087f9c6aa93b50979595d3e263cbc60585655dd30bbaec"
+    },
+    {
+      "path": "ScrumFlix/Domain/User.cs",
+      "size_bytes": 6400,
+      "sha256": "96540d2c3992b88387426f804df4f467d401761804ef31961d5eadba28f804f0"
+    },
+    {
+      "path": "ScrumFlix/Filters/BookingDiagnosticsFilter.cs",
+      "size_bytes": 1387,
+      "sha256": "fa1aa80b6b74d3dc27ca512e30f5c8ac2b33cb99ee33f987adc3e34267e3af7f"
+    },
+    {
+      "path": "ScrumFlix/GlobalUsings.cs",
+      "size_bytes": 2167,
+      "sha256": "e87caa19ea365531a29a60da84b4930f42703dd5e5b8d7af69d6f2fd5292cdde"
+    },
+    {
+      "path": "ScrumFlix/Hub/ProgressHub.cs",
+      "size_bytes": 7626,
+      "sha256": "609646c0204f7821828daa392e2e41fd34594a9f1315e21164c536a814edc4d9"
+    },
+    {
+      "path": "ScrumFlix/Hub/ScheduleHub.cs",
+      "size_bytes": 4400,
+      "sha256": "2e539ba5cdc0889c8924a618a1612d38ac7b5b092dc733e163aab268143070aa"
+    },
+    {
+      "path": "ScrumFlix/Hub/TmdbProgressHub.cs",
+      "size_bytes": 3132,
+      "sha256": "e628a72de279dcb4f46bdeabcf30751c0dbf9c17c8536f2bb508a455c3a3a0d9"
+    },
+    {
+      "path": "ScrumFlix/Infrastructure/CorrelationIdMiddleware.cs",
+      "size_bytes": 2668,
+      "sha256": "f93a48cf413700bb76644eb548a4d1124e1b51b485738e44cffc9b8ec5a14973"
+    },
+    {
+      "path": "ScrumFlix/Infrastructure/LoggingConfiguration.cs",
+      "size_bytes": 21570,
+      "sha256": "b26cc650afa276d9ed68ca1358d50db39793110e52536672292daf0c7f07c754"
+    },
+    {
+      "path": "ScrumFlix/Infrastructure/SecurityHeadersConfiguration.cs",
+      "size_bytes": 23138,
+      "sha256": "9af32434a8615125799f3f22aaad59c99d0071ef8d3adc10b51c19febeec3e46"
+    },
+    {
+      "path": "ScrumFlix/Infrastructure/TimeZoneHelper.cs",
+      "size_bytes": 11549,
+      "sha256": "1da083469edc52db90bf53a3cf4b237dcfaecd884cc6da9e7e80750a6478472d"
+    },
+    {
+      "path": "ScrumFlix/Infrastructure/TmdbConfiguration.cs",
+      "size_bytes": 6846,
+      "sha256": "f87f5412b2faf30a4346ab89612dff0fde349b68cfdf3870f72288deda0f7ca5"
+    },
+    {
+      "path": "ScrumFlix/Models/CartItem.cs",
+      "size_bytes": 7281,
+      "sha256": "7f220481643d38e82afc7dd8ee6e628b699e8b0937e00db64d1630139845b64d"
+    },
+    {
+      "path": "ScrumFlix/Program.cs",
+      "size_bytes": 27882,
+      "sha256": "320ec565257fc9fe5f97d35c39b1bccad96aff160167eb1bf2088b79d9b513ef"
+    },
+    {
+      "path": "ScrumFlix/Properties/PublishProfiles/FTPProfile.pubxml",
+      "size_bytes": 1027,
+      "sha256": "3377bb92dfa374aa8561edb0dbdebacb5f5ae1983e25a7a75b425c383e9828eb"
+    },
+    {
+      "path": "ScrumFlix/Properties/PublishProfiles/FTPSomee.pubxml",
+      "size_bytes": 1027,
+      "sha256": "3377bb92dfa374aa8561edb0dbdebacb5f5ae1983e25a7a75b425c383e9828eb"
+    },
+    {
+      "path": "ScrumFlix/Properties/launchSettings.json",
+      "size_bytes": 282,
+      "sha256": "8d30fb0d8b3c6fca8e1622ff9c66bb5a90de7f9d9c3d9c617d8d36c71c288a6a"
+    },
+    {
+      "path": "ScrumFlix/ScrumFlix.IntegrationTests.csproj",
+      "size_bytes": 1288,
+      "sha256": "aadf034d162774a9c5d7545bf74f613bea7863081b05f8befd64268331ffded1"
+    },
+    {
+      "path": "ScrumFlix/ScrumFlix.Tests.csproj",
+      "size_bytes": 933,
+      "sha256": "f484fdc557c5c8854337e8bb9666415014b9a305779697b084ed9b3b513a8c60"
+    },
+    {
+      "path": "ScrumFlix/ScrumFlix.csproj",
+      "size_bytes": 14375,
+      "sha256": "7d0c9c7b6f4d41593cc888d98dae75bee40f5a47753452b80cd8780a8d9ee288"
+    },
+    {
+      "path": "ScrumFlix/Services/AuditService.cs",
+      "size_bytes": 2728,
+      "sha256": "f9d38bf502d5f08aae06d143eea873afe402f8a2e9e18126e3da7ca4448340b2"
+    },
+    {
+      "path": "ScrumFlix/Services/AuthService.cs",
+      "size_bytes": 14174,
+      "sha256": "8aaf97fff1a8540898b4c9ec785b3c5ece061d168da11df8d5eda8699763b1cf"
+    },
+    {
+      "path": "ScrumFlix/Services/BackgroundQueue/BackgroundTaskQueue.cs",
+      "size_bytes": 2724,
+      "sha256": "36932766ae562ddb54b0a1c30ca5da98688a3adbfac0a8047145df5db16e8d8f"
+    },
+    {
+      "path": "ScrumFlix/Services/BackgroundQueue/IBackgroundTaskQueue.cs",
+      "size_bytes": 3746,
+      "sha256": "2b696974ca31013a0ea44b766dcdd19253195ceded8057d99ac89e1f0016cc2a"
+    },
+    {
+      "path": "ScrumFlix/Services/BackgroundQueue/QueuedHostedService.cs",
+      "size_bytes": 4425,
+      "sha256": "0a1a13f8916f27a6aac39782e2d929f9f15ae5c1e8c5d760397b386c0783b524"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Components/BackupArtifacts.cs",
+      "size_bytes": 2027,
+      "sha256": "29ef0f029c5462be10443254f51ed9ba0cdc46ae8b0c6b39c026e0a5c36d33d3"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Components/DatabaseObjectBackupProvider.cs",
+      "size_bytes": 10625,
+      "sha256": "9e8c0649720dd968b07bfa7c8d6be1bde81e9f319e18fc130a1888857651d259"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Components/ManifestBuilder.cs",
+      "size_bytes": 2850,
+      "sha256": "75a9446981a94ebc6e4f64a9fa2891a1ad41e0835ce7368a874684f424bf2de1"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Components/SchemaBackupProvider.cs",
+      "size_bytes": 4798,
+      "sha256": "5f703a43d892ca78ae7dd68691a57dc2cc3139a4c4b7319535fc1c23df8893a4"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Internal/MySqlDdl.cs",
+      "size_bytes": 1744,
+      "sha256": "f0e55e7e870bae7bab36790247598c5128cf9bd66e0a9ecfd1112b8f089a884e"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Internal/MySqlIntrospector.cs",
+      "size_bytes": 9770,
+      "sha256": "7c731b1c1d3415730ccd8a21c4d9f692f1ba440717ee01d8ecf44f407eb2799d"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Models/BackupManifest.cs",
+      "size_bytes": 3462,
+      "sha256": "feef0916f7d8eb474ccdec9ff0097221af42ecd0fd6f6074dcf8ebba3bcde327"
+    },
+    {
+      "path": "ScrumFlix/Services/Backup/Models/DatabaseBackupOptions.cs",
+      "size_bytes": 5776,
+      "sha256": "deb0b0766064c59169a24ff034901582da9c977dba923a6013c159b2ed218811"
+    },
+    {
+      "path": "ScrumFlix/Services/DatabaseBackupService.cs",
+      "size_bytes": 47991,
+      "sha256": "85f9aee2a0d109c8f741fbc016a73c891e67ab72eb3300f1778983db259d1301"
+    },
+    {
+      "path": "ScrumFlix/Services/EmailService.cs",
+      "size_bytes": 44919,
+      "sha256": "51db459085a1824593ddc41334d858807b2b310fd2b751b1466bcc6ac965408f"
+    },
+    {
+      "path": "ScrumFlix/Services/IAuditService.cs",
+      "size_bytes": 2229,
+      "sha256": "608d3b718c9380fb0b621c389b91f89a701b5d219ae8518f7b5db2f6db364bc0"
+    },
+    {
+      "path": "ScrumFlix/Services/IAuthService.cs",
+      "size_bytes": 2638,
+      "sha256": "ba9303dd45163c1b74a821537364ebf4332e9cc6dc57ca510bea5cb4900b33d4"
+    },
+    {
+      "path": "ScrumFlix/Services/IDatabaseBackupService.cs",
+      "size_bytes": 8786,
+      "sha256": "8b3b21b42a705016139b493eb6aced2a766a0991cf64af7c32d22363b6e8b352"
+    },
+    {
+      "path": "ScrumFlix/Services/IEmailService.cs",
+      "size_bytes": 7102,
+      "sha256": "da96b5a4d69124e27ebd5556fbba51e5573b15045b53be84d1ce824a75c0f5e3"
+    },
+    {
+      "path": "ScrumFlix/Services/ISystemAccountProvider.cs",
+      "size_bytes": 1740,
+      "sha256": "18d2ca99e41dd49aa7b31727e70b4e9fa12ade9431b9f7d38506a220dfe15455"
+    },
+    {
+      "path": "ScrumFlix/Services/ITmdbSyncService.cs",
+      "size_bytes": 4464,
+      "sha256": "1a5294bc5e7149cfc04671a292e247f1f6d089dc8e5e53790986307b269c8fb1"
+    },
+    {
+      "path": "ScrumFlix/Services/LogRetentionService.cs",
+      "size_bytes": 2506,
+      "sha256": "60f52cc21cdee164713ebaf072b03e6e5a0c7f8bc61ccdf19546220488077b85"
+    },
+    {
+      "path": "ScrumFlix/Services/LoginResult.cs",
+      "size_bytes": 3211,
+      "sha256": "82da5968b27ffa37f4881f2ad9a9c141351e617eec22ee7b060093b771f098bb"
+    },
+    {
+      "path": "ScrumFlix/Services/Progress/IProgressReporter.cs",
+      "size_bytes": 2981,
+      "sha256": "94429d4e864df66aa3e8057ef95bcd685e654ed5968de636d6a93c30b901d86c"
+    },
+    {
+      "path": "ScrumFlix/Services/Progress/IProgressReporterFactory.cs",
+      "size_bytes": 4058,
+      "sha256": "cd70b4a8e46dfcce7d6433bba1c290f31070e45df5508461b59656b319e006b2"
+    },
+    {
+      "path": "ScrumFlix/Services/Progress/ProgressReporter.cs",
+      "size_bytes": 5342,
+      "sha256": "5794e8ed0d6d6ae87d374b26bb668f2626118d00ea4c7a340abfc7e0525bc515"
+    },
+    {
+      "path": "ScrumFlix/Services/Progress/ProgressReporterFactory.cs",
+      "size_bytes": 3683,
+      "sha256": "ed9079c0e5e32a5dc09623e952d86acdb461c7e755d0b09ad6397fe2e16f427c"
+    },
+    {
+      "path": "ScrumFlix/Services/Progress/ProgressState.cs",
+      "size_bytes": 6550,
+      "sha256": "7c13643778f78208febcc84683dabbc6d9935dc6b03568e82e9b80f48c765117"
+    },
+    {
+      "path": "ScrumFlix/Services/QrCodeService.cs",
+      "size_bytes": 7853,
+      "sha256": "3fcfdb148cea80536a168a6f72cbac85207accfe298573f295ff563096e77b1d"
+    },
+    {
+      "path": "ScrumFlix/Services/SeatReservationExpiryService.cs",
+      "size_bytes": 7947,
+      "sha256": "1fb7f174a7a86c809af63fa79455d77229222ab9e2b8150d5aa357ffb7e430ae"
+    },
+    {
+      "path": "ScrumFlix/Services/SeatService.cs",
+      "size_bytes": 7704,
+      "sha256": "b9cfa235b0c6dbe8d6a0ea76094773bb0c5f2b03311246e5f428b354662ad003"
+    },
+    {
+      "path": "ScrumFlix/Services/SystemAccountProvider.cs",
+      "size_bytes": 3761,
+      "sha256": "db4a313946b1e545422ff976dd39bd5e796f9fcf081eaf2a02a8417a22d14776"
+    },
+    {
+      "path": "ScrumFlix/Services/TMDB/ITmdbImageService.cs",
+      "size_bytes": 733,
+      "sha256": "f1345d15fcb38b1cbe0df281dc0ac542397d3e29ba6be597376528ffd98b2376"
+    },
+    {
+      "path": "ScrumFlix/Services/TMDB/TmdbImageService.cs",
+      "size_bytes": 2054,
+      "sha256": "e3d55940fb4cd9024ba303337def8d82487d03459bf3caba7dd78ee9fa33daca"
+    },
+    {
+      "path": "ScrumFlix/Services/TmdbSyncService.cs",
+      "size_bytes": 20792,
+      "sha256": "21404b2f680459b9cdba002cc388c4e702fd300322a42948c94271b95d8066cf"
+    },
+    {
+      "path": "ScrumFlix/ViewComponents/FooterLocationsViewComponent.cs",
+      "size_bytes": 1223,
+      "sha256": "005bbccd32c5f342b0415fff33e387007b4350a7d3d0a8bedc54907f1c12a5d4"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/CartViewModel.cs",
+      "size_bytes": 1500,
+      "sha256": "7f6801f224d5acb13773e2be5c4e441c035644dc4feecc1b3eef3c4aad7856ae"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/ChangePasswordViewModel.cs",
+      "size_bytes": 1720,
+      "sha256": "7c57d0e15e5baa22a5fecfecb42c919d2aafcf55105cc03a5b493dd1d0fc783a"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/ConcessionsCatalogViewModel.cs",
+      "size_bytes": 2216,
+      "sha256": "ce9f55bc1e4135b8e5632aa06cf43580981346af7c1af05a33fb62e5cfd7c9e3"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/ErrorViewModel.cs",
+      "size_bytes": 1768,
+      "sha256": "96eb1a84733b637df9b75fe22904edb200e1f633ff65225f951238af9f8e112b"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/HomeDashboardViewModel.cs",
+      "size_bytes": 2825,
+      "sha256": "732d8d280ffdf6307a6e614d1b33ce6ef4f62383c7a066164a5b7038bd3b4eb9"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/LayoutViewModel.cs",
+      "size_bytes": 1686,
+      "sha256": "f28b2a9447b55c86e90ce01c65a3a49f74c93b5bb1917eb1197e0d9c0e04620a"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/LocationConflictViewModel.cs",
+      "size_bytes": 2415,
+      "sha256": "996c1050bc7efecdd6a0ed8e5f7891500a23ab6d5596174226df67a1f6d8da14"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/LoginViewModel.cs",
+      "size_bytes": 1122,
+      "sha256": "6991043be6ff6c84f0f24f4288f19994c808dd12afcbd45ba9977d1f11a87247"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/MovieCatalogViewModel.cs",
+      "size_bytes": 2365,
+      "sha256": "279878d45f7b2f8488ece26c24ac3f44d1c01ebf9636ad442d41bba6efb18996"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/MovieDetailViewModel.cs",
+      "size_bytes": 5354,
+      "sha256": "9b4c94b892184cab54c17e7adb92372f1d583e017dd8c225662cca8bf1d1220e"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/OrderConfirmationViewModel.cs",
+      "size_bytes": 5404,
+      "sha256": "1f25cf10c039d2f489b5ab45cb4bc036a1a0df5cc372c182fbc2fb9732e54271"
+    },
+    {
+      "path": "ScrumFlix/ViewModels/ShowtimeBookingViewModel.cs",
+      "size_bytes": 4248,
+      "sha256": "36f7bb0e55415dcd384c26942eb4335095e4ed1fd94e6c8e7d19fcbcdde44eb5"
+    },
+    {
+      "path": "ScrumFlix/Views/Account/ChangePassword.cshtml",
+      "size_bytes": 10552,
+      "sha256": "6f8ae04018162551e5190ebb8999ac1fc928c568520dfb6b9c3643fdb7ff9750"
+    },
+    {
+      "path": "ScrumFlix/Views/Account/Login.cshtml",
+      "size_bytes": 4172,
+      "sha256": "c3eed5df17fc1bf7d73d755edee6d8a7d5ad4fbfa755a9bfc74766bbfe92d330"
+    },
+    {
+      "path": "ScrumFlix/Views/Cart/CartReview.cshtml",
+      "size_bytes": 7419,
+      "sha256": "bc1e641fc8f3ceaa8b5042f2f6837730f29acd0c9b684d29e693a1d27bceb3d7"
+    },
+    {
+      "path": "ScrumFlix/Views/Cart/OrderConfirmation.cshtml",
+      "size_bytes": 14201,
+      "sha256": "fc5ee9b1da00cf791fb45a11fcbe36ef433b946781bd3d3679a22009c9a473a2"
+    },
+    {
+      "path": "ScrumFlix/Views/Concessions/ConcessionsCatalog.cshtml",
+      "size_bytes": 7205,
+      "sha256": "d9a1aba674d106b9a421e79606428352e42fd4409eb7e651fe60e12cf356a44a"
+    },
+    {
+      "path": "ScrumFlix/Views/Concessions/LocationConflict.cshtml",
+      "size_bytes": 5693,
+      "sha256": "1633f16000beb69303c2c399af355e5422545d0829eb5314e8548280b8dbfeb5"
+    },
+    {
+      "path": "ScrumFlix/Views/Home/AccessDenied.cshtml",
+      "size_bytes": 1218,
+      "sha256": "67887a5bcf7f2c9dcad294b22d7d6f347a98007e408c5dacecbdf28d7e9953ec"
+    },
+    {
+      "path": "ScrumFlix/Views/Home/Error.cshtml",
+      "size_bytes": 3969,
+      "sha256": "1bf6e8ee4ea6f883f37c9d719efff12074343a941f8af81cf5920a2f8ce9a918"
+    },
+    {
+      "path": "ScrumFlix/Views/Home/Error500.cshtml",
+      "size_bytes": 4737,
+      "sha256": "1c0b4ebb2bac754871e198fbd8513ece5ab16e8a7d027bc3f5868b9b09ae5e56"
+    },
+    {
+      "path": "ScrumFlix/Views/Home/HomeDashboard.cshtml",
+      "size_bytes": 15886,
+      "sha256": "9a74fa554144a0e193347f534a4ebb5bd3b79d42da4ce1802f19b2482bfb658e"
+    },
+    {
+      "path": "ScrumFlix/Views/Movies/MovieCatalog.cshtml",
+      "size_bytes": 11063,
+      "sha256": "fb6da08308775ead61714c62b772d16406d485fdb70402537647aad1a5a5273a"
+    },
+    {
+      "path": "ScrumFlix/Views/Movies/MovieDetail.cshtml",
+      "size_bytes": 514,
+      "sha256": "8d6e1d6cd7369325c85708cd1152108aee5d92113aafd1dc2fa6633be93deecd"
+    },
+    {
+      "path": "ScrumFlix/Views/Movies/_MovieDetailPartial.cshtml",
+      "size_bytes": 20416,
+      "sha256": "b3f7bbcc0eabda74297d6211192eca619ca4a95a1d84b2945b3ae52d946d6c70"
+    },
+    {
+      "path": "ScrumFlix/Views/Shared/Components/FooterLocations/Default.cshtml",
+      "size_bytes": 486,
+      "sha256": "baf1ad1c0567ae3fa0110a7c740ff24569b0fc94454229d58eac13da657de5e2"
+    },
+    {
+      "path": "ScrumFlix/Views/Shared/_Layout.cshtml",
+      "size_bytes": 20521,
+      "sha256": "0ed96faedce8c3a26b83d3f0272d7f89b9ee570ddd1ea4ff047f48b90d9b41c3"
+    },
+    {
+      "path": "ScrumFlix/Views/Shared/_ValidationScriptsPartial.cshtml",
+      "size_bytes": 493,
+      "sha256": "2976ef95553f13bb51a6b08505bf3caefb9c1a2224b8a3fd3c0ad5169ea99893"
+    },
+    {
+      "path": "ScrumFlix/Views/Showtimes/ShowtimeBooking.cshtml",
+      "size_bytes": 16358,
+      "sha256": "4e1025ba27f06ab380287ac4bfb661b773a1e64fa8f0ba1a6731ed5e652d28ca"
+    },
+    {
+      "path": "ScrumFlix/Views/_ViewImports.cshtml",
+      "size_bytes": 212,
+      "sha256": "d07cc93f7097518f49a1a73b2517ab53f7ad9abdfe61ee9a2d640b0810e62642"
+    },
+    {
+      "path": "ScrumFlix/Views/_ViewStart.cshtml",
+      "size_bytes": 32,
+      "sha256": "1b8496d15708e5d6554b607ecca4e226d9797ffdf6dc97ff10c137ae5f5fccf4"
+    },
+    {
+      "path": "ScrumFlix/appsettings.Development.json",
+      "size_bytes": 2144,
+      "sha256": "65a3bd9017338618c9e20b434cb6529dd430535046882eadc9d19cdc68e167e8"
+    },
+    {
+      "path": "ScrumFlix/appsettings.json",
+      "size_bytes": 7408,
+      "sha256": "190e8feba173acef9024a8d2e6418bc21fd1702e09e0173dcbe1eb74f98c7326"
+    },
+    {
+      "path": "ScrumFlix/libman.json",
+      "size_bytes": 287,
+      "sha256": "61a5c8755bf13ee0ec6f555103aa49e0db11c71d16377b3614dfcf7a40816269"
+    },
+    {
+      "path": "ScrumFlix/logs/.gitkeep",
+      "size_bytes": 69,
+      "sha256": "d8fc3da95abd38ca818cc1d01f806154b420af69613fda069dec119270ba4169"
+    },
+    {
+      "path": "ScrumFlix/web.config",
+      "size_bytes": 17402,
+      "sha256": "cab72e20804cdf39f827db0911ea58c298a9ea8bcceaea77f5a6a51a6854b63d"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/android-chrome-192x192.png",
+      "size_bytes": 40392,
+      "sha256": "9f922e67cf9b104f256a48b2c914575ee5bfdde30964e92cabc96039e74ac178"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/android-chrome-512x512.png",
+      "size_bytes": 245020,
+      "sha256": "08d3dcb30bcb073b751d2a5fd8cecaba82c0d6ed7505b634d8ef90b0cdfb10a2"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/apple-touch-icon.png",
+      "size_bytes": 36061,
+      "sha256": "2330bfff86c8f728a2246830a2a18230e2de8689f26359876bc075773aab4a04"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/scrumflix.css",
+      "size_bytes": 45636,
+      "sha256": "83aad304d0e06fcaec1fb17392e73b837d48861b8d559ff904a8c14beeb731a4"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-base.css",
+      "size_bytes": 7305,
+      "sha256": "2a92f1cc85fbaeee272e4553fc39c8af7d37c0c03e29cccb4f835cac0676efb7"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-components.css",
+      "size_bytes": 99190,
+      "sha256": "6de9af6a9efdf8ce0fad768cd032806cb9140d88e40f42d36f22ded2825c98b2"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-layout.css",
+      "size_bytes": 17444,
+      "sha256": "4e8924a9c2cc4acf43c8e2fc4d4a176d5474ddcc8c23cd6f7349f9b5dfc71596"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-spinner.css",
+      "size_bytes": 8323,
+      "sha256": "110a18fafbc1607099145adecefe4e4f110645e3a76450d1b2f0c921d93b7d8b"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-theme-light.css",
+      "size_bytes": 27812,
+      "sha256": "c02442986c8f0dc0790aa3c9de0f0dd09b0737ff3433ad3a029257febdcdfa75"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-theme-red.css",
+      "size_bytes": 18515,
+      "sha256": "f3faf393a7927853bc3c4a5c928ad3ae07f8e90c78f4b308b4a685c1ee76368a"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/css/sf-tokens.css",
+      "size_bytes": 35158,
+      "sha256": "6cc7753cf93c55e07ea617c322067827cd9d1ca73e55511b0b0f3c4f8b5f1d67"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/favicon-16x16.png",
+      "size_bytes": 633,
+      "sha256": "4c118d439589188d0e166d5bc3844511fc685bfc5efde23090c8f3dc086797d6"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/favicon-32x32.png",
+      "size_bytes": 1706,
+      "sha256": "57126ef24522b56829f0d780eab25f92373a95ba21c77965a766ace313c1eafb"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/favicon.ico",
+      "size_bytes": 15406,
+      "sha256": "81fd2ff50ea6ca1bbdf7dca820d6fe18ff50da80dcf005885145e37143372942"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/candy_box.png",
+      "size_bytes": 1030601,
+      "sha256": "522584bbc5227e03a669f7fec45ac8ecb29171478c2000ea310f903965841aa5"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/fountain_drink.png",
+      "size_bytes": 999133,
+      "sha256": "9c060d93a84ead795616a7c0545c42cd9c7b1962d40babab958093cb0ee34936"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/logo.png",
+      "size_bytes": 861412,
+      "sha256": "699cefae1f68c9a32f024007c9d0a834b24c8e25a0265e3495a821f35667dee3"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/movie_theatre_background.png",
+      "size_bytes": 262320,
+      "sha256": "14aa4e91c5d9d57a211ead4cc481012faaf8bac6b60fc59e50b88830eebe480a"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/popcorn_drink_combo.png",
+      "size_bytes": 1077156,
+      "sha256": "dae46d97c1ac871d4e5346b0d981628720dbf6e6f60597356d653b91b580d920"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/images/tmdb-logo.svg",
+      "size_bytes": 2232,
+      "sha256": "5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/account-change-password.js",
+      "size_bytes": 622,
+      "sha256": "0cf3debbe5633c8796a16545185f30f16ea223192ffc3515a889e938d5fa2cd4"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/alpine/LICENSE.md",
+      "size_bytes": 1092,
+      "sha256": "08b7502da6e7aa1d0bbdc97d220fbf669b9366c61bd0f072238283c89bc4773a"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/alpine/alpine-csp.min.js",
+      "size_bytes": 72198,
+      "sha256": "0d18d7f8d7910e2e0212f0f056b12f50bebc3abb7d88d2f7c7cb4c336fe4519a"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/alpine/scrumflix-alpine.js",
+      "size_bytes": 6293,
+      "sha256": "15f8f0b9783df354240b6c806c50fbcc6d92a972ef5c2cba9b40a271d4205608"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/concessions.js",
+      "size_bytes": 2629,
+      "sha256": "f8a49dde5e560380b58ea60b8eb837a7c06442d80cc888ba672e59a802d2367b"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/login.js",
+      "size_bytes": 2623,
+      "sha256": "86e1f232b9b3dadc5d1ac40e6a616261e2a87a5bb660525b90a3f445317c00a7"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/refreshCartBadge.js",
+      "size_bytes": 903,
+      "sha256": "03250b862253d39b18c27b474f2201e058eb101e2201c038e649d77719efc90d"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/scrumflix.js",
+      "size_bytes": 11020,
+      "sha256": "f21f1d10a9ec5dfde193352b93bea428fcf63373390f88bd47ad88a161ecfdc4"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/seatPicker.js",
+      "size_bytes": 18653,
+      "sha256": "711ed3e890072f3115e83fc09b16319ed68e737330b3e83ac7ced006526902d7"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-admin-sidebar.js",
+      "size_bytes": 1574,
+      "sha256": "716c3fc797e2a08cc6ac48834eef09d9ffab2324c35302c7f951d6b47c64730a"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-admin-tables.js",
+      "size_bytes": 3089,
+      "sha256": "d15d4faa3afb2729c1b7fa865729926ed33eb9c1b7234a64265ca0f1510c46bc"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-backup.js",
+      "size_bytes": 8883,
+      "sha256": "2773c61c4531c8952c79cc4610f7a0e66c5ebdf88c8866cb241270df41548512"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-crud-spinner.js",
+      "size_bytes": 5582,
+      "sha256": "abf33d1e4514e8857815081642fd9f94ff309e92225f595a0897c753d8800dd3"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-export.js",
+      "size_bytes": 2938,
+      "sha256": "116bb100b68d8d9871106f42b2505902656c2bb8e3419cc435881eb0224694f0"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-featured-carousel.js",
+      "size_bytes": 6626,
+      "sha256": "f6d72573779c98fbbde57d3285858ef3fa00b4cab81f5f6441ce6dbdcb402d28"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-movie-catalog.js",
+      "size_bytes": 5843,
+      "sha256": "c8072027b05e6f310c1bcf1b169bcd8a5099c3534affe8a5f944a5b93bb01708"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-movie-detail.js",
+      "size_bytes": 402,
+      "sha256": "17650e268bf979dae5f7dbd3929f5d0a17c2fefd69c4c1f134b911829323a63b"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-movie-genre.js",
+      "size_bytes": 2077,
+      "sha256": "7b61dbd6c3720736d0a9686474ec134fb46379919e72aba98fef368494edf23c"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-movie-preview.js",
+      "size_bytes": 6805,
+      "sha256": "f8c7484e36c8fd090f9c001a48a944808d13ce3be6c3259390f3bc0f18efa074"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-progress.js",
+      "size_bytes": 10300,
+      "sha256": "d896edaee658e7ea814f4d72ac36ed535a7207e6d6d7bfe962fc814b613b89f0"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-schedule.js",
+      "size_bytes": 2484,
+      "sha256": "354cdacc9e5789acbf7c785496e48c74e5cd7727ce63390d11386afef322da13"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-shift-form.js",
+      "size_bytes": 2448,
+      "sha256": "3e548160dde83c0ec803dad731f9acbc996f27552721f37456227b3192dbef3d"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-spinner.js",
+      "size_bytes": 10885,
+      "sha256": "5963fbc1f1109b6620c9afd6a41e65b9668b5137903fbaeca09fb3c21798ae30"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-theme-switcher.js",
+      "size_bytes": 15177,
+      "sha256": "e0eb5cf4da4267e1d65048c3011b590d205a60eb592023b9ed3df632ba926fdb"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/sf-tmdb-sync.js",
+      "size_bytes": 7364,
+      "sha256": "1627548277c4ac11ad142e5d0bb763a1946585036554990d30b4f53adf8a75c6"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/signalr/dist/browser/signalr.js",
+      "size_bytes": 156694,
+      "sha256": "d70637b7ba3d547d64449b2592cd496c394f8e342a48e117b944e6f777c2fcc2"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/js/signalr/dist/browser/signalr.min.js",
+      "size_bytes": 47729,
+      "sha256": "10dd7681421e4638a55a3367a68ac0eac1973be1b4471b91b1b9e2306bb0b050"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/manifest.json",
+      "size_bytes": 377,
+      "sha256": "e33c635091c99c1c2fdf8b6c135dd9b9e44814cd6b48fc33bd36176921dd96a5"
+    },
+    {
+      "path": "ScrumFlix/wwwroot/site.webmanifest",
+      "size_bytes": 263,
+      "sha256": "7a9e07ce1f7386689917602ddc5a75750ad842e605ff764f67173529c181bf04"
+    },
+    {
+      "path": "ScrumFlix.slnx",
+      "size_bytes": 225,
+      "sha256": "3c48e27f5eb43a19b7e552988680e18d4968f3fc85cb9b85614fec006f9cf900"
+    },
+    {
+      "path": "global.json",
+      "size_bytes": 63,
+      "sha256": "9384d5f057ed52752aa3dc5407e75b2265495154fb3a6597afe70b79f8776f93"
+    },
+    {
+      "path": "sftree.md",
+      "size_bytes": 16620,
+      "sha256": "7a763f86d070d58b3af21e2b07298c9c486493efd032589eca747cbad76a4a49"
+    },
+    {
+      "path": "sftree.txt",
+      "size_bytes": 16636,
+      "sha256": "886f473850f06e22e6cdea2e32b3259d4665bc2c99dd5ee549b48a72a1296601"
+    },
+    {
+      "path": "structure.txt",
+      "size_bytes": 33312,
+      "sha256": "fb9c0ba41ba5c9dfbe908a2b3b8363d6e51f007c0c0babf19bd0c2ed5aedcd29"
+    },
+    {
+      "path": "tests/ScrumFlix.IntegrationTests/ScheduleIntegrationTests.cs",
+      "size_bytes": 4413,
+      "sha256": "20b586c75e41b9ab8473ff41ec5697173111c17c823db690b20416f98192ad25"
+    },
+    {
+      "path": "tests/ScrumFlix.IntegrationTests/ScrumFlix.IntegrationTests.csproj",
+      "size_bytes": 1046,
+      "sha256": "f37e9326cf4b2e7665da304e7cbf4af2dcaebf6d36739b56b2ea86dd0846338d"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/BackgroundQueue/BackgroundTaskQueueTests.cs",
+      "size_bytes": 3503,
+      "sha256": "a94e0fa08ffd479736c18ccc8107d172abec6aff777fa1dbd9fca4c223b8a973"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/BackgroundQueue/QueuedHostedServiceTests.cs",
+      "size_bytes": 4402,
+      "sha256": "6a90a3d9f86cbd78f1d44c2fa34a4437f0a81d8e0d6181c6e89d318f831a5e9e"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/DatabaseBackupOptionsTests.cs",
+      "size_bytes": 4742,
+      "sha256": "04123f9f14a4e927a020208f12b7ec1e8ea6e5b7e902cc25d1161ee59e8e3ce4"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/DatabaseBackupServiceTests.cs",
+      "size_bytes": 8062,
+      "sha256": "bb2012a55ce4029ab5e0912a2c330e2800efb6d468c80a53e5796f4a7dba7ef5"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/ExampleTests.cs",
+      "size_bytes": 172,
+      "sha256": "3b434ffd6fbe6506f160903c467a984df1313a9ee06ecb82edb5daa1535398ea"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/MySqlDdlTests.cs",
+      "size_bytes": 3334,
+      "sha256": "e13a006f34f5007f4770adf760d232d3ea936c99cec738c02045af307fe97d81"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/QrConcessionPayloadTests.cs",
+      "size_bytes": 3181,
+      "sha256": "73e3f6b7bf3cb3835163d4a09f210381c49ea54b1f4a177d727bc372059c26e9"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/QrTicketPayloadTests.cs",
+      "size_bytes": 4375,
+      "sha256": "5cd4d3dc7af6943fe961f83c9529cf84805bb161f4ab3020084ad635f15406d4"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/ScrumFlix.Tests.csproj",
+      "size_bytes": 962,
+      "sha256": "b7ac1679114011e48ccb2a5f1696d5882f6ee1e7ed80cd9a746213329e29a802"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/Services/Progress/ProgressStateTests.cs",
+      "size_bytes": 4607,
+      "sha256": "24389c592552717c3d94ef82541a01cff9f2aaa52b47a71f54c1fc8566b12a0f"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/TimeZoneConversionTests.cs",
+      "size_bytes": 7624,
+      "sha256": "0a33cb242d352086de211ed7d42767991e0300faf0f2215bb25d114581b2028d"
+    },
+    {
+      "path": "tests/ScrumFlix.Tests/TimeZoneTestHelper.cs",
+      "size_bytes": 1177,
+      "sha256": "6df95ce857bc7fdb246af349d433135b23be4f291ca8648fbe0d965224841cf2"
+    },
+    {
+      "path": "tests/frontend/alpine-smoke.js",
+      "size_bytes": 4154,
+      "sha256": "6dcfbb201d315b240d3b5f6936b94dab93aa73861b34fe78536eb1dfe5a51b49"
+    },
+    {
+      "path": "tests/frontend/package-lock.json",
+      "size_bytes": 18615,
+      "sha256": "f21783fe00a80735dad95d8c8c91b7af2c134fe5fc91467f825e4e4c890c0a10"
+    },
+    {
+      "path": "tests/frontend/package.json",
+      "size_bytes": 173,
+      "sha256": "34233ebf1dfde396cb42583d0a31499982858aff24771ae2be93c1eacebeed2f"
+    }
+  ]
+}

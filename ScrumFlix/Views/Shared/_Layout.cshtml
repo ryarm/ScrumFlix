@@ -92,9 +92,9 @@
      * Note: asp-append-version adds a cache-busting query string.
      *@
 	<script src="~/js/sf-theme-switcher.js" asp-append-version="true"></script>
-	@* Alpine CSP build 3.17.4: registry first, then one deferred core initialization. *@
+	@* Alpine CSP 3.17.5 via pinned jsDelivr URL: registry first, then deferred core initialization. *@
 	<script defer src="~/js/alpine/scrumflix-alpine.js" asp-append-version="true"></script>
-	<script defer src="~/js/alpine/alpine-csp.min.js" asp-append-version="true"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/@@alpinejs/csp@3.17.5/dist/cdn.min.js" integrity="sha384-Q4UOujiwqAb/jTt3ki4pdkETk4I3rIFQX8h271PLI41okj/YIKY7IQQFMw73wkrX" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js" integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 

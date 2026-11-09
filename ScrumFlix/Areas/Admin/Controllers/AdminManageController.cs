@@ -816,6 +816,22 @@ public class AdminManageController : StaffControllerBase
         return View(new ExportViewModel());
     }
 
+    // An old bookmark to a POST-only export URL opens the parameter form.
+    // GET never generates a report; the form retains POST and anti-forgery validation.
+    [HttpGet, ActionName("ExportTickets")]
+    public IActionResult ExportTicketsForm()
+    {
+        if (RoleGuard(1) is { } r) return r;
+        return RedirectToAction(nameof(Exports));
+    }
+
+    [HttpGet, ActionName("ExportConcessions")]
+    public IActionResult ExportConcessionsForm()
+    {
+        if (RoleGuard(1) is { } r) return r;
+        return RedirectToAction(nameof(Exports));
+    }
+
     /// <summary>
     /// POST: Exports ticket sales within the requested date range as CSV or Excel.
     /// </summary>

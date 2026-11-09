@@ -79,6 +79,7 @@
  */
 
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.DataProtection;
 using QuestPDF.Infrastructure;
 using ScrumFlix.Filters;
 using ScrumFlix.Hubs;
@@ -113,6 +114,33 @@ QuestPDF.Settings.License = LicenseType.Community;
 // See Infrastructure/LoggingConfiguration.cs for sink and enricher details.
 LoggingConfiguration.ConfigureLogging(builder);
 
+// Set DataProtection__KeysPath to a durable, private directory outside the
+// deployed application. A configured but invalid path must fail startup.
+var keyDirectory = builder.Configuration["DataProtection:KeysPath"];
+if (!string.IsNullOrWhiteSpace(keyDirectory))
+{
+    if (!OperatingSystem.IsWindows() || !Path.IsPathFullyQualified(keyDirectory))
+        throw new InvalidOperationException(
+            "DataProtection:KeysPath must be an absolute path on a Windows host.");
+
+    var keyPath = Path.GetFullPath(keyDirectory);
+    var contentRoot = Path.TrimEndingDirectorySeparator(
+        Path.GetFullPath(builder.Environment.ContentRootPath));
+    if (keyPath.Equals(contentRoot, StringComparison.OrdinalIgnoreCase) ||
+        keyPath.StartsWith(contentRoot + Path.DirectorySeparatorChar,
+            StringComparison.OrdinalIgnoreCase))
+        throw new InvalidOperationException(
+            "DataProtection:KeysPath must be outside the deployed application directory.");
+    if (!Directory.Exists(keyPath))
+        throw new DirectoryNotFoundException(
+            "DataProtection:KeysPath directory does not exist. Provision a durable, private directory first.");
+
+    builder.Services.AddDataProtection()
+        .SetApplicationName("ScrumFlix")
+        .PersistKeysToFileSystem(new DirectoryInfo(keyPath))
+        .ProtectKeysWithDpapi(protectToLocalMachine: true);
+}
+
 // ── Database — EF Core / Pomelo MySQL ─────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("MySQLConnection")
     ?? throw new InvalidOperationException(
@@ -146,11 +174,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
            // EnableSensitiveDataLogging: shows parameter values in EF log output.
            // Development only — never enable in Production (leaks PII).
-           .EnableSensitiveDataLogging(builder.Environment.IsDevelopment())
-
-           // EF Core log events now flow through Serilog via ILoggerFactory.
-           // The old .LogTo(Console.WriteLine) is removed — Serilog owns all output.
-           .UseLoggerFactory(LoggerFactory.Create(lb => lb.AddSerilog()));
+           .EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
+    // EF Core uses the application's DI logger factory, registered with Serilog.
 });
 
 // ── Session — shopping cart persistence ───────────────────────────────────
@@ -220,6 +245,10 @@ builder.Services.AddHostedService<QueuedHostedService>();
 // and releases expired seat holds via SeatService.ReleaseExpiredReservationsAsync().
 // Registered as a hosted service — runs for the lifetime of the application.
 builder.Services.AddHostedService<SeatReservationExpiryService>();
+
+// Database log deletion is disabled until retention and backup policy are approved.
+if (builder.Configuration.GetValue<bool>("LogRetention:Enabled"))
+    builder.Services.AddHostedService<LogRetentionService>();
 
 // QrCodeService: stateless PNG QR code generator (no DbContext dependency).
 // Singleton — safe to share across requests; avoids repeated object allocation.

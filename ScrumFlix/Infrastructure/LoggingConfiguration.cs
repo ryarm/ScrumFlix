@@ -25,11 +25,9 @@
  *   "Serilog:Filter" and read by ReadFrom.Configuration(). This means levels
  *   and noise filters can be tuned in production via web.config environment
  *   variables (Serilog__MinimumLevel__Default=Debug) without redeploying.
- *   Code-level calls below act as safe fallbacks when the config section
- *   is absent (e.g. a stripped-down CI/test environment).
  *
  * Serilog.Expressions use:
- *   1. Global Filter.ByExcluding() — drops high-volume low-value events
+ *   1. Configured global filter — drops high-volume low-value events
  *      (health checks, favicon, static asset requests) before they reach
  *      any sink. Driven from appsettings.json "Serilog:Filter" so rules
  *      can be adjusted per-environment without recompiling.
@@ -84,25 +82,6 @@ public static class LoggingConfiguration
     // Syntax reference: https://github.com/serilog/serilog-expressions
 
     /// <summary>
-    /// Global noise filter applied to ALL sinks.
-    /// Excludes high-volume, low-value events that would otherwise fill MySQL
-    /// and clutter the console. Rules are also declared in appsettings.json
-    /// "Serilog:Filter" (ReadFrom.Configuration picks them up automatically),
-    /// so production overrides require only a web.config env-var change.
-    ///
-    /// Excluded:
-    ///   • /health, /healthz, /ping, /ready — load-balancer/K8s probes
-    ///   • /favicon.ico, /favicon-*.png      — browser icon requests
-    ///   • RequestPath starting with /cache/ — ImageSharp processed-image cache
-    ///   • Microsoft.AspNetCore.StaticFiles  — all static asset delivery events
-    ///     (already suppressed at Warning level, belt-and-suspenders here)
-    /// </summary>
-    private const string GlobalNoiseFilter =
-        "RequestPath like '/health%' or " +
-        "RequestPath like '/favicon%' or " +
-        "RequestPath like '/cache/%' or " +
-        "SourceContext = 'Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware'";
-
     /// <summary>
     /// Email alert sub-logger filter.
     /// Only ScrumFlix application code at Error or Fatal level triggers an email.
@@ -190,8 +169,6 @@ public static class LoggingConfiguration
     /// Minimum levels and filter rules are read from appsettings.json
     /// "Serilog:MinimumLevel" and "Serilog:Filter" via ReadFrom.Configuration()
     /// so they can be adjusted per-environment without recompiling.
-    /// Code-level declarations act as safe fallbacks when the config section
-    /// is absent.
     /// </summary>
     private static void BuildLogger(
         IConfiguration cfg,
@@ -202,28 +179,11 @@ public static class LoggingConfiguration
         // ── Base configuration from appsettings.json ───────────────────────────
         // ReadFrom.Configuration() picks up the "Serilog" section including:
         //   MinimumLevel, MinimumLevel.Override, Enrich, and Filter entries.
-        // The Filter entries in appsettings.json declare the GlobalNoiseFilter
+        // The Filter entries in appsettings.json declare the noise-filter
         // expression so it's tuneable per-environment without a recompile.
         lc
             .ReadFrom.Configuration(cfg)
             .ReadFrom.Services(services)
-
-            // ── Code-level fallback minimum levels ─────────────────────────
-            // Active only when the "Serilog" config section is absent.
-            .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles", LogEventLevel.Error)
-            .MinimumLevel.Override("System.Net.Http.HttpClient", LogEventLevel.Warning)
-
-            // ── Code-level fallback global noise filter ────────────────────
-            // ReadFrom.Configuration() applies the Serilog:Filter rules from
-            // appsettings.json first. This code-level call is a safety net for
-            // environments where the config section may be missing. If config
-            // already applied the filter this is a harmless duplicate exclusion.
-            .Filter.ByExcluding(GlobalNoiseFilter)
 
             // ── Enrichers ──────────────────────────────────────────────────
             // FromLogContext:      picks up CorrelationId (CorrelationIdMiddleware)

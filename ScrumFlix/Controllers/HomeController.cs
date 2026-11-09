@@ -84,6 +84,8 @@ public class HomeController : ConsumerControllerBase
                      && m.TmdbMetadata.PosterPath != null
                      && m.TmdbMetadata.BackdropPath != null
                      && m.TmdbMetadata.TrailerYouTubeKey != null)
+            .OrderBy(m => m.Title)
+            .ThenBy(m => m.MovieId)
             .Take(10)            // carousel supports up to 10 featured movies
             .AsNoTracking()
             .ToListAsync();

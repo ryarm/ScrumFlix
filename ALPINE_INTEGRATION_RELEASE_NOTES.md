@@ -14,8 +14,13 @@ Source baseline: `ScrumFlix_Phase4_3_ProgressFramework_2026-09-26(3).zip`. This 
 - Corrected shared time-zone abbreviations for the seven configured US regions, including Alaska, Hawaii, and Arizona. The existing ten abbreviation/QR failures are resolved; added 14 zone/alias test cases.
 - Added a root `global.json` selecting `Microsoft.Testing.Platform` for `dotnet test` with the .NET 10 SDK and the solution's xUnit v3 test projects. This addresses the Windows error that says the VSTest target is no longer supported. Run test commands from this extracted project root.
 - Added `Directory.Build.props` to locate a developer's private `ScrumFlix/sixlabors.lic` for test projects. The previous archive contained this license file; the current archive excludes it and `.gitignore` now ignores it. Keep your own valid license at that path after extracting the package. Do not commit or distribute an unrestricted license key.
+- Production stabilization follow-up: added stable ordering to the featured home query, safe GET redirects for stale Admin export links, configurable persistent Data Protection keys, and an opt-in bounded 30-day MySQL log retention worker. Corrected Serilog configuration precedence and EF logging provider use. See `PRODUCTION_STABILIZATION.md` for operational gates and limits.
+- Offline review of `Full_DB_20261106.sql` confirmed 2,121 recent `Logs` rows, not 98,072 in that dump; six EF row-limit warning rows, two GET/405 rows per export action, and ephemeral-key warnings. The current dump has no rows eligible for 30-day retention. The dump itself is not included in this source package.
+- November 8 merge: reapplied these targeted stabilization fixes to the user's newer November 7 source. Preserved the user's upgraded NuGet/test packages, active TMDB-attributed footer, image assets, and publish-profile source. Private license and populated production transform are excluded from the merged distributable; the user's original source is untouched. See `MERGE_REPORT_2026-11-08.md`. This merged revision awaits a new Windows build/test run.
 
 ## Verification performed
+
+The checks below are historical results from earlier package revisions and the user's Windows run before the November 7 dependency upgrades. They do not qualify this merged source revision; see `MERGE_REPORT_2026-11-08.md` for current gates.
 
 | Check | Result |
 |---|---|
