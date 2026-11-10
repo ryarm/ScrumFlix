@@ -8,19 +8,27 @@
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.18.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.22">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
 		<PackageReference Include="MimeKit" Version="4.18.2" />
-		<PackageReference Include="xunit.v3" Version="4.0.2" />
+		<PackageReference Include="xunit.v3" Version="4.0.3" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.22" />
-  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.22" />
+		<!-- Align this test project's Roslyn dependency graph with Telerik UI
+			 2026.3.1015 (Microsoft.CodeAnalysis 5.0.0). Without this direct pin,
+			 NuGet selects Workspaces.MSBuild 4.8.0, whose exact-version
+			 dependencies produce NU1608. Keep this test-only reference private. -->
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.0.0">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+
 	</ItemGroup>
 
 	<ItemGroup>
