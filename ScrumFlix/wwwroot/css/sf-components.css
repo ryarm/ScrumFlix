@@ -3073,12 +3073,26 @@
 
 /* ── Full-page centering ─────────────────────────────────────────────── */
 .sf-login-page {
+    /* Login keeps its gold identity in dark/light; the red theme overrides these. */
+    --sf-login-accent: var(--primitive-gold);
+    --sf-login-accent-hover: var(--primitive-gold-dim);
+    --sf-login-accent-glow: var(--primitive-gold-glow);
+    --sf-login-on-accent: var(--primitive-dark-900);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
     background: var(--sf-bg-page);
+}
+
+
+/* Keep gold on dark/light; red/black uses its own brand accent. */
+[data-theme="red"] .sf-login-page {
+    --sf-login-accent: var(--primitive-red);
+    --sf-login-accent-hover: var(--primitive-red-light);
+    --sf-login-accent-glow: var(--sf-color-accent-glow);
+    --sf-login-on-accent: var(--primitive-white);
 }
 
 /* ── Card ────────────────────────────────────────────────────────────── */
@@ -3105,13 +3119,13 @@
     width: 68px;
     height: 68px;
     border-radius: 50%;
-    background: rgba(240,199,61,.12);
-    border: 2px solid var(--primitive-gold);
+    background: var(--sf-login-accent-glow);
+    border: 2px solid var(--sf-login-accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.9rem;
-    color: var(--primitive-gold);
+    color: var(--sf-login-accent);
     margin-bottom: .5rem;
 }
 
@@ -3206,8 +3220,8 @@
 }
 
 .sf-login-input:focus {
-    border-color: var(--primitive-gold);
-    box-shadow: 0 0 0 3px rgba(240,199,61,.18);
+    border-color: var(--sf-input-focus-border);
+    box-shadow: var(--sf-input-focus-shadow);
 }
 
 .sf-login-input::placeholder {
@@ -3248,7 +3262,7 @@
 
 .sf-login-pw-toggle:hover,
 .sf-login-pw-toggle:focus-visible {
-    color: var(--primitive-gold);
+    color: var(--sf-login-accent);
     outline: none;
 }
 
@@ -3257,8 +3271,8 @@
     width: 100%;
     padding: .8rem;
     margin-top: .25rem;
-    background: var(--primitive-gold);
-    color: var(--primitive-dark-900);
+    background: var(--sf-login-accent);
+    color: var(--sf-login-on-accent);
     border: none;
     border-radius: 8px;
     font-size: .975rem;
@@ -3269,7 +3283,7 @@
 }
 
 .sf-login-submit:hover {
-    background: var(--primitive-gold-dim);
+    background: var(--sf-login-accent-hover);
 }
 
 .sf-login-submit:active {
@@ -3335,3 +3349,14 @@
     font: inherit;
     cursor: pointer;
 }
+
+/* Public catalog showtime groups; grid controls use the existing Kendo theme. */
+.sf-catalog-group-title { margin: 2rem 0 1.25rem; padding-left: .75rem; border-left: 3px solid var(--sf-gold, #e9bb32); }
+.sf-catalog-showtimes { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .8rem; }
+.sf-catalog-showtime { display: inline-block; border: 1px solid currentColor; border-radius: .4rem; padding: .25rem .45rem; font-size: .78rem; text-decoration: none; }
+.sf-catalog-showtime:hover, .sf-catalog-showtime:focus-visible { background: var(--sf-gold, #e9bb32); color: #071640; }
+
+/* Catalog Telerik widgets own their arrows; native select chrome is only for fallback. */
+.sf-cascade-wrap .k-dropdownlist,
+.sf-cascade-wrap .k-combobox { width: 100%; min-height: 44px; }
+.sf-cascade-wrap .k-input-inner { background-image: none; }

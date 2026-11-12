@@ -182,9 +182,12 @@ public static class SecurityHeadersConfiguration
 
           builder.AddScriptSrc()
           .Self()
+          .WithNonce() // Allow the per-request Telerik activation script without unsafe-eval.
           //.UnsafeInline() // Allows the refreshCartBadge() script in _Layout
           .From("cdn.jsdelivr.net")
           .From("cdnjs.cloudflare.com") // Added for FontAwesome CSS
+          .From("kendo.cdn.telerik.com") // Telerik Kendo UI scripts
+          .From("code.jquery.com") // jQuery (required by Kendo)
           .From("https://www.youtube.com"); // Added for FontAwesome CSS
 
           //builder.AddScriptSrc()
@@ -197,6 +200,7 @@ public static class SecurityHeadersConfiguration
           .UnsafeInline()
           .From("cdn.jsdelivr.net")
           .From("fonts.googleapis.com")
+          .From("kendo.cdn.telerik.com") // Telerik Kendo UI theme CSS
           .From("cdnjs.cloudflare.com"); // Added for FontAwesome CSS
                                          //builder.AddStyleSrc()
                                          //    .Self()
@@ -209,6 +213,7 @@ public static class SecurityHeadersConfiguration
           .Self()
           .From("fonts.gstatic.com")
           .From("cdn.jsdelivr.net") //  Required for the actual Icon files (.woff2)
+          .From("kendo.cdn.telerik.com") // Kendo theme fonts, if the theme requests any
           .From("cdnjs.cloudflare.com"); // Added for FontAwesome Font files
                                          //builder.AddFontSrc()
                                          //    .Self()
@@ -360,6 +365,8 @@ public static class SecurityHeadersConfiguration
           .UnsafeInline() // ← allows Browser Link's injected script
           .From("cdn.jsdelivr.net")
           .From("cdnjs.cloudflare.com")
+          .From("kendo.cdn.telerik.com") // Telerik Kendo UI scripts
+          .From("code.jquery.com") // jQuery (required by Kendo)
           .From("https://www.youtube.com");
 
           // all other directives identical to BuildPolicy()
@@ -369,6 +376,7 @@ public static class SecurityHeadersConfiguration
           .UnsafeInline()
           .From("cdn.jsdelivr.net")
           .From("fonts.googleapis.com")
+          .From("kendo.cdn.telerik.com") // Telerik Kendo UI theme CSS
           .From("cdnjs.cloudflare.com"); // Added for FontAwesome CSS
                                          //builder.AddStyleSrc()
                                          //    .Self()
@@ -381,6 +389,7 @@ public static class SecurityHeadersConfiguration
           .Self()
           .From("fonts.gstatic.com")
           .From("cdn.jsdelivr.net") //  Required for the actual Icon files (.woff2)
+          .From("kendo.cdn.telerik.com") // Kendo theme fonts, if the theme requests any
           .From("cdnjs.cloudflare.com"); // Added for FontAwesome Font files
                                          //builder.AddFontSrc()
                                          //    .Self()

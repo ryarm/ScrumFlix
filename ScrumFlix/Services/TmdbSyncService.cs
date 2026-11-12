@@ -5,7 +5,7 @@
  *          the canonical MovieTmdbMetadata, Genres, and MovieGenres tables.
  *
  * DEPENDENCIES:
- *   TMDbLib 3.0.0         — TMDbClient (NuGet)
+ *   TMDbLib 4.0.0         — TMDbClient (NuGet)
  *   AppDbContext           — EF Core DbContext
  *   ILogger<T>             — Serilog via ILogger pipeline
  *   IConfiguration         — reads "Tmdb:ApiKey" from User Secrets / env vars
@@ -18,12 +18,14 @@
  *   a critical error and all sync operations return immediately without
  *   throwing — safe degradation, app continues without poster enrichment.
  *
- * RESILIENCE:
- *   TMDbClient is constructed once per service lifetime (Scoped → one per request
- *   or one per background tick). Microsoft.Extensions.Http.Resilience is wired to
- *   the named HttpClient "TmdbClient" in Program.cs via AddStandardResilienceHandler(),
- *   providing automatic retry (3 attempts, exponential backoff) and circuit-breaking
- *   for all outbound TMDb API calls. No manual retry logic is needed here.
+ * HTTP TRANSPORT:
+ *   This scoped service constructs TMDbClient(apiKey) directly. The separately
+ *   registered named HttpClient "TmdbClient" is unused by this service; its
+ *   resilience handler does not apply to these TMDbLib calls. The June 12, 2026
+ *   hang investigation suggested a transport change, but did not prove a root
+ *   cause. Subsequent queue/progress fixes and the TMDbLib 4.0.0 upgrade are
+ *   separate changes; preserve this working path unless a real failure warrants
+ *   new diagnostics. No transport-specific timeout/retry guarantee is asserted.
  *
  * SYNC STRATEGY:
  *   1. SyncGenresAsync   — upsert the TMDb genre master list into Genres.
@@ -74,8 +76,8 @@ namespace ScrumFlix.Services;
 /// <summary>
 /// Synchronizes movie metadata (posters, trailers, ratings, genres) from
 /// the TMDb API into the MovieTmdbMetadata, Genres, and MovieGenres tables.
-/// Registered as Scoped in Program.cs. Consumed by the Admin sync UI action
-/// and (optionally) a scheduled background worker in a future phase.
+/// Registered as scoped by TmdbConfiguration. The Admin action uses it for
+/// single-movie requests and queued full-catalog sync operations.
 /// </summary>
 public sealed class TmdbSyncService : ITmdbSyncService
 {

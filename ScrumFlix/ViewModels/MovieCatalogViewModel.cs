@@ -29,6 +29,9 @@ public class MovieCatalogViewModel
     /// </summary>
     public List<Movie> AllMovies => Movies;
 
+    /// <summary>Upcoming active showtimes for each filtered movie, ordered by start time.</summary>
+    public Dictionary<int, List<Showtime>> UpcomingShowtimes { get; set; } = new();
+
     /// <summary>Gets or sets all distinct genres for the genre chip pills and Genre dropdown.</summary>
     public List<string> Genres { get; set; } = new();
 

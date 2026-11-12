@@ -601,6 +601,26 @@ public class AdminManageController : StaffControllerBase
         return View(new LocationIndexViewModel { Locations = locations });
     }
 
+    /// <summary>Read-only data for the Telerik locations grid. The page's HTML table remains available if JavaScript fails.</summary>
+    [HttpGet]
+    public async Task<IActionResult> LocationsGridData()
+    {
+        if (RoleGuard(1) is { } r) return r;
+
+        var locations = await _db.Locations.AsNoTracking()
+            .OrderBy(l => l.LocationName)
+            .Select(l => new
+            {
+                locationId = l.LocationId,
+                locationName = l.LocationName,
+                locationAddress = l.LocationAddress,
+                screenCount = l.TheaterScreens.Count,
+                timeZoneId = l.TimeZoneId,
+                isActive = l.IsActive
+            }).ToListAsync();
+        return Json(locations);
+    }
+
     /// <summary>GET: create-location form.</summary>
     public IActionResult LocationCreate()
     {

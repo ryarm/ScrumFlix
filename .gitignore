@@ -34,3 +34,7 @@ logs/*
 # Environment-specific config
 appsettings.Production.json
 web.Production.config
+
+# Telerik license key — personal and confidential, never commit
+telerik-license.txt
+telerik-license*.txt

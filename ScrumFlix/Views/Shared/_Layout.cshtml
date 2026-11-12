@@ -1,3 +1,4 @@
+@using NetEscapades.AspNetCore.SecurityHeaders
 @*
  * File: /ScrumFlix/Views/Shared/_Layout.cshtml
  * Description: Main site layout — updated for Phase 3 CSS architecture migration.
@@ -53,6 +54,8 @@
 	@* ── Bootstrap 5.3.8 CSS (loaded BEFORE our tokens so our variables win) ── *@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+	@* ── Telerik Kendo UI theme — AFTER Bootstrap, BEFORE the sf-* tiers so ScrumFlix tokens win ── *@
+	<link rel="stylesheet" href="https://kendo.cdn.telerik.com/themes/14.6.1/default/default-main.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	@* ── ScrumFlix 4-Tier CSS Architecture ─────────────────────────────── *@
@@ -73,6 +76,7 @@
 	@* Tier 4: Per-theme overrides — always loaded; selectors activate via [data-theme] *@
 	<link rel="stylesheet" href="~/css/sf-theme-light.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/css/sf-theme-red.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/sf-kendo-theme.css" asp-append-version="true" />
 
 	@*  Splide.js carousel  *@
 	<link rel="stylesheet"
@@ -92,6 +96,12 @@
      * Note: asp-append-version adds a cache-busting query string.
      *@
 	<script src="~/js/sf-theme-switcher.js" asp-append-version="true"></script>
+	@* ── jQuery (once) then Kendo UI 2026.3.1015 — Kendo scripts must follow jQuery ── *@
+	<script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+	<script src="https://kendo.cdn.telerik.com/2026.3.1015/js/kendo.all.min.js"></script>
+	<script src="https://kendo.cdn.telerik.com/2026.3.1015/js/kendo.aspnetmvc.min.js"></script>
+    @* These pages initialize some Kendo widgets directly in JavaScript; activate their scripts from the licensed ASP.NET Core package. *@
+    @(Html.Kendo().ActivateKendoScripts(Context.GetNonce()))
 	@* Alpine CSP 3.17.5 via pinned jsDelivr URL: registry first, then deferred core initialization. *@
 	<script defer src="~/js/alpine/scrumflix-alpine.js" asp-append-version="true"></script>
 	<script defer src="https://cdn.jsdelivr.net/npm/@@alpinejs/csp@3.17.5/dist/cdn.min.js" integrity="sha384-Q4UOujiwqAb/jTt3ki4pdkETk4I3rIFQX8h271PLI41okj/YIKY7IQQFMw73wkrX" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -426,6 +436,12 @@
 	</footer>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+	@* ── Kendo deferred init: emits ONE same-origin script file (CSP-safe, no inline script).
+	     Must follow components rendered in the page body, including its partials.
+	     Components rendered later (for example in a Scripts section or an HTMX response)
+	     need their own deferred initialization after they render. ── *@
+	@(Html.Kendo().DeferredScriptFile())
 
 	@*  Splide.js carousel  *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/splidejs/4.1.4/js/splide.min.js"

@@ -1,0 +1,73 @@
+/* Bridge Telerik Default 14.x colors to ScrumFlix's existing html[data-theme] tokens.
+   Loaded after all sf-theme-* files. Popups appended to body inherit from html. */
+:root,
+html[data-theme="dark"],
+html[data-theme="light"],
+html[data-theme="red"] {
+    --kendo-color-app-surface: var(--sf-bg-card);
+    --kendo-color-on-app-surface: var(--sf-text-primary);
+    --kendo-color-surface: var(--sf-bg-card);
+    --kendo-color-base: var(--sf-bg-card-alt);
+    --kendo-color-subtle: var(--sf-text-muted);
+    --kendo-color-primary: var(--sf-color-accent);
+    --kendo-color-on-primary: var(--sf-color-on-accent);
+    --kendo-color-secondary: var(--sf-text-muted);
+    --kendo-color-success: var(--sf-color-success);
+    --kendo-color-error: var(--sf-color-danger);
+    --kendo-color-warning: var(--sf-color-warning);
+    --kendo-color-info: var(--sf-color-info);
+    --kendo-color-series: var(--sf-color-accent);
+    --sf-kendo-stripe: color-mix(in srgb, var(--sf-bg-card) 94%, var(--sf-text-primary) 6%);
+    --sf-kendo-hover: color-mix(in srgb, var(--sf-bg-card) 86%, var(--sf-color-accent) 14%);
+}
+
+/* Keep grid lines, alternating rows, focus and paging readable in all three
+   modes. Telerik controls retain their native sorting/filtering behavior. */
+.k-grid, .k-grid-header, .k-grid-content, .k-grid-pager,
+.k-popup, .k-list-container, .k-input, .k-dropdownlist {
+    border-color: var(--sf-border-color);
+}
+.k-grid {
+    border-radius: 10px;
+    overflow: hidden;
+    color: var(--sf-text-primary);
+    background: var(--sf-bg-card);
+}
+.k-grid .k-grid-header, .k-grid .k-grid-pager {
+    background: var(--sf-bg-card-alt);
+    color: var(--sf-text-primary);
+}
+.k-grid .k-grid-content, .k-grid .k-table-row {
+    background: var(--sf-bg-card);
+    color: var(--sf-text-primary);
+}
+.k-grid .k-grid-content tbody > tr:nth-child(even),
+.k-grid .k-grid-content tbody > tr:nth-child(even) > td {
+    background: var(--sf-kendo-stripe);
+}
+.k-grid .k-grid-content tbody > tr:hover,
+.k-grid .k-grid-content tbody > tr:hover > td,
+.k-grid .k-grid-content tbody > tr.k-hover,
+.k-grid .k-grid-content tbody > tr.k-hover > td {
+    background: var(--sf-kendo-hover);
+}
+.k-grid .k-grid-content tbody > tr.k-selected,
+.k-grid .k-grid-content tbody > tr.k-selected > td {
+    background: var(--sf-color-accent);
+    color: var(--sf-color-on-accent);
+}
+.k-grid .k-table-th, .k-grid .k-table-td {
+    border-color: var(--sf-border-color);
+}
+.k-grid a, .k-grid .k-link, .k-grid .k-button,
+.k-grid .k-table-th .k-link, .k-grid .k-grid-pager {
+    color: var(--sf-text-primary);
+}
+.k-grid .k-selected, .k-list-item.k-selected {
+    background: var(--sf-color-accent);
+    color: var(--sf-color-on-accent);
+}
+.k-grid :focus-visible, .k-input:focus-within, .k-popup :focus-visible {
+    outline: 2px solid var(--sf-color-focus-ring);
+    outline-offset: 2px;
+}

@@ -24,12 +24,6 @@
 @model MovieCatalogViewModel
 @{
 	ViewData["Title"] = "Movies";
-	var moviesByGenreJson = System.Text.Json.JsonSerializer.Serialize(
-		Model.MoviesByGenre.ToDictionary(
-			kvp => kvp.Key,
-			kvp => kvp.Value.Select(t => new { id = t.MovieId, name = t.Title })
-		)
-	);
 	var layoutVm = Context.Items["LayoutViewModel"] as ScrumFlix.ViewModels.LayoutViewModel ?? new ScrumFlix.ViewModels.LayoutViewModel();
 	var isStaff  = layoutVm.RoleId is not null;
 	var isAdmin  = layoutVm.RoleId == 1;
@@ -39,7 +33,7 @@
 	<div class="container-xl d-flex align-items-center justify-content-between flex-wrap gap-3">
 		<div>
 			<h1 class="sf-page-title"><i class="bi bi-film me-3"></i>Movies</h1>
-			<p class="sf-page-subtitle">Browse our full catalog of currently showing films.</p>
+			<p class="sf-page-subtitle">Browse films with showtimes and explore the full movie catalog.</p>
 		</div>
 		@if (isAdmin)
 		{
@@ -51,7 +45,9 @@
 </div>
 
 <section class="sf-section" aria-label="Movie catalog">
-	<div class="container-xl" id="movieCatalog" data-movies='@Html.Raw(moviesByGenreJson)'>
+	<div class="container-xl" id="movieCatalog" data-movies-url="@Url.Action("GetMoviesByGenre", "Movies")"
+         data-suggestions-url="@Url.Action("CatalogTitleSuggestions", "Movies")"
+         data-detail-url="@Url.Action("MovieDetail", "Movies")">
 
 		<!-- Row 1: Keyword Title Search -->
 		<form method="get" asp-controller="Movies" asp-action="MovieCatalog"
@@ -154,11 +150,17 @@
 			}
 		</p>
 
-		<!-- Movie Grid -->
+		<!-- Films with upcoming showtimes appear first; the remaining catalog stays browsable. -->
 		@if (Model.Movies.Any())
 		{
-			<div class="row g-4">
-				@foreach (var movie in Model.Movies)
+            var showingMovies = Model.Movies.Where(m => Model.UpcomingShowtimes.ContainsKey(m.MovieId)).ToList();
+            var otherMovies = Model.Movies.Where(m => !Model.UpcomingShowtimes.ContainsKey(m.MovieId)).ToList();
+            foreach (var group in new[] { showingMovies, otherMovies })
+            {
+                if (group.Count == 0) continue;
+                <h2 class="sf-section-title sf-catalog-group-title">@(ReferenceEquals(group, showingMovies) ? "Movies with Upcoming Showtimes" : "No Showtimes Available At This Time")</h2>
+                <div class="row g-4 mb-5">
+				@foreach (var movie in group)
 				{
 					var hasTrailer  = movie.TmdbMetadata?.TrailerYouTubeKey is not null;
 					var detailUrl   = Url.Action("MovieDetail", "Movies", new { id = movie.MovieId }) ?? "#";
@@ -235,11 +237,24 @@
 									<span class="sf-genre-pill">@movie.PrimaryGenreDisplay</span>
 									<span class="sf-runtime">@movie.FormattedRunTime</span>
 								</div>
+                                @if (Model.UpcomingShowtimes.TryGetValue(movie.MovieId, out var showtimes))
+                                {
+                                    <div class="sf-catalog-showtimes" aria-label="Upcoming showtimes for @movie.Title">
+                                        @foreach (var showtime in showtimes)
+                                        {
+                                            <a asp-controller="Showtimes" asp-action="ShowtimeBooking" asp-route-id="@showtime.ShowtimeId"
+                                               class="sf-catalog-showtime" aria-label="Book @movie.Title on @(showtime.StartTime.ToString("dddd, MMMM d 'at' h:mm tt"))">
+                                                @showtime.StartTime.ToString("ddd M/d h:mm tt")
+                                            </a>
+                                        }
+                                    </div>
+                                }
 							</div>
 						</article>
 					</div>
 				}
 			</div>
+            }
 		}
 		else
 		{

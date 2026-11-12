@@ -156,9 +156,20 @@ public class MoviesController : ConsumerControllerBase
                 g => g.Select(m => (m.MovieId, m.Title)).ToList()
             );
 
+        var filteredMovies = filtered.ToList();
+        var movieIds = filteredMovies.Select(m => m.MovieId).ToList();
+        var now = DateTime.UtcNow;
+        var upcomingShowtimes = await _db.Showtimes.AsNoTracking()
+            .Where(st => movieIds.Contains(st.MovieId) && st.IsActive && st.StartTime >= now)
+            .OrderBy(st => st.StartTime).ThenBy(st => st.ShowtimeId)
+            .ToListAsync();
+        var showtimesByMovie = upcomingShowtimes.GroupBy(st => st.MovieId)
+            .ToDictionary(g => g.Key, g => g.Take(3).ToList());
+
         var vm = new MovieCatalogViewModel
         {
-            Movies = filtered.ToList(),
+            Movies = filteredMovies,
+            UpcomingShowtimes = showtimesByMovie,
             Genres = genres,
             MoviesByGenre = moviesByGenre,
             SearchTerm = search,
@@ -196,6 +207,19 @@ public class MoviesController : ConsumerControllerBase
         return Json(movies);
     }
 
+    /// <summary>Limited title suggestions for the catalog search box.</summary>
+    [HttpGet]
+    public async Task<IActionResult> CatalogTitleSuggestions(string? term, string? genre)
+    {
+        if (string.IsNullOrWhiteSpace(term) || term.Length < 2) return Json(Array.Empty<string>());
+        var query = _db.Movies.AsNoTracking().Where(m => m.Title.Contains(term));
+        if (!string.IsNullOrWhiteSpace(genre)) query = query.Where(m => m.Genre == genre);
+        var titles = await query.OrderBy(m => m.Title).ThenBy(m => m.MovieId)
+            .Select(m => new { id = m.MovieId, title = m.Title })
+            .Take(20).ToListAsync();
+        return Json(titles);
+    }
+
     // ── Detail ─────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -226,6 +250,7 @@ public class MoviesController : ConsumerControllerBase
                 .ThenInclude(ts => ts!.Location)
             .Include(st => st.Tickets)          // for AvailableSeats computed prop
             .Include(st => st.ShowtimeSeats)    // for HasSeatsSeeded check in view
+            .AsSplitQuery()                 // load tickets and seats without a cartesian product
             .AsNoTracking()
             .AsQueryable();
 

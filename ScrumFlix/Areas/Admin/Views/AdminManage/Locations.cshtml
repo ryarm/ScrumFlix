@@ -30,6 +30,11 @@
             </div>
         }
 
+        <div id="locations-grid" hidden aria-label="Theater locations"
+             data-read-url="@Url.Action("LocationsGridData", "AdminManage", new { area = "Admin" })"
+             data-edit-url="@Url.Action("LocationEdit", "AdminManage", new { area = "Admin" })"
+             data-screens-url="@Url.Action("Screens", "AdminManage", new { area = "Admin" })"></div>
+        <div id="locations-fallback">
         @if (!Model.Locations.Any())
         {
             <div class="sf-empty-state text-center py-5">
@@ -105,15 +110,9 @@
         }
 
     </div>
+    </div>
 </section>
 
 @section Scripts {
-<script src="~/js/sf-admin-tables.js"></script>
-<script>
-    // Wire data-sort-col headers — keeps onclick out of markup for CSP compliance.
-    document.querySelectorAll('th[data-sort-col]').forEach(th => {
-        th.addEventListener('click', () =>
-            sortTable('locations-table', parseInt(th.dataset.sortCol, 10)));
-    });
-</script>
+    <script src="~/js/sf-admin-locations.js" asp-append-version="true"></script>
 }

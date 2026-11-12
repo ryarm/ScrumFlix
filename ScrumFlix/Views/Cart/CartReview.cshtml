@@ -68,6 +68,15 @@
 										}
 									</div>
 								}
+								@if (item.ItemType == CartItemType.Ticket && item.ShowtimeId is > 0)
+								{
+									<div class="sf-cart-item-meta">
+										<a asp-controller="Showtimes" asp-action="ShowtimeBooking" asp-route-id="@item.ShowtimeId"
+										   aria-label="Choose more seats for @item.DisplayName">
+											<i class="bi bi-plus-circle me-1" aria-hidden="true"></i>More seats for this showtime
+										</a>
+									</div>
+								}
 								<div class="sf-cart-item-price-unit">@item.UnitPrice.ToString("C") each</div>
 							</div>
 
@@ -180,7 +189,7 @@
 
 						<div class="sf-summary-links mt-3">
 							<a asp-controller="Movies" asp-action="MovieCatalog">
-								<i class="bi bi-arrow-left me-1"></i>Add More Tickets
+								<i class="bi bi-arrow-left me-1"></i>Browse More Movies
 							</a>
 							<span class="sf-summary-divider-inline">·</span>
 							<a asp-controller="Concessions" asp-action="ConcessionsCatalog">

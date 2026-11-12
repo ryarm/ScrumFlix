@@ -105,6 +105,7 @@ public class ShowtimesController : ConsumerControllerBase
             .Include(st => st.Tickets)
             .Include(st => st.ShowtimeSeats)   // required for accurate AvailableSeats
                 .ThenInclude(ss => ss.Seat)    // required for Seat.DisplayLabel label matching
+            .AsSplitQuery()                 // avoid multiplying tickets by seats in one SQL result
             .FirstOrDefaultAsync(st => st.ShowtimeId == showtimeId && st.IsActive);
 
     // ── GET: ShowtimeBooking ───────────────────────────────────────────────

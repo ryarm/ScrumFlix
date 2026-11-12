@@ -1,30 +1,11 @@
 /*
  * File:      /ScrumFlix/Hub/TmdbProgressHub.cs
  * Namespace: ScrumFlix.Hubs
- * Purpose:   SignalR hub for broadcasting real-time TMDb sync progress to
- *            Admin clients on the TmdbSyncPage.
- *
- * Architecture:
- *   - Only Admin users (RoleId == 1) can connect. The AdminStaff policy uses
- *     the session-backed authentication scheme in Program.cs.
- *
- *   - A single group "tmdb-sync" is used rather than per-user groups because
- *     only one Admin sync can run at a time and all connected Admin clients
- *     watching the sync page should see the same progress.
- *
- * Events emitted by the server (via IHubContext<TmdbProgressHub>):
- *   "TmdbSyncProgress"  — { percent: int, message: string, synced: int,
- *                           skipped: int, failed: int, total: int }
- *   "TmdbSyncComplete"  — { synced: int, skipped: int, failed: int, wasForced: bool }
- *   "TmdbSyncError"     — { message: string }
- *
- * Consumed by:
- *   - TmdbSyncPage.cshtml via sfSpinner.fromSignalR() helper in sf-spinner.js
- *   - AdminHomeController.TmdbSyncRunAsync (POST — new streaming action)
- *
- * Route: /tmdbSyncHub (registered in Program.cs)
- *
- * Phase: 6 — Real-time TMDb sync progress
+ * Purpose: Legacy TMDb-specific SignalR hub retained at /tmdbSyncHub.
+ *          It joins connections to the "tmdb-sync" group but the current
+ *          AdminHomeController action publishes progress through the shared
+ *          ProgressHub at /progressHub instead. The June 2026 session log
+ *          predates the shared queue/progress implementation.
  */
 
 using Microsoft.AspNetCore.Authorization;
@@ -34,16 +15,15 @@ using ScrumFlix.Services;
 namespace ScrumFlix.Hubs;
 
 /// <summary>
-/// SignalR hub for broadcasting TMDb sync progress to Admin clients.
-/// Emits TmdbSyncProgress events as each movie is synced so the
-/// sf-spinner component can display real, accurate percentages.
+/// Legacy TMDb-specific hub; the active bulk-sync progress path uses
+/// ProgressHub. Kept mapped for compatibility until deliberately removed.
 /// </summary>
 [Authorize(Policy = "AdminStaff")]
 public class TmdbProgressHub : Hub
 {
     private readonly ILogger<TmdbProgressHub> _logger;
 
-    /// <summary>SignalR group name used for all sync-progress broadcasts.</summary>
+    /// <summary>Group name for this legacy hub.</summary>
     public const string SyncGroup = "tmdb-sync";
 
     public TmdbProgressHub(ILogger<TmdbProgressHub> logger)
@@ -54,7 +34,7 @@ public class TmdbProgressHub : Hub
     /// <inheritdoc />
     public override async Task OnConnectedAsync()
     {
-        // Join the broadcast group — all Admin clients watching the sync page receive progress.
+        // Retain legacy group membership for any client that still connects here.
         await Groups.AddToGroupAsync(Context.ConnectionId, SyncGroup);
 
         _logger.LogDebug(

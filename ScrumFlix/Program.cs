@@ -266,8 +266,8 @@ builder.Services.AddSingleton<QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ── TMDb sync service ────────────────────────────────────────────────
-// Registers ITmdbSyncService + TmdbSyncService (Scoped) and the named
-// "TmdbClient" HttpClient with AddStandardResilienceHandler().
+// Registers the scoped TMDbLib sync service and a separate named HttpClient.
+// The named client's resilience pipeline does not apply to the active sync path.
 // API key is read from "Tmdb:ApiKey" (User Secrets / env var).
 builder.Services.ConfigureTmdb(builder.Configuration);
 
@@ -305,6 +305,17 @@ builder.Services.AddControllersWithViews(options =>
 })
 .AddJsonOptions(opts =>
     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
+// ── Telerik UI for ASP.NET Core ────────────────────────────────────────────
+// DeferToScriptFiles: component initialisation is emitted as one same-origin .js file
+// (served by KendoDeferredScriptsMiddleware) instead of inline <script>, so the strict
+// CSP in SecurityHeadersConfiguration (no unsafe-inline) keeps working.
+// JSON naming is intentionally NOT changed here (see AddJsonOptions above): existing
+// endpoints keep camelCase. Revisit only when adding Kendo Grid/DataSource endpoints.
+builder.Services.AddKendo(options =>
+{
+    options.DeferToScriptFiles = true;
+});
 
 // ============================================================================
 // Memory Cache
@@ -377,6 +388,10 @@ app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 // ── Standard middleware ────────────────────────────────────────────────────
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Serves the generated Kendo deferred-initialisation script (reads from IMemoryCache,
+// registered via AddMemoryCache above). After static files so real files win.
+app.UseMiddleware<Kendo.Mvc.KendoDeferredScriptsMiddleware>();
 
 // ── Serilog request logging ───────────────────────────────────────────────
 //
